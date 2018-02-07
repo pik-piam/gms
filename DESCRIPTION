@@ -1,8 +1,8 @@
 Package: lucode
 Type: Package
 Title: PIK Landuse Group Code Manipulation and Analysis Tools
-Version: 2.96.0
-Date: 2018-01-26
+Version: 2.96.1
+Date: 2018-02-07
 Authors@R: c(person("Jan Philipp", "Dietrich", email = "dietrich@pik-potsdam.de", role = c("aut","cre")),
              person("Anastasis", "Giannousakis", email = "giannou@pik-potsdam.de", role = "aut"),
              person("David", "Klein", email = "dklein@pik-potsdam.de", role = "aut"),
