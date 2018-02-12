@@ -23,13 +23,13 @@ updateRepo <- function(path=".", check=TRUE, force_rebuild=FALSE, clean=FALSE) {
   setwd(path)
   
   if(dir.exists(".svn")) {
-    if(clean) system("svn revert -R .")
-    system("svn update")
+    if(clean) system("svn revert -Rq .")
+    system("svn update -q")
   }
   ap <- suppressWarnings(available.packages(paste0("file:",getwd())))
   
   dirs <- grep("^\\.",list.dirs(recursive = FALSE,full.names = FALSE), value=TRUE, invert=TRUE)
-  nchar <- max(length(dirs))
+  nchar <- max(nchar(dirs))
   for(d in dirs) {
     fd <- format(d,width=nchar)
     curversion <- tryCatch(ap[d,"Version"],error=function(e)return(0))
@@ -50,15 +50,15 @@ updateRepo <- function(path=".", check=TRUE, force_rebuild=FALSE, clean=FALSE) {
       if(vkey$valid | !check | force_rebuild) {
         if(vkey$roxygen) suppressWarnings(devtools::document(pkg=".",roclets=c('rd', 'collate', 'namespace', 'vignette')))
         error <- try(devtools::build())
-        if(dir.exists(".git")) system("git --no-pager show -s --format='%h | %s | %an <%ae>' HEAD")
         if("try-error" %in% class(error)) {
           message(".:: ",fd," ",curversion," -> ",vkey$version," build failed ::.")
+          if(dir.exists(".git")) system("git --no-pager show -s --format='(%h) %s \n%an <%ae>' HEAD")
         } else {
           message(".:: ",fd," ",curversion," -> ",vkey$version," build success ::.")
         }
       } else {
-        if(dir.exists(".git")) system("git --no-pager show -s --format='%h | %s | %an <%ae>' HEAD")
         message(".:: ",fd," ",curversion," -> ",vkey$version," invalid commit ::.")
+        if(dir.exists(".git")) system("git --no-pager show -s --format='(%h) %s \n%an <%ae>' HEAD")
       }
     } else message(".:: ",fd," ",format(curversion, width=10)," ok ::.")
     setwd("..")
