@@ -30,7 +30,7 @@ updateRepo <- function(path=".", check=TRUE, force_rebuild=FALSE) {
     vkey <- validkey()
     if(!file.exists(paste0("../",d,"_",vkey$version,".tar.gz")) | force_rebuild) {
       if(vkey$valid | !check | force_rebuild) {
-        if(vkey$roxygen) try(devtools::document(pkg=".",roclets=c('rd', 'collate', 'namespace', 'vignette')))
+        if(vkey$roxygen) suppressWarnings(devtools::document(pkg=".",roclets=c('rd', 'collate', 'namespace', 'vignette')))
         try(devtools::build())
       } else message(d," not build as package has not been successfully checked beforehand!")
     }
