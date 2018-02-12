@@ -21,16 +21,25 @@ updateRepo <- function(path=".", check=TRUE, force_rebuild=FALSE) {
   on.exit(setwd(cwd))
   setwd(path)
   
-  if(dir.exists(".svn")) system("svn update")
-  
+  if(dir.exists(".svn")) {
+    system("svn revert -R .")
+    system("svn update")
+  }
   ap <- suppressWarnings(available.packages(paste0("file:",getwd())))
   
   dirs <- grep("^\\.",list.dirs(recursive = FALSE,full.names = FALSE), value=TRUE, invert=TRUE)
   for(d in dirs) {
     curversion <- tryCatch(ap[d,"Version"],error=function(e)return(0))
     setwd(d)
-    if(dir.exists(".svn")) system("svn update")
-    if(dir.exists(".git")) system("git pull")
+    if(dir.exists(".svn")) {
+      system("svn revert -R .")
+      system("svn update")
+    }
+    if(dir.exists(".git")) {
+      system("git reset --hard HEAD")
+      system("git clean -fxq")
+      system("git pull")
+    }
     vkey <- validkey()
     if(curversion < vkey$version | force_rebuild) {
       if(vkey$valid | !check | force_rebuild) {
@@ -42,7 +51,7 @@ updateRepo <- function(path=".", check=TRUE, force_rebuild=FALSE) {
           message(".:: ",d," ",curversion," -> ",vkey$version," build success ::.")
         }
       } else message(".:: ",d," ",curversion," -> ",vkey$version," invalid commit ::.")
-    } else message(".:: ",d," ",curversion," online ::.")
+    } else message(".:: ",d," ",curversion," ok ::.")
     setwd("..")
   }
   tools::write_PACKAGES()    
