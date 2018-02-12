@@ -38,7 +38,7 @@ updateRepo <- function(path=".", check=TRUE, force_rebuild=FALSE) {
           message(".:: ",d," build success ::.")
         }
       } else message(".:: ",d," invalid commit ::.")
-    }
+    } else message(".:: ",d," ok ::.")
     setwd("..")
   }
   tools::write_PACKAGES()    
