@@ -8,7 +8,6 @@
 #' @importFrom shiny fluidPage sidebarLayout sidebarPanel selectInput shinyApp renderPlot mainPanel plotOutput column actionButton reactive removeUI
 #' reactiveValues observeEvent insertUI tags fluidRow sliderInput titlePanel radioButtons textOutput renderText
 #' @importFrom data.table uniqueN
-#' @importFrom mip theme_mip
 #' @export
 
 
@@ -124,11 +123,17 @@ modelstats <- function(files=c("https://www.pik-potsdam.de/rd3mod/magpie.rds","h
       }
       # fvec is the filter vector to be applied on
       # out to select the chosen entries
+      if (!requireNamespace("mip", quietly = TRUE)) {
+        theme <- NULL
+      } else {
+        theme <- mip::theme_mip(size=14)
+      }
+      
       ggplot2::ggplot(i$out[fvec,]) + ggplot2::theme(legend.direction="vertical") +
         ggplot2::geom_point(ggplot2::aes_string(y=cset(input$yaxis,i$filter),
                                                 x=cset(input$xaxis,i$filter),
                                                 color=cset(input$color,i$filter)),size=5) +
-        theme_mip(size=14)
+        theme
     }, height=700)
 
     observeEvent(input$filter, {
