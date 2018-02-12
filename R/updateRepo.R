@@ -37,6 +37,7 @@ updateRepo <- function(path=".", check=TRUE, force_rebuild=FALSE) {
     }
     if(dir.exists(".git")) {
       system("git reset --hard HEAD")
+      system("git --no-pager show -s --format='%an <%ae>' HEAD")
       system("git clean -fxq")
       system("git pull")
     }
