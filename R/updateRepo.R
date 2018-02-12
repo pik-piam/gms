@@ -22,23 +22,26 @@ updateRepo <- function(path=".", check=TRUE, force_rebuild=FALSE) {
   
   if(dir.exists(".svn")) system("svn update")
   
+  ap <- suppressWarnings(available.packages(paste0("file:",getwd())))
+  
   dirs <- grep("^\\.",list.dirs(recursive = FALSE,full.names = FALSE), value=TRUE, invert=TRUE)
   for(d in dirs) {
+    curversion <- tryCatch(ap[d,"Version"],error=function(e)return(0))
     setwd(d)
     if(dir.exists(".svn")) system("svn update")
     if(dir.exists(".git")) system("git pull")
     vkey <- validkey()
-    if(!file.exists(paste0("../",d,"_",vkey$version,".tar.gz")) | force_rebuild) {
+    if(curversion < vkey$version | force_rebuild) {
       if(vkey$valid | !check | force_rebuild) {
         if(vkey$roxygen) suppressWarnings(devtools::document(pkg=".",roclets=c('rd', 'collate', 'namespace', 'vignette')))
         error <- try(devtools::build())
         if("try-error" %in% class(error)) {
-          message(".:: ",d," build failed ::.")
+          message(".:: ",d," ",curversion," -> ",vkey$version," build failed ::.")
         } else {
-          message(".:: ",d," build success ::.")
+          message(".:: ",d," ",curversion," -> ",vkey$version," build success ::.")
         }
-      } else message(".:: ",d," invalid commit ::.")
-    } else message(".:: ",d," ok ::.")
+      } else message(".:: ",d," ",curversion," -> ",vkey$version," invalid commit ::.")
+    } else message(".:: ",d," ",curversion," online ::.")
     setwd("..")
   }
   tools::write_PACKAGES()    

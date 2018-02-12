@@ -31,8 +31,7 @@ packageInfo <- function(package, repos=c("https://cran.rstudio.com/","http://www
     cat("Availability in repositories:\n")
     v <- list()
     for(r in repos) {
-      v$r <- try(available.packages(paste0(r,"/src/contrib"))[package,"Version"], silent = TRUE)
-      if("try-error" %in% class(v$r)) v$r <- "<not available>"
+      v$r <- tryCatch(available.packages(paste0(r,"/src/contrib"))[package,"Version"], error=function(e)return("<not available>"))
       cat(v$r,"|",r,"\n")
     }
     cat("\n")
