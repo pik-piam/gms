@@ -31,8 +31,13 @@ updateRepo <- function(path=".", check=TRUE, force_rebuild=FALSE) {
     if(!file.exists(paste0("../",d,"_",vkey$version,".tar.gz")) | force_rebuild) {
       if(vkey$valid | !check | force_rebuild) {
         if(vkey$roxygen) suppressWarnings(devtools::document(pkg=".",roclets=c('rd', 'collate', 'namespace', 'vignette')))
-        try(devtools::build())
-      } else message(d," not build as package has not been successfully checked beforehand!")
+        error <- try(devtools::build())
+        if("try-error" %in% class(error)) {
+          message(".:: ",d," build failed ::.")
+        } else {
+          message(".:: ",d," build success ::.")
+        }
+      } else message(".:: ",d," invalid commit ::.")
     }
     setwd("..")
   }
