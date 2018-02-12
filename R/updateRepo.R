@@ -16,6 +16,7 @@
 #' @export
 
 updateRepo <- function(path=".", check=TRUE, force_rebuild=FALSE) {
+  cat(date(),"\n")
   cwd <- getwd()
   on.exit(setwd(cwd))
   setwd(path)
