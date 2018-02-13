@@ -29,7 +29,7 @@ updateRepo <- function(path=".", check=TRUE, force_rebuild=FALSE, clean=FALSE, p
   if(!is.null(pidfile)) {
     if(file.exists(pidfile)) {
       pid <- readLines(pidfile)
-      if(any(grepl(pid,system("ps -A", intern = TRUE)))) {
+      if(any(grepl(paste0("^ *",pid," "),system("ps -A", intern = TRUE)))) {
         message("Process already running.")
         return(NULL)
       }
