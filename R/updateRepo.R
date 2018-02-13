@@ -52,7 +52,6 @@ updateRepo <- function(path=".", check=TRUE, force_rebuild=FALSE, clean=FALSE) {
         if(!("try-error" %in% class(error))) error <- try(devtools::build())
         if("try-error" %in% class(error)) {
           message(".:: ",fd," ",curversion," -> ",vkey$version," build failed ::.")
-          message(error)
           if(dir.exists(".git")) system("git --no-pager show -s --format='(%h) %s \n%an <%ae>' HEAD")
         } else {
           message(".:: ",fd," ",curversion," -> ",vkey$version," build success ::.")
