@@ -12,15 +12,30 @@
 #' in order to be distributed
 #' @param force_rebuild Option to rebuild all packages from source
 #' @param clean Option to clean repos before updating/pulling to avoid merge conflicts
+#' @param pidfile file name of a "process id" file containing the process id of the current 
+#' process. If set this will make sure that the function is not run twice at the same time. 
+#' If set to NULL this will be ignored. The OS needs to provide a "ps" command in order to
+#' have this working.
 #' @author Jan Philipp Dietrich
 #' @seealso \code{\link{buildLibrary}}
 #' @export
 
-updateRepo <- function(path=".", check=TRUE, force_rebuild=FALSE, clean=FALSE) {
+updateRepo <- function(path=".", check=TRUE, force_rebuild=FALSE, clean=FALSE, pidfile=NULL) {
   cat(date(),"\n")
   cwd <- getwd()
   on.exit(setwd(cwd))
   setwd(path)
+  
+  if(!is.null(pidfile)) {
+    if(file.exists(pidfile)) {
+      pid <- readLines(pidfile)
+      if(any(grepl(pid,system("ps -A", intern = TRUE)))) {
+        message("Process already running.")
+        return(NULL)
+      }
+    } 
+    writeLines(as.character(Sys.getpid()),pidfile)
+  }
   
   if(dir.exists(".svn")) {
     if(clean) system("svn revert -Rq .")
