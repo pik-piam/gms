@@ -48,10 +48,11 @@ updateRepo <- function(path=".", check=TRUE, force_rebuild=FALSE, clean=FALSE) {
     vkey <- validkey()
     if(curversion < vkey$version | force_rebuild) {
       if(vkey$valid | !check | force_rebuild) {
-        if(vkey$roxygen) suppressWarnings(devtools::document(pkg=".",roclets=c('rd', 'collate', 'namespace', 'vignette')))
-        error <- try(devtools::build())
+        if(vkey$roxygen) error <- try(devtools::document(pkg=".",roclets=c('rd', 'collate', 'namespace', 'vignette')))
+        if(!("try-error" %in% class(error))) error <- try(devtools::build())
         if("try-error" %in% class(error)) {
           message(".:: ",fd," ",curversion," -> ",vkey$version," build failed ::.")
+          message(error)
           if(dir.exists(".git")) system("git --no-pager show -s --format='(%h) %s \n%an <%ae>' HEAD")
         } else {
           message(".:: ",fd," ",curversion," -> ",vkey$version," build success ::.")
