@@ -56,6 +56,10 @@ buildLibrary<-function(lib=".",cran=TRUE, update_type=NULL){
     stop("The package check showed warnings. You need to take care of these warnings first before submission!")
   }
 
+  if(length(ck$notes)>0) {
+    stop("The package check showed notes. You need to take care of these notes first before submission!")
+  }
+  
   ##########################################################
   #Check for version numbers
   ##########################################################
