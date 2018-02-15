@@ -40,6 +40,8 @@ download_unpack <- function(input, targetdir="input", repositories=NULL, usernam
   
   if(!dir.exists(targetdir)) dir.create(targetdir)
   
+  writeLines(files,paste0(targetdir,"/source_files.log"))
+  
   # create curl handle
   if(any(grepl("://",repositories))) {
     if(!requireNamespace("curl", quietly = TRUE)) stop("The package curl is required for downloading files!")
