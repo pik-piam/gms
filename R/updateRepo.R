@@ -78,5 +78,6 @@ updateRepo <- function(path=".", check=TRUE, force_rebuild=FALSE, clean=FALSE, p
     } else message(".:: ",fd," ",format(curversion, width=10)," ok ::.")
     setwd("..")
   }
-  tools::write_PACKAGES()    
+  tools::write_PACKAGES() 
+  message("done.")
 }
