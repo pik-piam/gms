@@ -46,6 +46,12 @@ buildLibrary<-function(lib=".",cran=TRUE, update_type=NULL){
   #check the library
   ############################################################
   ck <- devtools::check(".",cran=cran)
+  
+  #Filter warnings and notes which are accepted
+  accepted_warnings <- "Warning: package '.*' was built under R version"
+  for(aw in accepted_warnings) {
+    ck$warnings <- grep(aw, ck$warnings, value=TRUE,invert=TRUE)
+  }
   print(ck)
   
   if(length(ck$errors)>0) {
