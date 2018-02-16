@@ -27,6 +27,8 @@ download_unpack <- function(input, targetdir="input", repositories=NULL, debug=F
     files <- input
   }
   
+  ifiles <- files
+  
   if(!dir.exists(targetdir)) dir.create(targetdir)
   
   writeLines(files,paste0(targetdir,"/source_files.log"))
@@ -36,13 +38,12 @@ download_unpack <- function(input, targetdir="input", repositories=NULL, debug=F
     if(!requireNamespace("curl", quietly = TRUE)) stop("The package curl is required for downloading files!")
   }
   
-  .unpack <- function(file, filepath, repo, targetdir,found) {
-    message("    ",file)
-    untar(filepath,exdir=targetdir)
-    return(rbind(found,data.frame(row.names=file,repo=repo,md5sum=tools::md5sum(filepath))))
+  .unpack <- function(file, filepath, repo, found) {
+    message("    -> ",file)
+    return(rbind(found,data.frame(row.names=file,repo=repo,path=filepath,md5sum=tools::md5sum(filepath), stringsAsFactors=FALSE)))
   }
   
-  message("Load and unpack data..")
+  message("Load data..")
   md5sum <- list()
   found <- NULL
   for(repo in names(repositories)) {
@@ -59,24 +60,31 @@ download_unpack <- function(input, targetdir="input", repositories=NULL, debug=F
       next 
     }
     for(file in files) {
-      filepath <- NULL
       path <- paste0(sub("/$","",repo),"/",file)
       if(grepl("://",repo)) {
         tmpdir <- ifelse(debug,targetdir,tempdir())
         tmp <- try(curl::curl_download(path,paste0(tmpdir,"/",file),handle=h),silent = !debug)
         if(!("try-error" %in% class(tmp))) {
           files <- files[-match(file,files)]
-          found <- .unpack(file, paste0(tmpdir,"/",file), repo, targetdir, found)
+          found <- .unpack(file, paste0(tmpdir,"/",file), repo, found)
         }
       } else if(file.exists(path)) {
         files <- files[-match(file,files)]
-        found <- .unpack(file, path, repo, targetdir,found)
+        found <- .unpack(file, path, repo, found)
       }
     }
     if(length(files)==0) break
   }
   if(is.null(found)) stop("No file could be found!")
+  #sort files in intial order and unpack
+  found <- found[intersect(ifiles,rownames(found)),]
+  message("..unpack files..")
+  for(f in rownames(found)) {
+    message(" -> ",f)
+    untar(found[f,"path"],exdir=targetdir)
+  }
   if(length(files)>0) warning("Some files not found:\n  ",paste(files, collapse = "\n  "))
   message("..done")
+  if(!debug) found$path <- NULL
   return(found)
 }
