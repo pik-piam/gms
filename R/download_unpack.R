@@ -13,6 +13,8 @@
 #' no options are required the value has to be NULL. (e.g. 
 #' list("ftp://my_pw_protected_server.de/data"=list(user="me",password=12345), "http://free_server.de/dat"=NULL))
 #' @param debug switch for debug mode with additional diagnostic information
+#' @return Information about the download process in form of a data.frame with data sets as row names and repositories
+#' (where it was downloaded from) and corresponding md5sum as columns
 #' @author Jan Philipp Dietrich
 #' @importFrom utils untar
 #' @export
@@ -40,11 +42,10 @@ download_unpack <- function(input, targetdir="input", repositories=NULL, debug=F
   
   .unpack <- function(file, filepath, repo, found) {
     message("    -> ",file)
-    return(rbind(found,data.frame(row.names=file,repo=repo,path=filepath,md5sum=tools::md5sum(filepath), stringsAsFactors=FALSE)))
+    return(rbind(found,data.frame(row.names=file,repo=repo,path=filepath,md5=tools::md5sum(filepath), stringsAsFactors=FALSE)))
   }
   
   message("Load data..")
-  md5sum <- list()
   found <- NULL
   for(repo in names(repositories)) {
     message("  try ",repo)
@@ -86,5 +87,6 @@ download_unpack <- function(input, targetdir="input", repositories=NULL, debug=F
   if(length(files)>0) warning("Some files not found:\n  ",paste(files, collapse = "\n  "))
   message("..done")
   if(!debug) found$path <- NULL
+  attr(found,"warnings") <- warnings()
   return(found)
 }
