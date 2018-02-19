@@ -76,7 +76,10 @@ download_unpack <- function(input, targetdir="input", repositories=NULL, debug=F
     }
     if(length(files)==0) break
   }
-  if(is.null(found)) stop("No file could be found!")
+  if(is.null(found)) {
+    cat("\n")
+    stop("No file could be found!")
+  } 
   #sort files in intial order and unpack
   found <- found[intersect(ifiles,rownames(found)),]
   message("..unpack files..")
