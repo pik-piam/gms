@@ -52,7 +52,7 @@ download_unpack <- function(input, targetdir="input", repositories=NULL, debug=F
     if(grepl("://",repo)) {
       h <- try(curl::new_handle(verbose=debug, .list=repositories[[repo]]),silent = !debug)
       tmp <- try(curl::curl_fetch_memory(repo, handle=h)$status_code, silent = !debug)
-      if(tmp != 200) {
+      if(tmp != 200 &  !grepl("scp://",repo)) {
         message("    repository access failed .. skip repository!")
         next
       }
