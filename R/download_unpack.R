@@ -76,6 +76,11 @@ download_unpack <- function(input, targetdir="input", repositories=NULL, debug=F
     }
     if(length(files)==0) break
   }
+  if(length(files)>0) {
+    tmp <- paste0("Following files not found:\n  ",paste(files, collapse = "\n  "))
+    warning(tmp)
+    message(tmp)
+  }
   if(is.null(found)) {
     cat("\n")
     stop("No file could be found!")
@@ -87,7 +92,6 @@ download_unpack <- function(input, targetdir="input", repositories=NULL, debug=F
     message(" -> ",f)
     untar(found[f,"path"],exdir=targetdir)
   }
-  if(length(files)>0) warning("Some files not found:\n  ",paste(files, collapse = "\n  "))
   message("..done")
   if(!debug) found$path <- NULL
   attr(found,"warnings") <- warnings()
