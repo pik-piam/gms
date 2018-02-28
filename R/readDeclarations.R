@@ -24,7 +24,7 @@ readDeclarations <- function(file,unlist=TRUE){
   for(t in types) {
    tname <- sub("\\([^\\)]*\\)","",t)
    if(tname=="table") tname<-"parameter"
-   startings <- grep(paste("^ *",t,sep=""),d, ignore.case = TRUE)
+   startings <- grep(paste("^ *",t,"[s]?( |$)",sep=""),d, ignore.case = TRUE)
    for(s in startings) {
      e <- min(endings[endings>=s])
      tmp <- d[s:e] #cut all object declarations of the given type

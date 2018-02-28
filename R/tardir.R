@@ -2,8 +2,6 @@
 #' 
 #' Creates a tgz from all files in a directory
 #' 
-#' 
-#' @usage tardir(dir=".", tarfile="data.tgz")
 #' @param dir directory from which the tar file should be generated
 #' @param tarfile name of the archive the data should be written to (tgz file)
 #' @author Jan Philipp Dietrich
