@@ -75,7 +75,7 @@ singleGAMSfile <- function(modelpath=".",mainfile="main.gms",output="full.gms") 
       var <- gsub("(\\\"|%)","",tmp[2])
       val <- gsub("(\\\"|%)","",tmp[4])
       if(is.null(setglobals[[var]])) {
-        #warning("No value set for $setglobal \"",var,"\"! Value is set to \"MISSING\"!")
+        warning("No value set for $setglobal \"",var,"\"! Value is set to \"MISSING\"!")
         setglobals[[var]] <- "MISSING"   
       }
       if(setglobals[[var]]==val) {

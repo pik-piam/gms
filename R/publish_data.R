@@ -43,14 +43,16 @@ publish_data <- function(input,name, target=Sys.getenv("PUBLISH_DATA_TARGET", un
     target <- choose_target(target)
   }
   tarfile <- paste0(name,".tgz")
-  dir <- tempdir()
+  dir <- paste0(tempdir(),"/data")
+  tmptarfile <- paste0(tempdir(),"/",tarfile)
+  dir.create(dir)
   download_unpack(input, targetdir=dir, ...)
-  tardir(dir=dir, tarfile=tarfile)
+  tardir(dir=dir, tarfile=tmptarfile)
   unlink(dir, recursive = TRUE)
   if(grepl(":",target)) {
-    system(paste0("sftp ",target," <<< $'put ",tarfile,"'"))
-    unlink(tarfile)
+    system(paste0("sftp ",target," <<< $'put ",tmptarfile,"'"))
+    unlink(tmptarfile)
   } else {
-    file.rename(tarfile,paste0(target,"/",tarfile))
+    file.rename(tmptarfile,paste0(target,"/",tarfile))
   }
 }
