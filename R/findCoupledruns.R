@@ -11,7 +11,7 @@
 #' @author David Klein
 #' @export
 findCoupledruns <- function(resultsfolder) {
-  cat("\nNo run specified by user. Searching for all scenarios of coupled runs in",resultsfolder,": ")
+  cat("\nSearching for all scenarios of coupled runs in",resultsfolder,": ")
   # Find which runs were performed by searching for all files that contain "-rem-"
   runs <- Sys.glob(path(resultsfolder,"/*-rem-*"))
   if (length(runs)==0) runs <- Sys.glob(path(resultsfolder,"/*-mag-*"))
