@@ -5,10 +5,10 @@
 #' @param input a vector of files to be downloaded or a cfg list with settings to be used (e.g. containing
 #' cfg$input, cfg$repositories). Settings in the config list will be overwritten by other arguments of
 #' this function if they are not set to NULL
-#' @param name name of the data to be published (will be used in as file name). If a target vector, or targets 
+#' @param name name of the data to be published (will be used in as file name). 
+#' @param target target the data should be published in (format user@server:/folder/path) If a target vector, or targets 
 #' separated by "|" are provided the user will be asked interactively where the file should be written to. 
 #' By default it will look for target information in the environment variable PUBLISH_DATA_TARGET
-#' @param target target the data should be published in (format user@server:/folder/path)
 #' @param ... further options provided to \code{\link{download_unpack}}
 #' @seealso \code{\link{download_unpack}},\code{\link{tardir}}
 #' @author Jan Philipp Dietrich
@@ -42,7 +42,7 @@ publish_data <- function(input,name, target=Sys.getenv("PUBLISH_DATA_TARGET", un
     }
     target <- choose_target(target)
   }
-  tarfile <- paste0(name,".tgz")
+  tarfile <- paste0(sub("\\.tgz$","", name),".tgz")
   dir <- paste0(tempdir(),"/data")
   tmptarfile <- paste0(tempdir(),"/",tarfile)
   dir.create(dir)
