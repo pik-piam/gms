@@ -13,7 +13,7 @@
 #' packageInfo("lucode")
 #' 
 
-packageInfo <- function(package, repos=c("https://cran.rstudio.com/","http://www.pik-potsdam.de/rd3mod/R/", "http://rse.pik-potsdam.de/r/packages/")) {
+packageInfo <- function(package, repos=c("https://cran.rstudio.com/","http://www.pik-potsdam.de/rd3mod/R/", "https://rse.pik-potsdam.de/r/packages/")) {
   version <- try(packageVersion(package), silent=TRUE)
   if("try-error" %in% class(version)) {
     version <- "<not installed>"
