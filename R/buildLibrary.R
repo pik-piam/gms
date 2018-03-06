@@ -48,7 +48,8 @@ buildLibrary<-function(lib=".",cran=TRUE, update_type=NULL){
   ck <- devtools::check(".",cran=cran)
   
   #Filter warnings and notes which are accepted
-  accepted_warnings <- "Warning: package '.*' was built under R version"
+  accepted_warnings <- c("Warning: package '.*' was built under R version",
+                         "Warning: namespace '.*' is not available and has been replaced")
   for(aw in accepted_warnings) {
     ck$warnings <- grep(aw, ck$warnings, value=TRUE,invert=TRUE)
   }
