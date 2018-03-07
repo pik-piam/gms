@@ -11,7 +11,7 @@
 
 
 goxygen <- function(path=".", docfolder="doc") {
-  if (!requireNamespace("knitr", quietly = TRUE)) stop("The package knitr is not available! Install it first before running goxygen!")
+  if (!requireNamespace("pander", quietly = TRUE)) stop("The package pander is not available! Install it first before running goxygen!")
 
   if(is.character(path)) {
     cc <- codeCheck(path=path, debug=TRUE)
@@ -35,7 +35,7 @@ goxygen <- function(path=".", docfolder="doc") {
     }
     .format <- function(out,aps) {
       # format information
-      fout <- data.frame(Name=paste0(out$name,sub("()","",paste0("(",out$sets,")"),fixed=TRUE)), 
+      fout <- data.frame(Name=paste0(out$name,sub("()","",paste0(" (",out$sets,")"),fixed=TRUE)), 
                          Description=out$description, 
                          Unit=out$unit)
       aps[,] <- ifelse(aps==1,"x","")
@@ -44,7 +44,7 @@ goxygen <- function(path=".", docfolder="doc") {
     .clean <- function(x,caption) {
       if(nrow(x)==0) return(NULL)
       rownames(x) <- NULL
-      return(knitr::kable(x, "pandoc", caption=caption))
+      return(pander::pandoc.table.return(x, "pandoc", caption=caption, split.table=160))
     }
     interfaceTables <- function(cc, module) {
       # collect information about module interfaces
