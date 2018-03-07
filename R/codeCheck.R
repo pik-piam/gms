@@ -298,7 +298,7 @@ codeCheck <- function(path=".",modulepath="modules", core_files = c("core/*.gms"
   cat(" Description check done...              (time elapsed:",format(proc.time()["elapsed"]-ptm,width=6,nsmall=2,digits=2),")\n\n")
   
   if(debug) {
-    out <- list(interfaceInfo=interfaceInfo,ap=ap,gams=gams,gams_backup=gams_backup,sap=sap,esap=esap)
+    out <- list(interfaceInfo=interfaceInfo,ap=ap,gams=gams,gams_backup=gams_backup,sap=sap,esap=esap,modulesInfo=modulesInfo)
   } else {
     out <- interfaceInfo
   }

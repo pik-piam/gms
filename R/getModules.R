@@ -22,5 +22,6 @@ getModules <- function(modulepath) {
   realizations <- folder
   for(i in 1:dim(out)[1]) realizations[i] <- paste(setdiff(base::list.dirs(path=path(modulepath,out[i,"folder"]),full.names = FALSE,recursive = FALSE),lucode$reserved_types),collapse=",")
   out <- cbind(out,realizations)
+  rownames(out) <- out[,"name"]
   return(out)  
 }

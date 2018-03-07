@@ -4,7 +4,7 @@
 #' modularized gams model. (incomplete --- work in progress!) 
 #' 
 #' @param path path to the model to be documented
-#' @param docfolder folder the documentation should be written to
+#' @param docfolder folder the documentation should be written to relative to model folder
 #' @author Jan Philipp Dietrich
 #' @seealso \code{\link{codeCheck}}
 #' @export
@@ -12,15 +12,16 @@
 
 goxygen <- function(path=".", docfolder="doc") {
   if (!requireNamespace("pander", quietly = TRUE)) stop("The package pander is not available! Install it first before running goxygen!")
-
+  cwd <- getwd()
+  on.exit(setwd(cwd))
+  
   if(is.character(path)) {
-    cc <- codeCheck(path=path, debug=TRUE)
+    setwd(path)
+    cc <- codeCheck(debug=TRUE)
   } else {
     cc <- path
   }
   if(!dir.exists(docfolder)) dir.create(docfolder, recursive = TRUE)
-  cwd <- getwd()
-  on.exit(setwd(cwd))
   setwd(docfolder)
   
   collectTables <- function(cc) {
@@ -82,10 +83,12 @@ goxygen <- function(path=".", docfolder="doc") {
       out <- .format(out,aps)
       return(.clean(out,"declarations"))
     }
+
+    modInfo <- rbind(cc$modulesInfo,core=c(name="core",number="",folder="core",realizations=""))
     out <- list()
     for(m in names(cc$interfaceInfo)) {
-      out[[m]] <- interfaceTables(cc,m)
-      out[[m]]$declarations <- moduleTables(cc,m)
+      out[[modInfo[m,"folder"]]] <- interfaceTables(cc,m)
+      out[[modInfo[m,"folder"]]]$declarations <- moduleTables(cc,m)
     }
     return(out)
   }
@@ -144,6 +147,7 @@ goxygen <- function(path=".", docfolder="doc") {
 
   # write doc files
   for(m in names(out)) {
+    #mc <- readModuleComments(m)
     writeModulePage(m,out[[m]])
   }
   
