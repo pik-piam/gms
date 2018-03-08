@@ -33,7 +33,7 @@ gamsequation2tex <- function(x) {
     } 
     
     convert_sumprod <- function(x) {
-      sum <- "(#\\w+#)\\(([^,]+),"
+      sum <- "(#\\w+#)\\(([^(,]+|\\(.*?\\)),"
       x <- gsub(sum,"\\1_{\\2}(",x)
       return(x)
     }
