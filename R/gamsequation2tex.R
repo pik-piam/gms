@@ -7,7 +7,7 @@
 #' @return GAMS equation converted to latex code
 #' @author Jan Philipp Dietrich
 #' @export
-#' @importFrom stringi stri_extract_all_regex stri_replace_first_regex stri_replace_first_fixed
+#' @importFrom stringi stri_extract_all_regex stri_replace_first_regex stri_replace_first_fixed stri_count_fixed
 #' @seealso \code{\link{goxygen}}
 #' @examples
 #' 
@@ -96,6 +96,34 @@ gamsequation2tex <- function(x) {
     return(x)
   }
   
+  fixlines <- function(x, name) {
+    x <- gsub("^\n *","",x)
+    x <- gsub("\n *\\}","}\n",x)
+    out <- strsplit(x,"\n")[[1]]
+    
+    #check {-bracket balance
+    balance <- (stri_count_fixed(out,"{") - stri_count_fixed(out,"}"))
+    if(any(balance!=0)) warning("Fixed illegal line break in ",name,"!")
+    while(any(balance!=0)) {
+      i <- which(balance!=0)[1]
+      out[i] <- paste(out[i],out[i+1])
+      out <- out[-(i+1)]
+      balance <- (stri_count_fixed(out,"{") - stri_count_fixed(out,"}"))
+    }
+    
+    # check left/right balance
+    balance <- (stri_count_fixed(out,"\\left") - stri_count_fixed(out,"\\right"))
+    for(i in which(balance>0)) {
+      out[i] <- paste(out[i],rep("\\right.",balance[i]))
+    }
+    for(i in which(balance<0)) {
+      out[i] <- paste(paste(rep("\\left.",-1*balance[i]),collapse=""),out[i])
+    }
+    out <- paste(out,collapse="\\\\ \n & ")
+    out <- paste("\\begin{aligned}\n",out,"\n\\end{aligned}")
+    return(out)
+  }
+  
   #remove spaces and line breaks
   #x <- gsub("[\n ]*","",x)
   
@@ -103,6 +131,8 @@ gamsequation2tex <- function(x) {
   pattern <- "^(.*)\\.\\.([^;]*);?$"
   name <- sub(pattern,"\\1",x)
   eq <- sub(pattern,"\\2",x)
+  
+  multiline <- grepl("\n",eq)
   
   #split sides
   pattern <- "^(.*)(=[lgen]=)(.*)$"
@@ -116,11 +146,14 @@ gamsequation2tex <- function(x) {
                    "=g=" = "\\\\geq",
                    "=n=" = "\\\\neq")
   
+  if(multiline) middle <- paste(middle,"&")
   
   left <- convert_side(left)
   right <- convert_side(right)
   
   out <- paste(left,middle,right)
+  out <- gsub(" +"," ",out)
+  if(multiline) out <- fixlines(out, name)
   names(out) <- name
   
   if(grepl("#",out)) {

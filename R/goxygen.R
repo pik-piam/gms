@@ -64,8 +64,8 @@ goxygen <- function(path=".", docfolder="doc") {
         
       out <- list(input=fout[ifs[names(ifs) == "in"],],output=fout[ifs[names(ifs) == "out"],1:3])
       
-      out$input  <- .clean(out$input,"input")
-      out$output <- .clean(out$output,"output")
+      out$input  <- .clean(out$input,"module inputs")
+      out$output <- .clean(out$output,"module outputs")
       return(out)
     }
     moduleTables <- function(cc, module) {
@@ -82,7 +82,7 @@ goxygen <- function(path=".", docfolder="doc") {
       
       out <- .merge(dec)
       out <- .format(out,aps)
-      return(.clean(out,"declarations"))
+      return(.clean(out,"module-internal objects"))
     }
 
     modInfo <- rbind(cc$modulesInfo,core=c(name="core",number="",folder="core",realizations=""))
