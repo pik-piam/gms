@@ -6,6 +6,7 @@
 #' @param path path to the model to be documented
 #' @param docfolder folder the documentation should be written to relative to model folder
 #' @author Jan Philipp Dietrich
+#' @importFrom stringi stri_extract_all_regex stri_replace_all_regex
 #' @seealso \code{\link{codeCheck}}
 #' @export
 
@@ -93,7 +94,44 @@ goxygen <- function(path=".", docfolder="doc") {
     return(out)
   }
   
-  writeModulePage <- function(name,data) {
+  extractRealization <- function(path, comment="*'") {
+    
+    escapeRegex <- function(x) {
+      return(gsub("([.|()\\^{}+$*?]|\\[|\\])", "\\\\\\1", x))
+    }
+    
+    x <- readLines(path, warn = FALSE)
+    x <- grep("^\\*[^']",x,value=TRUE,invert=TRUE)
+    x <- paste(x,collapse="\n")
+    equation <- "(^|\n).*\\.\\.(.|\n)*?;"
+    eq <- stri_extract_all_regex(x,equation)[[1]]
+    eq <- gamsequation2tex(eq)
+    
+    x <- stri_replace_all_regex(x,equation,paste(comment,"\n",comment,"#::.equation.::#","\n",comment,"\n"))
+    co <- stri_extract_all_regex(x,paste0(escapeRegex(comment),".*(\\n|$)"))[[1]]
+    co <- gsub(paste0("(\n|",escapeRegex(comment)," *)"),"",co)
+    
+    # fill in equations
+    for(i in names(eq)) {
+      co[grep("#::.equation.::#",co)[1]] <- paste0("$$",eq[i],"$$")
+    }
+    return(co)
+  }
+  
+  collectRealizations <- function(m, cc,modules="../modules/") {
+    m <- sub("[0-9]*_","",m)
+    if(m=="core") return(NULL)
+    rea <- strsplit(cc$modulesInfo[m,"realizations"],",")[[1]]
+    folder <- cc$modulesInfo[m,"folder"]
+    out <- list()
+    for(r in rea) {
+      path <- paste0(modules,folder,"/",r,"/equations.gms")
+      if(file.exists(path)) out[[r]] <- extractRealization(path)
+    }
+    return(out)
+  }
+  
+  writeModulePage <- function(name,data,rdata) {
     zz <- file(paste0(name,".md"), "w")
     
     .empty <- function(zz) {
@@ -131,6 +169,11 @@ goxygen <- function(path=".", docfolder="doc") {
     
     .header("Realizations",2,zz)
     
+    for(r in names(rdata)) {
+      .header(r,3,zz)
+      .write(rdata[[r]],zz)
+    }
+    
     .header("Definitions",2,zz)
     .write(data$declarations, zz)
     
@@ -147,8 +190,8 @@ goxygen <- function(path=".", docfolder="doc") {
 
   # write doc files
   for(m in names(out)) {
-    #mc <- readModuleComments(m)
-    writeModulePage(m,out[[m]])
+    mr <- collectRealizations(m,cc)
+    writeModulePage(m,out[[m]],mr)
   }
   
   return(out)
