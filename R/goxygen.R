@@ -33,6 +33,7 @@ goxygen <- function(path=".", docfolder="doc") {
       unit <- sub(pattern,"\\2",dec[,"description"])
       unit[!grepl(pattern,dec[,"description"])] <- ""
       unit <- sub("mio.","10^6",unit)
+      unit <- gsub("\\\\","/",unit)
       return(data.frame(name=dec[,"names"],sets=dec[,"sets"], description=description, unit=unit, stringsAsFactors = FALSE))
     }
     .format <- function(out,aps) {
@@ -113,7 +114,8 @@ goxygen <- function(path=".", docfolder="doc") {
     
     # fill in equations
     for(i in names(eq)) {
-      co[grep("#::.equation.::#",co)[1]] <- paste0("$$",eq[i],"$$")
+      delim <- ifelse(grepl("CONVERSION FAILED!",i,fixed = TRUE), "```","$$")
+      co[grep("#::.equation.::#",co)[1]] <- paste0(delim,"\n",eq[i],"\n",delim)
     }
     return(co)
   }
@@ -193,6 +195,4 @@ goxygen <- function(path=".", docfolder="doc") {
     mr <- collectRealizations(m,cc)
     writeModulePage(m,out[[m]],mr)
   }
-  
-  return(out)
 }

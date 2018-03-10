@@ -99,6 +99,8 @@ gamsequation2tex <- function(x) {
   fixlines <- function(x, name) {
     x <- gsub("^\n *","",x)
     x <- gsub("\n *\\}","}\n",x)
+    x <- gsub("(\\\\frac\\{[^}]*\\}[^{]*?)\\n(.*?\\{)","\\1#codelinebreakonly#\\2",x)
+    
     out <- strsplit(x,"\n")[[1]]
     
     #check {-bracket balance
@@ -120,6 +122,7 @@ gamsequation2tex <- function(x) {
       out[i] <- paste(paste(rep("\\left.",-1*balance[i]),collapse=""),out[i])
     }
     out <- paste(out,collapse="\\\\ \n & ")
+    out <- gsub("#codelinebreakonly#","\n",out,fixed=TRUE)
     out <- paste("\\begin{aligned}\n",out,"\n\\end{aligned}")
     return(out)
   }
@@ -128,9 +131,15 @@ gamsequation2tex <- function(x) {
   #x <- gsub("[\n ]*","",x)
   
   # split name and equation
-  pattern <- "^(.*)\\.\\.([^;]*);?$"
+  pattern <- "^\n*(.*?) *\\.\\. *(.*?);?$"
   name <- sub(pattern,"\\1",x)
   eq <- sub(pattern,"\\2",x)
+  
+  if(grepl("(^\\$|\n\\$)",x)) {
+    warning("Cannot handle equations with preceeding dollar conditions! Return original code!")
+    names(x) <- paste(name,"(CONVERSION FAILED!)")
+    return(x)
+  }
   
   multiline <- grepl("\n",eq)
   
@@ -142,9 +151,9 @@ gamsequation2tex <- function(x) {
   
   middle <- switch(middle,
                    "=e=" = "=",
-                   "=l=" = "\\\\leq",
-                   "=g=" = "\\\\geq",
-                   "=n=" = "\\\\neq")
+                   "=l=" = "\\leq",
+                   "=g=" = "\\geq",
+                   "=n=" = "\\neq")
   
   if(multiline) middle <- paste(middle,"&")
   
@@ -153,11 +162,16 @@ gamsequation2tex <- function(x) {
   
   out <- paste(left,middle,right)
   out <- gsub(" +"," ",out)
+  out <- gsub("([$%])","\\\\\\1",out)
+  out <- gsub(">=","\\geq", out, fixed=TRUE)
+  out <- gsub("<=","\\leq", out, fixed=TRUE)
+  
   if(multiline) out <- fixlines(out, name)
   names(out) <- name
   
   if(grepl("#",out)) {
     warning("Equation ",name," could not be converted! Return original code!")
+    names(x) <- paste(name,"(CONVERSION FAILED!)")
     return(x)
   }
   
