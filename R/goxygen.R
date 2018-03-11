@@ -22,7 +22,9 @@ goxygen <- function(path=".", docfolder="doc") {
   } else {
     cc <- path
   }
+  
   if(!dir.exists(docfolder)) dir.create(docfolder, recursive = TRUE)
+  
   setwd(docfolder)
   
   collectTables <- function(cc) {
@@ -95,12 +97,23 @@ goxygen <- function(path=".", docfolder="doc") {
     return(out)
   }
   
+  escapeRegex <- function(x) {
+    return(gsub("([.|()\\^{}+$*?]|\\[|\\])", "\\\\\\1", x))
+  }
+  
+  extractModuleDescription <- function(path, comment="*'") {
+    comment <- paste0("^",escapeRegex(comment)," *")
+    x <- readLines(path, warn = FALSE)
+    x <- grep(comment,x,value=TRUE)
+    x <- sub(comment,"",x)
+    while(length(x)>2 & x[2]=="") x <- x[-2]
+    out <- list(title=x[1],description=x[-1])
+    if(is.na(out$title)) out$title <- "*TITLE MISSING*"
+    if(length(out$description)==0) out$description <- "> *DESCRIPTION MISSING*"
+    return(out)
+  }
+  
   extractRealization <- function(path, comment="*'") {
-    
-    escapeRegex <- function(x) {
-      return(gsub("([.|()\\^{}+$*?]|\\[|\\])", "\\\\\\1", x))
-    }
-    
     x <- readLines(path, warn = FALSE)
     x <- grep("^\\*[^']",x,value=TRUE,invert=TRUE)
     x <- paste(x,collapse="\n")
@@ -130,10 +143,12 @@ goxygen <- function(path=".", docfolder="doc") {
       path <- paste0(modules,folder,"/",r,"/equations.gms")
       if(file.exists(path)) out[[r]] <- extractRealization(path)
     }
-    return(out)
+    module_description <- extractModuleDescription(paste0(modules,folder,"/",folder,".gms"))
+    return(list(rdata=out,desc=module_description))
   }
   
-  writeModulePage <- function(name,data,rdata) {
+  writeModulePage <- function(name,data,module) {
+    
     zz <- file(paste0(name,".md"), "w")
     
     .empty <- function(zz) {
@@ -158,8 +173,10 @@ goxygen <- function(path=".", docfolder="doc") {
     }
     
     
-    .header(name,1,zz)
+    .header(paste0(module$desc$title," (",name,")"),1,zz)
     .header("Description",2,zz)
+    .write(module$desc$description,zz)
+    
     .header("Interfaces",2,zz)
     .header("Input",3,zz)
     .write(data$input, zz)
@@ -171,6 +188,7 @@ goxygen <- function(path=".", docfolder="doc") {
     
     .header("Realizations",2,zz)
     
+    rdata <- module$rdata
     for(r in names(rdata)) {
       .header(r,3,zz)
       .write(rdata[[r]],zz)
@@ -191,7 +209,7 @@ goxygen <- function(path=".", docfolder="doc") {
   out <- collectTables(cc)
 
   # write doc files
-  for(m in names(out)) {
+  for(m in setdiff(names(out),"core")) {
     mr <- collectRealizations(m,cc)
     writeModulePage(m,out[[m]],mr)
   }
