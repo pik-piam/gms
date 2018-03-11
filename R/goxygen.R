@@ -5,26 +5,40 @@
 #' 
 #' @param path path to the model to be documented
 #' @param docfolder folder the documentation should be written to relative to model folder
+#' @param cache Boolean to allow read data from existing cache file
 #' @author Jan Philipp Dietrich
 #' @importFrom stringi stri_extract_all_regex stri_replace_all_regex
 #' @seealso \code{\link{codeCheck}}
 #' @export
 
 
-goxygen <- function(path=".", docfolder="doc") {
+goxygen <- function(path=".", docfolder="doc", cache=FALSE) {
   if (!requireNamespace("pander", quietly = TRUE)) stop("The package pander is not available! Install it first before running goxygen!")
   cwd <- getwd()
   on.exit(setwd(cwd))
   
-  if(is.character(path)) {
-    setwd(path)
-    cc <- codeCheck(debug=TRUE)
+  setwd(path)
+  if(!dir.exists(docfolder)) dir.create(docfolder, recursive = TRUE)
+  cachefile <- paste0(docfolder,"/doc.rds")
+  if(cache & file.exists(cachefile)) {
+    cache <- readRDS(cachefile)
+    cc <- cache$cc
+    interfaces <- cache$interfaces
   } else {
-    cc <- path
+    cc <- codeCheck(debug=TRUE)
+    interfaces <- modules_interfaceplot(cc$interfaceInfo)
+    saveRDS(list(cc=cc,interfaces=interfaces),cachefile)
   }
   
-  if(!dir.exists(docfolder)) dir.create(docfolder, recursive = TRUE)
+  copyimages <- function(docfolder) {
+    paths <- c("modules/*/*.png",
+               "modules/*/*/*.png",
+               "modules/*/*.jpg",
+               "modules/*/*/*.jpg")
+  file.copy(Sys.glob(paths),docfolder,overwrite = TRUE)
+  }
   
+  copyimages(docfolder)
   setwd(docfolder)
   
   collectTables <- function(cc) {
@@ -101,16 +115,33 @@ goxygen <- function(path=".", docfolder="doc") {
     return(gsub("([.|()\\^{}+$*?]|\\[|\\])", "\\\\\\1", x))
   }
   
-  extractModuleDescription <- function(path, comment="*'") {
+  extractDocumentation <- function(path, comment="*'") {
     comment <- paste0("^",escapeRegex(comment)," *")
     x <- readLines(path, warn = FALSE)
-    x <- grep(comment,x,value=TRUE)
+    x <- grep(comment, x, value=TRUE)
     x <- sub(comment,"",x)
-    while(length(x)>2 & x[2]=="") x <- x[-2]
-    out <- list(title=x[1],description=x[-1])
-    if(is.na(out$title)) out$title <- "*TITLE MISSING*"
-    if(length(out$description)==0) out$description <- "> *DESCRIPTION MISSING*"
-    return(out)
+    
+    extract_block <- function(x) {
+      pattern <- "^@(\\w*) (.*)$"
+      type <- sub(pattern,"\\1",x[1])
+      x[1] <- sub(pattern,"\\2",x[1])
+      while(length(x)>1 & x[1]=="")  x <- x[-1]
+      while(length(x)>1 & tail(x,1)=="") x <- x[-length(x)]
+      out <- list()
+      out[[type]] <- x
+      return(out)
+    }
+    
+    blocks_start <- grep("^@",x)
+    if(length(blocks_start)==0) return(list())
+    
+    blocks_end <- c(blocks_start[-1]-1,length(x))
+    
+    blocks <- list()
+    for(i in 1:length(blocks_start)) {
+      blocks <- c(blocks,extract_block(x[blocks_start[i]:blocks_end[i]]))
+    }
+    return(blocks)
   }
   
   extractRealization <- function(path, comment="*'") {
@@ -143,11 +174,19 @@ goxygen <- function(path=".", docfolder="doc") {
       path <- paste0(modules,folder,"/",r,"/equations.gms")
       if(file.exists(path)) out[[r]] <- extractRealization(path)
     }
-    module_description <- extractModuleDescription(paste0(modules,folder,"/",folder,".gms"))
-    return(list(rdata=out,desc=module_description))
+    module_description <- extractDocumentation(paste0(modules,folder,"/",folder,".gms"))
+    return(list(rdata=out,doc=module_description))
   }
   
-  writeModulePage <- function(name,data,module) {
+  collectSeealso <- function(interfaces,module,modulesInfo) {
+    module <- sub("^.*_","",module)
+    seealso <- setdiff(unique(c(interfaces$to,interfaces$from)),module)
+    modulesInfo <- rbind(modulesInfo,core=c("core","","core",""))
+    seealso <- modulesInfo[seealso,"folder"]
+    return(seealso)
+  }
+  
+  writeModulePage <- function(name,data,module,seealso) {
     
     zz <- file(paste0(name,".md"), "w")
     
@@ -172,10 +211,18 @@ goxygen <- function(path=".", docfolder="doc") {
       .empty(zz)
     }
     
+    .interfaceplot <- function(name,zz) {
+      file <- paste0("interfaces_",sub("^.*_","",name),".png")
+      if(file.exists(file)) {
+       .write(paste0("![Interfaces to other modules](",file,"){ height=50% width=100% }"),zz)
+      } else {
+       .write("**Interface plot missing!**",zz) 
+      }
+    }
     
-    .header(paste0(module$desc$title," (",name,")"),1,zz)
+    .header(paste0(module$doc$title," (",name,")"),1,zz)
     .header("Description",2,zz)
-    .write(module$desc$description,zz)
+    .write(module$doc$description,zz)
     
     .header("Interfaces",2,zz)
     .header("Input",3,zz)
@@ -185,6 +232,7 @@ goxygen <- function(path=".", docfolder="doc") {
     .write(data$output, zz)
     
     .header("Interface plot",3,zz)
+    .interfaceplot(name,zz)
     
     .header("Realizations",2,zz)
     
@@ -197,9 +245,11 @@ goxygen <- function(path=".", docfolder="doc") {
     .header("Definitions",2,zz)
     .write(data$declarations, zz)
     
-    .header("Developers",2,zz)
+    .header("Authors",2,zz)
+    .write(module$doc$authors,zz)
     
     .header("See Also",2,zz)
+    .write(paste0("[",sort(seealso),"]",collapse=", "),zz)
     
     .header("References",2,zz)
     
@@ -211,6 +261,8 @@ goxygen <- function(path=".", docfolder="doc") {
   # write doc files
   for(m in setdiff(names(out),"core")) {
     mr <- collectRealizations(m,cc)
-    writeModulePage(m,out[[m]],mr)
+    seealso <- collectSeealso(interfaces[[m]],m,cc$modulesInfo)
+    writeModulePage(m,out[[m]],mr,seealso)
   }
-}
+  }
+  
