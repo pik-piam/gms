@@ -61,7 +61,7 @@ updateRepo <- function(path=".", check=TRUE, force_rebuild=FALSE, clean=FALSE, p
       system("git pull -q")
     }
     vkey <- validkey()
-    if(curversion < vkey$version | force_rebuild) {
+    if(as.numeric_version(curversion) < as.numeric_version(vkey$version) | force_rebuild) {
       if(vkey$valid | !check | force_rebuild) {
         if(vkey$roxygen) error <- try(devtools::document(pkg=".",roclets=c('rd', 'collate', 'namespace', 'vignette')))
         if(!("try-error" %in% class(error))) error <- try(devtools::build())
