@@ -111,59 +111,6 @@ goxygen <- function(path=".", docfolder="doc", cache=FALSE) {
     return(out)
   }
   
-  escapeRegex <- function(x) {
-    return(gsub("([.|()\\^{}+$*?]|\\[|\\])", "\\\\\\1", x))
-  }
-  
-  extractDocumentation <- function(path, comment="*'") {
-    comment <- paste0("^",escapeRegex(comment)," *")
-    x <- readLines(path, warn = FALSE)
-    x <- grep(comment, x, value=TRUE)
-    x <- sub(comment,"",x)
-    
-    extract_block <- function(x) {
-      pattern <- "^@(\\w*) (.*)$"
-      type <- sub(pattern,"\\1",x[1])
-      x[1] <- sub(pattern,"\\2",x[1])
-      while(length(x)>1 & x[1]=="")  x <- x[-1]
-      while(length(x)>1 & tail(x,1)=="") x <- x[-length(x)]
-      out <- list()
-      out[[type]] <- x
-      return(out)
-    }
-    
-    blocks_start <- grep("^@",x)
-    if(length(blocks_start)==0) return(list())
-    
-    blocks_end <- c(blocks_start[-1]-1,length(x))
-    
-    blocks <- list()
-    for(i in 1:length(blocks_start)) {
-      blocks <- c(blocks,extract_block(x[blocks_start[i]:blocks_end[i]]))
-    }
-    return(blocks)
-  }
-  
-  extractRealization <- function(path, comment="*'") {
-    x <- readLines(path, warn = FALSE)
-    x <- grep("^\\*[^']",x,value=TRUE,invert=TRUE)
-    x <- paste(x,collapse="\n")
-    equation <- "(^|\n).*\\.\\.(.|\n)*?;"
-    eq <- stri_extract_all_regex(x,equation)[[1]]
-    eq <- gamsequation2tex(eq)
-    
-    x <- stri_replace_all_regex(x,equation,paste(comment,"\n",comment,"#::.equation.::#","\n",comment,"\n"))
-    co <- stri_extract_all_regex(x,paste0(escapeRegex(comment),".*(\\n|$)"))[[1]]
-    co <- gsub(paste0("(\n|",escapeRegex(comment)," *)"),"",co)
-    
-    # fill in equations
-    for(i in names(eq)) {
-      delim <- ifelse(grepl("CONVERSION FAILED!",i,fixed = TRUE), "```","$$")
-      co[grep("#::.equation.::#",co)[1]] <- paste0(delim,"\n",eq[i],"\n",delim)
-    }
-    return(co)
-  }
-  
   collectRealizations <- function(m, cc,modules="../modules/") {
     m <- sub("[0-9]*_","",m)
     if(m=="core") return(NULL)
@@ -172,7 +119,7 @@ goxygen <- function(path=".", docfolder="doc", cache=FALSE) {
     out <- list()
     for(r in rea) {
       path <- paste0(modules,folder,"/",r,"/equations.gms")
-      if(file.exists(path)) out[[r]] <- extractRealization(path)
+      if(file.exists(path)) out[[r]] <- extractDocumentation(path)
     }
     module_description <- extractDocumentation(paste0(modules,folder,"/",folder,".gms"))
     return(list(rdata=out,doc=module_description))
@@ -220,26 +167,34 @@ goxygen <- function(path=".", docfolder="doc", cache=FALSE) {
       }
     }
     
+    .limitations <- function(limitations,zz) {
+      if(is.null(limitations)) limitations <- "There are no known limitations."
+      limitations <- c("**Limitations**",limitations)
+      limitations <- paste(">",limitations)
+      .write(limitations,zz)
+    }
+    
     .header(paste0(module$doc$title," (",name,")"),1,zz)
     .header("Description",2,zz)
     .write(module$doc$description,zz)
     
     .header("Interfaces",2,zz)
+    
+    .interfaceplot(name,zz)
+    
     .header("Input",3,zz)
     .write(data$input, zz)
     
     .header("Output",3,zz)
     .write(data$output, zz)
     
-    .header("Interface plot",3,zz)
-    .interfaceplot(name,zz)
-    
     .header("Realizations",2,zz)
     
     rdata <- module$rdata
     for(r in names(rdata)) {
       .header(r,3,zz)
-      .write(rdata[[r]],zz)
+      .write(rdata[[r]]$realization,zz)
+      .limitations(rdata[[r]]$limitations,zz)
     }
     
     .header("Definitions",2,zz)
