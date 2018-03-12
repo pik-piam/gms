@@ -5,6 +5,9 @@
 #' only the specific documentation comment is evaluated.  
 #' 
 #' @param path path to the file which should be evaluated
+#' @param start_type set type for first line of code. This can be useful
+#' to extract documentation even if no documentation type has been set (e.g
+#' reading equations.gms as type realization)
 #' @param comment comment chars used for documentation comments
 #' @return a list of documentation pieces with type as name of each element 
 #' @author Jan Philipp Dietrich
@@ -12,7 +15,7 @@
 #' @seealso \code{\link{goxygen}}
 #' @export
 
-extractDocumentation <- function(path, comment="*'") {
+extractDocumentation <- function(path, start_type=NULL, comment="*'") {
   
   escapeRegex <- function(x) {
     return(gsub("([.|()\\^{}+$*?]|\\[|\\])", "\\\\\\1", x))
@@ -46,12 +49,16 @@ extractDocumentation <- function(path, comment="*'") {
     
     while(length(x)>1 & x[1]=="")  x <- x[-1]
     while(length(x)>1 & tail(x,1)=="") x <- x[-length(x)]
+    if(length(x)==1) if(is.na(x)) x <- NULL
     out <- list()
     out[[type]] <- x
     return(out)
   }
   
   x <- readLines(path, warn = FALSE)
+  if(!is.null(start_type)) {
+    x <- c(paste0(comment," @",start_type," "),x)
+  }
   
   blocks_start <- grep(paste0("^",escapeRegex(comment)," @[a-z]* "),x)
   if(length(blocks_start)==0) return(list())

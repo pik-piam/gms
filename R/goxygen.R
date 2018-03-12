@@ -52,15 +52,25 @@ goxygen <- function(path=".", docfolder="doc", cache=FALSE) {
       unit <- gsub("\\\\","/",unit)
       return(data.frame(name=dec[,"names"],sets=dec[,"sets"], description=description, unit=unit, stringsAsFactors = FALSE))
     }
-    .format <- function(out,aps) {
+    .format <- function(out,aps,ifs=NULL) {
+      if(nrow(out)==0) {
+        if(is.null(ifs)) {
+          return(NULL)
+        } else {
+          return(list(input=NULL,output=NULL))
+        }
+      }
       # format information
       fout <- data.frame(Name=paste0(out$name,sub("()","",paste0(" (",out$sets,")"),fixed=TRUE)), 
                          Description=out$description, 
                          Unit=out$unit)
       aps[,] <- ifelse(aps==1,"x","")
-      return(cbind(fout,aps))
+      fout <- cbind(fout,aps)
+      if(is.null(ifs)) return(fout)
+      return(list(input=fout[ifs[names(ifs) == "in"],],output=fout[ifs[names(ifs) == "out"],1:3]))
     }
     .clean <- function(x,caption) {
+      if(is.null(x)) return(NULL)
       if(nrow(x)==0) return(NULL)
       rownames(x) <- NULL
       return(pander::pandoc.table.return(x, "pandoc", caption=caption, split.table=160))
@@ -77,10 +87,8 @@ goxygen <- function(path=".", docfolder="doc", cache=FALSE) {
       aps <- aps[!duplicated(rownames(aps)),,drop=FALSE]
     
       out  <- .merge(dec)
-      fout <- .format(out,aps)
+      out <- .format(out,aps,ifs)
         
-      out <- list(input=fout[ifs[names(ifs) == "in"],],output=fout[ifs[names(ifs) == "out"],1:3])
-      
       out$input  <- .clean(out$input,"module inputs")
       out$output <- .clean(out$output,"module outputs")
       return(out)
@@ -88,7 +96,7 @@ goxygen <- function(path=".", docfolder="doc", cache=FALSE) {
     moduleTables <- function(cc, module) {
       # collect information about module interfaces
       dec <- cc$gams$declarations[grepl(paste0("^",module,"\\."),rownames(cc$gams$declarations)),, drop=FALSE]
-      dec <- dec[order(dec[,"names"]),]
+      dec <- dec[order(dec[,"names"]),,drop=FALSE]
       if(nrow(dec)==0) return(NULL)
       dec <- dec[!(dec[,"names"] %in% cc$interfaceInfo[[module]]),, drop=FALSE]
       dec <- dec[!duplicated(dec[,"names"]),,drop=FALSE]
@@ -119,7 +127,7 @@ goxygen <- function(path=".", docfolder="doc", cache=FALSE) {
     out <- list()
     for(r in rea) {
       path <- paste0(modules,folder,"/",r,"/equations.gms")
-      if(file.exists(path)) out[[r]] <- extractDocumentation(path)
+      if(file.exists(path)) out[[r]] <- extractDocumentation(path, start_type="realization")
     }
     module_description <- extractDocumentation(paste0(modules,folder,"/",folder,".gms"))
     return(list(rdata=out,doc=module_description))
