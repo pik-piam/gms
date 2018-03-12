@@ -66,9 +66,13 @@ gamsequation2tex <- function(x) {
       # handle exponents
       x <- gsub("\\*\\*([^<>=*+/-]+)","^{\\1}",x)
       # handle divisions
-      x <- gsub("([^<>=*+/-]+)/([^<>=*+/-]+)","\\\\frac{\\1}{\\2}",x)
+      steps <- 1
+      while(any(grepl("/",x)) | steps>10) {
+        x <- gsub("([^<>=*+/-]+)/([^<>=*+/-]+)","\\\\frac{\\1}{\\2}",x)
+        steps <- steps + 1
+      }
       #handle multiplications
-      while(any(grepl("/",x))) x <- gsub("*", " \\cdot ", x, fixed=TRUE)
+      x <- gsub("*", " \\cdot ", x, fixed=TRUE)
       #add braces back
       if(addbraces) x <- paste0("\\left(",x,"\\right)")
       names(x) <- names
