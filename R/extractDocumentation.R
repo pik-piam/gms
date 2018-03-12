@@ -23,10 +23,10 @@ extractDocumentation <- function(path, start_type=NULL, comment="*'") {
   
   extract_block <- function(x,comment) {
     code <- "@(\\w*) (.*)$"
-    pattern <- paste0("^",escapeRegex(comment)," *",code)
-    type <- sub(pattern,"\\1",x[1])
+    pattern <- paste0("^(",escapeRegex(comment),") *",code)
+    type <- sub(pattern,"\\2",x[1])
     if(type=="realization") {
-      x[1] <- sub(pattern,"\\2",x[1])
+      x[1] <- sub(pattern,"\\1 \\3",x[1])
       x <- paste(x,collapse="\n")
       equation <- "(^|\n).*\\.\\.(.|\n)*?;"
       eq <- stri_extract_all_regex(x,equation)[[1]]
