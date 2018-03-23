@@ -15,6 +15,8 @@
 #' @param test_switches (boolean) Should realization switches in model core be tested for completness?
 #' Usually set to TRUE but should be set to FALSE for standalone models only using a subset of
 #' existing modules
+#' @param strict (boolean) test strictness. If set to TRUE warnings from codeCheck will stop calculations
+#' at the end of the analysis. Useful to enforce clean code. 
 #' @return A list of all modules containing the interfaces for each module.
 #' @author Jan Philipp Dietrich
 #' @export
@@ -23,7 +25,7 @@
 #' 
 #' 
 
-codeCheck <- function(path=".",modulepath="modules", core_files = c("core/*.gms","main.gms"), debug=FALSE, interactive=FALSE, test_switches=TRUE) {
+codeCheck <- function(path=".",modulepath="modules", core_files = c("core/*.gms","main.gms"), debug=FALSE, interactive=FALSE, test_switches=TRUE, strict=FALSE) {
 .warning <- function(...,w=NULL) {
   warning(...,call.=FALSE)
   tmp <- list(NULL)
@@ -303,6 +305,7 @@ codeCheck <- function(path=".",modulepath="modules", core_files = c("core/*.gms"
     out <- interfaceInfo
   }
   
+  if(!is.null(w) & strict) stop("The code does not follow the given code conventions! Fix warnings to proceed!")
   attr(out,"last.warning") <- w
   return(out)
 }
