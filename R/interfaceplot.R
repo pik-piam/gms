@@ -72,6 +72,7 @@ interfaceplot <- function(x=".",modulepath="modules",cutoff=0,interactive=NULL,m
     id <- igraph::tkplot(g)
     tcltk::tkconfigure(igraph::tkplot.canvas(id), "bg"="white")
   } else {
+    if(!requireNamespace("qgraph", quietly = TRUE)) warning("The package qgraph is required for creating interface plots!")
     if(showInterfaces) {
       labels <- gsub(" ","\n",out[,4])
     } else {
