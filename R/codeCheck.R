@@ -26,12 +26,6 @@
 #' 
 
 codeCheck <- function(path=".",modulepath="modules", core_files = c("core/*.gms","main.gms"), debug=FALSE, interactive=FALSE, test_switches=TRUE, strict=FALSE) {
-.warning <- function(...,w=NULL) {
-  warning(...,call.=FALSE)
-  tmp <- list(NULL)
-  names(tmp) <- paste(...,sep="")
-  return(c(w,tmp))
-}
 
 .check_input_files <- function(w,path=".", modulepath="modules") {
   inputgms <- Sys.glob(path(path, modulepath,"*/*/input.gms"))
@@ -133,6 +127,7 @@ codeCheck <- function(path=".",modulepath="modules", core_files = c("core/*.gms"
   
   # Check appearance of objects
   ap <- checkAppearance(gams) 
+  w <- c(w,ap$warnings)
   
   cat(" Investigated variable appearances...   (time elapsed:",format(proc.time()["elapsed"]-ptm,width=6,nsmall=2,digits=2),")\n")  
   
@@ -295,7 +290,7 @@ codeCheck <- function(path=".",modulepath="modules", core_files = c("core/*.gms"
   
   
   # Do all declarations come with a description?
-  checkDescription(gams)
+  w <- checkDescription(gams,w)
   
   cat(" Description check done...              (time elapsed:",format(proc.time()["elapsed"]-ptm,width=6,nsmall=2,digits=2),")\n\n")
   
@@ -305,7 +300,7 @@ codeCheck <- function(path=".",modulepath="modules", core_files = c("core/*.gms"
     out <- interfaceInfo
   }
   
-  if(!is.null(w) & strict) stop("The code does not follow the given code conventions! Fix warnings to proceed!")
+  if(!is.null(w) & strict) stop("codeCheck returned warnings. Fix warnings to proceed!")
   attr(out,"last.warning") <- w
   return(out)
 }

@@ -5,7 +5,6 @@
 #' object of module xy,...)
 #' 
 #' 
-#' @usage checkAppearance(x)
 #' @param x A code list as returned by \code{\link{codeExtract}}
 #' @return A list with two elements: appearance and type. Appearance is a
 #' matrix containing values which indicate whether an object appears in a part
@@ -52,15 +51,16 @@ checkAppearance <- function(x) {
    
   dimnames(a)[[1]] <- rownames
   dimnames(a)[[2]] <- colnames
+  w <- NULL
   if(!is.null(x$not_used)){
     for(i in 1:dim(x$not_used)[1]) {
       if(a[x$not_used[i,"name"],dimnames(x$not_used)[[1]][i]]) {
-        warning(x$not_used[i,"name"]," appears in not_used.txt of module ",dimnames(x$not_used)[[1]][i]," but is used in the GAMS code of it!",call.=FALSE)  
+        w <- .warning(x$not_used[i,"name"]," appears in not_used.txt of module ",dimnames(x$not_used)[[1]][i]," but is used in the GAMS code of it!",w=w)  
       }
       a[x$not_used[i,"name"],dimnames(x$not_used)[[1]][i]] <- 2
     }
   }
   type <- sub("^(o|)[^_]*?(m|[0-9]{2}|)_.*$","\\1\\2",dimnames(a)[[1]])
   names(type) <- rownames
-  return(list(appearance=a,type=type)) 
+  return(list(appearance=a,type=type,warnings=w)) 
 }
