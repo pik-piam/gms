@@ -299,8 +299,13 @@ codeCheck <- function(path=".",modulepath="modules", core_files = c("core/*.gms"
   } else {
     out <- interfaceInfo
   }
-  
-  if(!is.null(w) & strict) stop("codeCheck returned warnings. Fix warnings to proceed!")
+
+  if(is.null(w)) {
+    message("All codeCheck tests passed!")
+  } else {
+    if(strict) stop("codeCheck returned warnings. Fix warnings to proceed!")
+    message("codeCheck reported code inconsistencies. Please fix the given warnings!")
+  }
   attr(out,"last.warning") <- w
   return(out)
 }
