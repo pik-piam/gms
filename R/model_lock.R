@@ -75,9 +75,9 @@ model_lock <- function(folder=".",file=".lock",timeout1=NULL,timeout2=NULL,check
       save(lock_queue,file=lfile)
   }
   else { # If running on cluster
-    if(system("mkdir .lock",intern=F,ignore.stdout=T,ignore.stderr=T)) {
+    if(system(paste("mkdir",lfile),intern=F,ignore.stdout=T,ignore.stderr=T)) {
       cat("The model folder is already locked by another process. Waiting for unlock... \n")
-      while(system("mkdir .lock",intern=F,ignore.stdout=T,ignore.stderr=T)) {
+      while(system(paste("mkdir",lfile),intern=F,ignore.stdout=T,ignore.stderr=T)) {
         Sys.sleep(check_interval)
       }
       cat("The model folder was unlocked by another process.\n")
