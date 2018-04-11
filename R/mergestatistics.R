@@ -44,8 +44,10 @@ mergestatistics <- function(dir=".", file=NULL, renew=FALSE) {
       modelstat <- "infeasible"
     }
     stats$solution <- modelstat
-    id <- gsub("\\.[rR]da","",f)
-    outlist[[id]] <- as.data.table(t(unlist(c(stats[c("user","date","version_management","revision","revision_date","solution")],runtime=as.numeric(stats[["runtime"]], units="hours"),stats$config))))
+    if(is.null(stats$id)) {
+      stats$id <- gsub("\\.[rR]da","",f)
+    }
+    outlist[[stats$id]] <- as.data.table(t(unlist(c(stats[c("user","date","version_management","revision","revision_date","solution")],runtime=as.numeric(stats[["runtime"]], units="hours"),stats$config))))
   }
   out <- rbind(out,rbindlist(outlist, fill=TRUE, idcol=TRUE),fill=TRUE)
   out <- as.data.table(lapply(out, function(x) return(type.convert(as.character(x), as.is=TRUE))))

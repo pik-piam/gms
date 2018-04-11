@@ -36,7 +36,8 @@ runstatistics <- function(file="runstatistics.Rda", overwrite=FALSE, submit=NULL
       cat("Cannot access run statistics repository", submit, "Run statistics are not submitted.\n")
     } else {
       stats$submitted <- TRUE
-      fname <- paste0(as.character(round(as.numeric(Sys.time())*100000)),".Rda")
+      stats$id <- as.character(round(as.numeric(Sys.time())*100000))
+      fname <- paste0(stats$id,".Rda")
       save(stats, file=paste0(submit,"/",fname), compress="xz")
       cat("Submitted run statistics to",submit,"\n")
     }
