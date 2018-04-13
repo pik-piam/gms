@@ -4,6 +4,7 @@
 #' and merged with \code{\link{mergestatistics}}
 #'
 #' @param files path to rds-files from which statistics should be read
+#' @param resultsfolder path to a folder containing model results of the corresponding runs
 #' @author Jan Philipp Dietrich
 #' @importFrom shiny fluidPage sidebarLayout sidebarPanel selectInput shinyApp renderPlot mainPanel plotOutput column actionButton reactive removeUI
 #' reactiveValues observeEvent insertUI tags fluidRow sliderInput titlePanel radioButtons textOutput renderText updateSelectInput
@@ -11,7 +12,7 @@
 #' @export
 
 
-modelstats <- function(files=c("https://www.pik-potsdam.de/rd3mod/magpie.rds","https://www.pik-potsdam.de/rd3mod/remind.rds")) {
+modelstats <- function(files=c("https://www.pik-potsdam.de/rd3mod/magpie.rds","https://www.pik-potsdam.de/rd3mod/remind.rds"), resultsfolder=NULL) {
   
   names(files) <- basename(files)
   
@@ -84,6 +85,10 @@ modelstats <- function(files=c("https://www.pik-potsdam.de/rd3mod/magpie.rds","h
     
     observeEvent(input$file, {
       x$data <- readdata(input$file)
+      if(!is.null(resultsfolder)) {
+        ids <- as.numeric(sub("\\.rds$","",readLines(url(paste0(resultsfolder,"/files")))))
+        x$data$with_results <- (x$data$.id %in% ids)
+      }
       nelem <- apply(x$data,2,uniqueN)
       x$filter <- grep(".id",names(x$data)[nelem>1], fixed=TRUE, value=TRUE, invert=TRUE)
       x$filterclass <- sapply(x$data,function(x)return(class(x)[1]))
