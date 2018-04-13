@@ -36,7 +36,9 @@ mergestatistics <- function(dir=".", file=NULL, renew=FALSE) {
   outlist <- list()
   for(f in files) {
     load(f)
-    if(all(stats$modelstat<=2)) {
+    if(anyNA(stats$modelstat)) {
+      modelstat <- "unknown"
+    } else if(all(stats$modelstat<=2)) {
       modelstat <- "optimal"
     } else if(all(stats$modelstat<=2 | stats$modelstat==7)) {
       modelstat <- "non-optimal"
@@ -52,6 +54,7 @@ mergestatistics <- function(dir=".", file=NULL, renew=FALSE) {
   out <- rbind(out,rbindlist(outlist, fill=TRUE, idcol=TRUE),fill=TRUE)
   out <- as.data.table(lapply(out, function(x) return(type.convert(as.character(x), as.is=TRUE))))
   names(out) <- make.unique(names(out))
+  out <- out[!is.na(out$user),]
   setwd(cwd)
   if(!is.null(file)) saveRDS(out, file=file)
   return(out)
