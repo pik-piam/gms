@@ -7,7 +7,7 @@
 #' @param resultsfolder path to a folder containing model results of the corresponding runs
 #' @author Jan Philipp Dietrich
 #' @importFrom shiny fluidPage sidebarLayout sidebarPanel selectInput shinyApp renderPlot mainPanel plotOutput column actionButton reactive removeUI
-#' reactiveValues observeEvent insertUI tags fluidRow sliderInput titlePanel radioButtons textOutput renderText updateSelectInput
+#' reactiveValues observeEvent insertUI tags fluidRow sliderInput titlePanel radioButtons textOutput renderText updateSelectInput callModule
 #' @importFrom data.table uniqueN
 #' @export
 
@@ -34,12 +34,7 @@ modelstats <- function(files=c("https://www.pik-potsdam.de/rd3mod/magpie.rds","h
                                         label = "Choose Colorkey",
                                         choices = "revision"),
                             tags$p(),tags$hr(),tags$p(),
-                            selectInput(inputId = "filter",
-                                        label = "Choose a filter",
-                                        choices = "user")),
-                   tags$div(id="sidebarend"),
-                   tags$hr(),
-                   textOutput("observations")),
+                            shinyFilterUI("runfilter"))),
       mainPanel(plotOutput("stats"))
     )
   )
@@ -56,32 +51,7 @@ modelstats <- function(files=c("https://www.pik-potsdam.de/rd3mod/magpie.rds","h
       return(out)
     }
     
-    x <- reactiveValues(data=NULL, selection=NULL, filter=NULL, filterclass=NULL, activefilter=NULL)
-    
-    selectdata <- function(data,input,filter){
-      choices <- list()
-      fvec <- rep(TRUE,dim(data)[1])
-      for(f in filter) {
-        slf <- paste0("slider",f)
-        if(!is.null(input[[slf]])) {
-          #updateSliderInput(session,slf,   min = min(data[[f]][fvec], na.rm=TRUE),
-          #                max = max(data[[f]][fvec], na.rm=TRUE),
-          #                value = c(min(data[[f]][fvec], na.rm=TRUE),max(data[[f]][fvec], na.rm=TRUE)))
-          
-          fvec <- (fvec & (data[[f]] >= input[[slf]][1]) & (data[[f]] <= input[[slf]][2]))
-        } else {
-          sf <- paste0("select",f)
-          if(!is.null(input[[sf]])) {
-            #updateSelectInput(session, sf,  choices=data[[f]][fvec], selected=input[[sf]])
-            fvec <- (fvec & (data[[f]] %in% input[[sf]]))
-          }
-        }
-      }
-      fvec[is.na(fvec)] <- FALSE
-      return(data[fvec,])
-    }
-    
-    selection <- reactive(selectdata(x$data,input,x$activefilter))
+    x <- reactiveValues()
     
     observeEvent(input$file, {
       x$data <- readdata(input$file)
@@ -89,30 +59,21 @@ modelstats <- function(files=c("https://www.pik-potsdam.de/rd3mod/magpie.rds","h
         ids <- as.numeric(sub("\\.rds$","",readLines(url(paste0(resultsfolder,"/files")))))
         x$data$with_results <- (x$data$.id %in% ids)
       }
-      nelem <- apply(x$data,2,uniqueN)
-      x$filter <- grep(".id",names(x$data)[nelem>1], fixed=TRUE, value=TRUE, invert=TRUE)
-      x$filterclass <- sapply(x$data,function(x)return(class(x)[1]))
-      for(f in x$activefilter) {
-        removeUI(
-          selector = escapeRegex(paste0("#div",f))
-        )
-      }
-      x$activefilter <- NULL
       removeUI(selector = "#title")
       insertUI(
         selector = "#titleend",
         where = "beforeBegin",
         ui = tags$div(id="title", titlePanel(paste0("Model run statistics from ",basename(input$file))))
       )
-      updateSelectInput(session, "xaxis",  choices=x$filter, selected = "date")
-      updateSelectInput(session, "yaxis",  choices=x$filter, selected = "user")
-      updateSelectInput(session, "color",  choices=x$filter, selected = "user")
-      updateSelectInput(session, "filter", choices=x$filter, selected = "user")
+      x$variables <- names(x$data)[!(names(x$data)==".id")]
+      updateSelectInput(session, "xaxis",  choices=x$variables, selected = "date")
+      updateSelectInput(session, "yaxis",  choices=x$variables, selected = "user")
+      updateSelectInput(session, "color",  choices=x$variables, selected = "user")
     })
     
+    selection <- callModule(shinyFilter,"runfilter",data=x$data,exclude=".id")
+    
     output$stats <- renderPlot({
-      selection <- selection()
-      output$observations <- renderText(paste0(dim(selection)[1]," observations"))
       cset <- function(i,check) {
         if(i %in% check) return(i)
         return(check[1])
@@ -125,66 +86,12 @@ modelstats <- function(files=c("https://www.pik-potsdam.de/rd3mod/magpie.rds","h
         theme <- mip::theme_mip(size=14)
       }
       
-      ggplot2::ggplot(selection) + ggplot2::theme(legend.direction="vertical") +
-        ggplot2::geom_point(ggplot2::aes_string(y=cset(input$yaxis,x$filter),
-                                                x=cset(input$xaxis,x$filter),
-                                                color=cset(input$color,x$filter)),size=5, na.rm=TRUE) +
+      ggplot2::ggplot(selection()) + ggplot2::theme(legend.direction="vertical") +
+        ggplot2::geom_point(ggplot2::aes_string(y=cset(input$yaxis,x$variables),
+                                                x=cset(input$xaxis,x$variables),
+                                                color=cset(input$color,x$variables)),size=5, na.rm=TRUE) +
         theme
     }, height=700)
-    
-    selectUI <- function(filter, data, class) {
-      if(class=="POSIXct") {
-        return(tags$div(id=paste0("div",filter),
-                        sliderInput(inputId = paste0("slider", filter),
-                                    label = filter,
-                                    min = min(data[[filter]], na.rm=TRUE),
-                                    max = max(data[[filter]], na.rm=TRUE),
-                                    value = c(min(data[[filter]], na.rm=TRUE),max(data[[filter]], na.rm=TRUE)),
-                                    ticks = FALSE,
-                                    step=60,
-                                    timezone="CET",
-                                    timeFormat = "%F %H:%M")))
-      } else if(class=="numeric") {
-        return(tags$div(id=paste0("div",filter),
-                        sliderInput(inputId = paste0("slider", filter),
-                                    label = filter,
-                                    min = floor(min(data[[filter]], na.rm=TRUE)),
-                                    max = ceiling(max(data[[filter]], na.rm=TRUE)),
-                                    value = c(min(data[[filter]], na.rm=TRUE),max(data[[filter]], na.rm=TRUE)),
-                                    ticks = FALSE)))        
-      } else {
-        return(tags$div(id=paste0("div",filter),
-                        selectInput(inputId = paste0("select", filter),
-                                    label = filter,
-                                    choices = unique(data[[filter]]),
-                                    multiple = TRUE, "display:inline")))
-      }
-    }
-    
-    observeEvent(c(input$filter,input$file), {
-      if(!(input$filter %in% x$activefilter)){
-        insertUI(
-          selector = "#sidebarend",
-          where = "beforeBegin",
-          ui = selectUI(input$filter, selection(), x$filterclass[input$filter])
-        )
-        x$activefilter <- c(x$activefilter,input$filter)
-      }
-      for(f in setdiff(x$activefilter, input$filter)) {
-        if(!is.null(input[[paste0("slider",f)]])) {
-          removeUI <- ((input[[paste0("slider",f)]][1] <= min(x$data[[f]], na.rm=TRUE)) &
-                         (input[[paste0("slider",f)]][2] >= max(x$data[[f]], na.rm=TRUE)))
-        } else {
-          removeUI <- ifelse(is.null(input[[paste0("select",f)]]), TRUE, FALSE)
-        }
-        if(removeUI) {
-          removeUI(
-            selector = escapeRegex(paste0("#div",f))
-          )
-          x$activefilter <- setdiff(x$activefilter,f)
-        }
-      }
-    })
   }
   
   shinyApp(ui=ui, server=server)
