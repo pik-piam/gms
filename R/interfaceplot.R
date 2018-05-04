@@ -2,10 +2,6 @@
 #' 
 #' Plots the interface network between the different modules of the model
 #' 
-#' 
-#' @usage interfaceplot(x=".", modulepath="modules", cutoff=0,
-#' interactive=NULL, modules=NULL, exclude_modules=NULL, interfaces=NULL,
-#' showInterfaces=TRUE, filetype=NULL, filename=NULL)
 #' @param x Either an interface list as returned by \code{\link{codeCheck}} or
 #' the path of the main folder of the model
 #' @param modulepath path to the module folder relative to "path" (only
@@ -26,12 +22,13 @@
 #' if too many labels are plotted).
 #' @param filetype File type if plot should be written to a file (e.g. png)
 #' @param filename File name without file type
+#' @param package package to use for interactive visualization. Available are currently visNetwork and igraph
 #' @return A matrix containing additional informations about the links between
 #' the modules
 #' @author Jan Philipp Dietrich
 #' @export
 #' @seealso \code{\link{codeCheck}}
-interfaceplot <- function(x=".",modulepath="modules",cutoff=0,interactive=NULL,modules=NULL,exclude_modules=NULL,interfaces=NULL,showInterfaces=TRUE, filetype=NULL, filename=NULL) {
+interfaceplot <- function(x=".",modulepath="modules",cutoff=0,interactive=NULL,modules=NULL,exclude_modules=NULL,interfaces=NULL,showInterfaces=TRUE, filetype=NULL, filename=NULL, package="visNetwork") {
   if(is.character(x)) x <- codeCheck(x,modulepath)  
   n <- names(x)
   out <- NULL
@@ -51,26 +48,41 @@ interfaceplot <- function(x=".",modulepath="modules",cutoff=0,interactive=NULL,m
   if(!is.null(modules)) out <- out[out[,1]%in%modules | out[,2]%in%modules,,drop=FALSE]
   if(!is.null(exclude_modules)) out <- out[!(out[,1]%in%exclude_modules | out[,2]%in%exclude_modules),,drop=FALSE]
   if(dim(out)[1]==0) stop("Nothing to plot anymore after filters have been applied!")
+  if(package=="visNetwork") {
+
+  }   
   if(is.null(interactive)) interactive <- interactive()
-  if(interactive) {  
-    g <- igraph::graph.edgelist(as.matrix(out[,-(3:4),drop=FALSE]))
-    igraph::E(g)$width <- as.integer(out[,3])
-    igraph::E(g)$curved <- 0.2
-    if(showInterfaces) igraph::E(g)$label <- gsub(" ","\n",out[,4])
-  
-    #set all label colors to black except for core which should be set to white
-    igraph::V(g)$label.color <- rep("black",length(igraph::V(g)$name))
-    igraph::V(g)$label.color[igraph::V(g)$name=="core"] <- "white"
+  if(interactive) { 
+    if(package=="visNetwork") {
+      if(!requireNamespace("visNetwork", quietly = TRUE)) stop("The package visNetwork is required for creating visNetwork interface plots!")
+      edges <- as.data.frame(out)
+      names(edges) <- c("from","to","value","title")
+      edges <- edges[edges$value!=0,]
+      nodes <- data.frame(id=unique(c(as.character(edges$from),as.character(edges$to))))
+      nodes$color <- mip::plotstyle(nodes$id)
+      nodes$label <- nodes$id
+      edges$color <- mip::plotstyle(edges$from)
+      return(visNetwork::visNetwork(nodes,edges))
+    } else {
+      g <- igraph::graph.edgelist(as.matrix(out[,-(3:4),drop=FALSE]))
+      igraph::E(g)$width <- as.integer(out[,3])
+      igraph::E(g)$curved <- 0.2
+      if(showInterfaces) igraph::E(g)$label <- gsub(" ","\n",out[,4])
     
-    #set colors vertices
-    igraph::V(g)$color <- mip::plotstyle(igraph::V(g)$name, unknown=unknown)
+      #set all label colors to black except for core which should be set to white
+      igraph::V(g)$label.color <- rep("black",length(igraph::V(g)$name))
+      igraph::V(g)$label.color[igraph::V(g)$name=="core"] <- "white"
+      
+      #set colors vertices
+      igraph::V(g)$color <- mip::plotstyle(igraph::V(g)$name, unknown=unknown)
+      
+      #set colors edges
+      igraph::E(g)$color       <- mip::plotstyle(out[,1], unknown=unknown)    
+      igraph::E(g)$label.color <- mip::plotstyle(out[,1], unknown=unknown)  
     
-    #set colors edges
-    igraph::E(g)$color       <- mip::plotstyle(out[,1], unknown=unknown)    
-    igraph::E(g)$label.color <- mip::plotstyle(out[,1], unknown=unknown)  
-  
-    id <- igraph::tkplot(g)
-    tcltk::tkconfigure(igraph::tkplot.canvas(id), "bg"="white")
+      id <- igraph::tkplot(g)
+      tcltk::tkconfigure(igraph::tkplot.canvas(id), "bg"="white")
+    }
   } else {
     if(!requireNamespace("qgraph", quietly = TRUE)) warning("The package qgraph is required for creating interface plots!")
     if(showInterfaces) {
