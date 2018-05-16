@@ -3,13 +3,12 @@
 #' Function reads arguments from command line of the structure value=content
 #' and transforms them to R-Values, if they are called as allowed arguments.
 #' 
-#' 
-#' @usage readArgs(..., .envir=parent.frame())
 #' @param \dots arguments allowed to be read from command line (other values
 #' are ignored). Value is set if found on command line input, nothing is done,
 #' if value is not found.
 #' @param .envir environment in which the variables should be written (by
 #' default the environment from which the function is called)
+#' @param .silent boolean which allows to suppress status messages
 #' @author Jan Philipp Dietrich
 #' @export
 #' @seealso \code{\link{manipulateConfig}}
@@ -40,7 +39,7 @@
 #' 
 #' 
 ###function that reads all allowed arguments from command line###
-readArgs <- function(..., .envir=parent.frame()) {
+readArgs <- function(..., .envir=parent.frame, .silent=FALSE) {
   allowed_args <- c(...)
 
   ###apply additional command line arguments###
@@ -50,9 +49,11 @@ readArgs <- function(..., .envir=parent.frame()) {
       if (strsplit(commandArgs()[argnr],"=")[[1]][1]==allowed_args[i]) assign(allowed_args[i],extract_arguments(commandArgs()[argnr]),envir=.envir)
     }
   }
-  print("",quote=FALSE)
-  print("### READ COMMAND LINE - ASSIGNED CONFIGURATION ###",quote=FALSE)
-  eprint_list(allowed_args, envir=.envir)
-  print("### READ COMMAND LINE - CONFIGURATION END ###",quote=FALSE)
-  print("",quote=FALSE)
+  if(!.silent) {
+    print("",quote=FALSE)
+    print("### READ COMMAND LINE - ASSIGNED CONFIGURATION ###",quote=FALSE)
+    eprint_list(allowed_args, envir=.envir)
+    print("### READ COMMAND LINE - CONFIGURATION END ###",quote=FALSE)
+    print("",quote=FALSE)
+  }
 }

@@ -37,6 +37,7 @@ shinyFilter <- function(input, output, session, data, exclude=NULL) {
   }
   
   selectUI <- function(session,filter, data, class) {
+    if(is.na(class)) class <- "NA"
     if(class=="POSIXct") {
       return(tags$div(id=paste0("div",filter),
                       sliderInput(inputId = session$ns(paste0("slider", filter)),
