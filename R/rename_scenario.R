@@ -2,7 +2,8 @@
 #' 
 #' Use this function to change the name of a run after it has finished. 
 #' This function renames the run folder, change the run title in the cfg and in the reporting.
-#' This can be useful if the initial name of a run was not meaningful.
+#' This can be useful if the initial name of a run was not meaningful. However, inconsistencies will
+#' remain, since the function will NOT rename the scenario in the list file, the gdx, and the results database.
 #' 
 #' @usage rename_scenario(map,keep_time_stamp = FALSE)
 #' @param map Named vector, containing the new scenario names as elements and the corresponding old folder names as the emelents' names.
@@ -28,6 +29,10 @@ rename_scenario <- function(map,keep_time_stamp = FALSE) {
       # if timestamp should not be kept set it to empty string (so it will have no effect in paste0 below)
       if (!keep_time_stamp) d <- ""
       new_folder <- paste0(map[f],d)
+      if (dir.exists(new_folder)) {
+        warning("Folder with the name ",new_folder," already exists! Skipped this one!")
+        next
+      }
       new_scenario <- map[f]
       
       cat("scenario from:",old_scenario,"\n           -> ",new_scenario,"\n")
@@ -37,6 +42,8 @@ rename_scenario <- function(map,keep_time_stamp = FALSE) {
         load(cfg_name)
         cfg$title <- new_scenario
         save(cfg,file=cfg_name)
+      } else {
+        warning("Could not find",cfg_name)
       }
       
       # rename scenario in mif: first read MAgPIE report, if not existsing read REMIND report
@@ -47,10 +54,14 @@ rename_scenario <- function(map,keep_time_stamp = FALSE) {
         new_mif_name <- paste0(old_folder,"/REMIND_generic_",new_scenario,".mif")
       }
       
-      cat("mif      from:",mif_name,"\n           -> ",new_mif_name,"\n")
-      a <- read.report(mif_name,as.list=F)
-      getNames(a,dim=1) <- gsub("\\.","",new_scenario)
-      write.report(a,new_mif_name)
+      if(file.exists(mif_name)) {
+        cat("mif      from:",mif_name,"\n           -> ",new_mif_name,"\n")
+        a <- read.report(mif_name,as.list=F)
+        getNames(a,dim=1) <- gsub("\\.","",new_scenario)
+        write.report(a,new_mif_name)
+      } else {
+        warning("Could not find",mif_name," nor ",paste0(old_folder,"/report.mif"))
+      }
       
       # rename folder
       cat("folder   from:",old_folder,"\n           -> ",new_folder,"\n")
