@@ -39,7 +39,7 @@
 #' 
 #' 
 ###function that reads all allowed arguments from command line###
-readArgs <- function(..., .envir=parent.frame, .silent=FALSE) {
+readArgs <- function(..., .envir=parent.frame(), .silent=FALSE) {
   allowed_args <- c(...)
 
   ###apply additional command line arguments###
