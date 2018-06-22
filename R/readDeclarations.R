@@ -39,6 +39,7 @@ readDeclarations <- function(file,unlist=TRUE){
      sets <- gsub("\\)","",sets)
      sets <- gsub(" +","",sets)
      description <- sub("^ *$","",gsub(",","",sub(structure,"\\3",tmp))) #store description (remove "," and empty entries)
+     description <- sub(" */.*$","", description) # remove values at the end, if given
      tmp <- cbind(names,sets,description)
      out[[tname]] <- rbind(out[[tname]],tmp)
    }
