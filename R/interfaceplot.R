@@ -26,6 +26,7 @@
 #' @return A matrix containing additional informations about the links between
 #' the modules
 #' @author Jan Philipp Dietrich
+#' @importFrom grDevices pdf dev.off
 #' @export
 #' @seealso \code{\link{codeCheck}}
 interfaceplot <- function(x=".",modulepath="modules",cutoff=0,interactive=NULL,modules=NULL,exclude_modules=NULL,interfaces=NULL,showInterfaces=TRUE, filetype=NULL, filename=NULL, package="visNetwork") {
@@ -90,9 +91,10 @@ interfaceplot <- function(x=".",modulepath="modules",cutoff=0,interactive=NULL,m
     } else {
       labels <- FALSE
     }
+    if(!is.null(filetype)) pdf()
     col <- mip::plotstyle(unique(as.vector(out[,1:2])), unknown=unknown)
     col["core"] <- NA
-    tmp <- suppressWarnings(try(qgraph::qgraph(out[,1:3],
+    tmp <- suppressWarnings(try(qgraph::qgraph(out[,1:3, drop=FALSE],
                       edge.color=mip::plotstyle(out[,1], unknown=unknown),
                       edge.labels=labels,
                       color=col,
@@ -124,6 +126,7 @@ interfaceplot <- function(x=".",modulepath="modules",cutoff=0,interactive=NULL,m
                         filename=filename,
                         filetype=filetype),silent=TRUE))
     }
+    if(!is.null(filetype)) dev.off()
   }
   return(out)
 }
