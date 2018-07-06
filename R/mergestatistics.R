@@ -9,13 +9,21 @@
 #' @param renew if set to TRUE the full data.table will be created again from scratch,
 #' if set to FALSE merging will start with the existing file (if it exists) and just add
 #' missing entries 
-#' @return A data table containing the merged run statistics
+#' @param quickcheck If active, the function compares last modification dates of repository data and 
+#' and merged statistics and cancels execution in case that there is no newer file in the data repository
+#' (assuming that merge statistics are already complete). This is useful if this function is run
+#' frequently and execution time plays a role, but might lead to cases in which the function is not run
+#' even if the merge statistics are incomplete.
+#' @return A data table containing the merged run statistics or NULL in case the data was not recalculated
 #' @author Jan Philipp Dietrich
 #' @importFrom data.table as.data.table rbindlist
 #' @importFrom utils type.convert
 #' @export
 
-mergestatistics <- function(dir=".", file=NULL, renew=FALSE) {
+mergestatistics <- function(dir=".", file=NULL, renew=FALSE, quickcheck=FALSE) {
+  if(quickcheck && file.exists(file) && all(file.info(Sys.glob(paste0(dir,"/*")))$mtime<file.info(file)$mtime)) {
+    return(NULL)
+  }
   out <- NULL
   id  <- NULL
   if(!is.null(file) & !renew) {
