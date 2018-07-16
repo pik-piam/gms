@@ -53,6 +53,6 @@ publish_data <- function(input,name, target=Sys.getenv("PUBLISH_DATA_TARGET", un
     system(paste0("sftp ",target," <<< $'put ",tmptarfile,"'"))
     unlink(tmptarfile)
   } else {
-    file.rename(tmptarfile,paste0(target,"/",tarfile))
+    file.rename(tmptarfile,paste0(normalizePath(target),"/",tarfile))
   }
 }
