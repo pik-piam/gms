@@ -45,6 +45,7 @@ updateRepo <- function(path=".", check=TRUE, force_rebuild=FALSE, clean=FALSE, p
   
   dirs <- grep("^\\.",list.dirs(recursive = FALSE,full.names = FALSE), value=TRUE, invert=TRUE)
   nchar <- max(nchar(dirs))
+  update_PACKAGES <- FALSE
   for(d in dirs) {
     fd <- format(d,width=nchar)
     curversion <- tryCatch(ap[d,"Version"],error=function(e)return(0))
@@ -63,12 +64,14 @@ updateRepo <- function(path=".", check=TRUE, force_rebuild=FALSE, clean=FALSE, p
     vkey <- validkey()
     if(as.numeric_version(curversion) < as.numeric_version(vkey$version) | force_rebuild) {
       if(vkey$valid | !check | force_rebuild) {
+        error <- NULL
         if(vkey$roxygen) error <- try(devtools::document(pkg=".",roclets=c('rd', 'collate', 'namespace', 'vignette')))
         if(!("try-error" %in% class(error))) error <- try(devtools::build())
         if("try-error" %in% class(error)) {
           message(".:: ",fd," ",curversion," -> ",vkey$version," build failed ::.")
           if(dir.exists(".git")) system("git --no-pager show -s --format='(%h) %s \n%an <%ae>' HEAD")
         } else {
+          update_PACKAGES <- TRUE
           message(".:: ",fd," ",curversion," -> ",vkey$version," build success ::.")
         }
       } else {
@@ -78,6 +81,6 @@ updateRepo <- function(path=".", check=TRUE, force_rebuild=FALSE, clean=FALSE, p
     } else message(".:: ",fd," ",format(curversion, width=10)," ok ::.")
     setwd("..")
   }
-  tools::write_PACKAGES() 
+  if(update_PACKAGES) tools::write_PACKAGES() 
   message("done.")
 }
