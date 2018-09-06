@@ -6,14 +6,13 @@
 #' @param sourcepath Path to folder containing all input files
 #' @param low_res Jans Geheimnis
 #' @param move If TRUE files will be moved instead of copied (default=FALSE)
+#' @importFrom magclass copy.magpie
 #' @export
 #' @author Jan Philipp Dietrich, David Klein
 #' @examples
 #' \dontrun{copy_input(x = file2destination, sourcepath = "input", low_res = low_res, move = TRUE)}
 
 copy_input <- function(x, sourcepath, low_res, move=FALSE) {
-  require(magclass)
-  
   if(is.character(x)) {
     if(!file.exists(x)) stop("Cannot find file mapping!")
     map <- read.csv(x, sep = ";", stringsAsFactors = FALSE)
