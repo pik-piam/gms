@@ -18,7 +18,8 @@
 get_info <- function(file, grep_expression, sep, pattern="", replacement=""){
   if(!file.exists(file)) return("#MISSING#")
   file <- readLines(file, warn=FALSE)
-  tmp <- grep(grep_expression, file, value=TRUE)
+  tmp <- grep(grep_expression, file, value=TRUE) # pick line
+  if(identical(tmp,character(0))) return(NA)
   tmp <- strsplit(tmp, sep)
   tmp <- sapply(tmp, "[[", 2)
   tmp <- gsub(pattern, replacement ,tmp)
