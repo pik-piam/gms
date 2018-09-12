@@ -3,34 +3,49 @@
 #' Reads all declarations given in a GAMS code and returns them.
 #' 
 #' 
-#' @usage readDeclarations(file,unlist=TRUE)
 #' @param file A gams file or a vector containing GAMS code.
 #' @param unlist A logical indicating whether the output should be returned as
 #' a list separated by object type or a matrix.
+#' @param types of declarations to be read. In addition to the types used by default it can also read set declarations (keyword "set")
 #' @return Either a list of declared objects or a matrix containing object
 #' name, the sets the object depends on and the description.
 #' @author Jan Philipp Dietrich
 #' @export
 #' @seealso \code{\link{codeCheck}}
-readDeclarations <- function(file,unlist=TRUE){
+readDeclarations <- function(file, unlist=TRUE, types=c("scalar","(positive |)variable","parameter","table","equation")){
   if(length(file)==1) {
     if(file == "") return(NULL)
     file <- readLines(file,warn=FALSE)
   }
   d <- GAMScodeFilter(file)
   endings <- grep(";[   ]*(!!|$)",d)
-  types <- c("scalar","(positive |)variable","parameter","table","equation")
   out <- list()
   for(t in types) {
    tname <- sub("\\([^\\)]*\\)","",t)
    if(tname=="table") tname<-"parameter"
    startings <- grep(paste("^ *",t,"[s]?( |$)",sep=""),d, ignore.case = TRUE)
    for(s in startings) {
-     e <- min(endings[endings>=s])
+     if(any(endings>=s)) {
+       e <- min(endings[endings>=s])
+     } else {
+       e <- length(d)
+     }
      tmp <- d[s:e] #cut all object declarations of the given type
      tmp <- sub(";","",tmp) # remove ;
      tmp <- sub("^\\$.*","",tmp) # remove $-expressions
      tmp <- sub(paste("^ ?",t,"[^ ]*",sep=""),"",tmp, ignore.case = TRUE) # remove type name
+     tmp <- sub("/.*/","",tmp) # remove / xyz / entries
+     .rmFilling <- function(x){
+       n <- grep("/",x)
+       if(length(n)<2) return(x)
+       rm <- NULL
+       for(i in seq(1,length(n)-1,2)){
+         rm <- c(rm,n[i]:n[i+1])
+       }
+       keep <- setdiff(1:length(x),rm)
+       return(x[keep])
+     }
+     tmp <- .rmFilling(tmp)
      tmp <- grep("^ *.{0,1} *$",tmp,invert=TRUE,value=TRUE) #remove all lines with no objects in them
      structure <- "^[ \t]*([^ ^,^\\(^\t]+)(\\([^\\)]+\\)|)[ \t]*(.*)$"
      names <- sub(structure,"\\1",tmp) #store name
