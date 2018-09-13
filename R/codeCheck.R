@@ -18,8 +18,9 @@
 #' @param strict (boolean) test strictness. If set to TRUE warnings from codeCheck will stop calculations
 #' at the end of the analysis. Useful to enforce clean code. 
 #' @param details (boolean) If activated the function will return more detailed output. Besides interface information
-#' it will provide a table containing all declarations in the code and an appearance table listing the appearance of all
-#' objects in the code. The format is list(interfaceInfo,declarations,appearance). This setting will be ignored
+#' it will provide a table containing all declarations in the code, an appearance table listing the appearance of all
+#' objects in the code and information about the existing modules. The format is 
+#' list(interfaceInfo,declarations,appearance,modulesInfo). This setting will be ignored
 #' when debug is set to TRUE.
 #' @return A list of all modules containing the interfaces for each module. Or more detailed output if either
 #' \code{details} or \code{debug} is set to TRUE.
@@ -309,7 +310,8 @@ codeCheck <- function(path=".",modulepath="modules", core_files = c("core/*.gms"
     d <- cbind(d,origin=rownames(d))
     rownames(d) <- NULL
     d <- as.data.frame(d, stringsAsFactors = FALSE)
-    out <- list(interfaceInfo=interfaceInfo,declarations=d,appearance=ap$appearance)
+    mi <- as.data.frame(modulesInfo,stringsAsFactors = FALSE)
+    out <- list(interfaceInfo=interfaceInfo,declarations=d,appearance=ap$appearance,modulesInfo=mi)
   } else {
     out <- interfaceInfo
   }
