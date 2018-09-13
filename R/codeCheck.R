@@ -17,7 +17,12 @@
 #' existing modules
 #' @param strict (boolean) test strictness. If set to TRUE warnings from codeCheck will stop calculations
 #' at the end of the analysis. Useful to enforce clean code. 
-#' @return A list of all modules containing the interfaces for each module.
+#' @param details (boolean) If activated the function will return more detailed output. Besides interface information
+#' it will provide a table containing all declarations in the code and an appearance table listing the appearance of all
+#' objects in the code. The format is list(interfaceInfo,declarations,appearance). This setting will be ignored
+#' when debug is set to TRUE.
+#' @return A list of all modules containing the interfaces for each module. Or more detailed output if either
+#' \code{details} or \code{debug} is set to TRUE.
 #' @author Jan Philipp Dietrich
 #' @export
 #' @seealso \code{\link{codeExtract}},\code{\link{readDeclarations}}
@@ -25,7 +30,7 @@
 #' 
 #' 
 
-codeCheck <- function(path=".",modulepath="modules", core_files = c("core/*.gms","main.gms"), debug=FALSE, interactive=FALSE, test_switches=TRUE, strict=FALSE) {
+codeCheck <- function(path=".",modulepath="modules", core_files = c("core/*.gms","main.gms"), debug=FALSE, interactive=FALSE, test_switches=TRUE, strict=FALSE, details=FALSE) {
 
 .check_input_files <- function(w,path=".", modulepath="modules") {
   inputgms <- Sys.glob(path(path, modulepath,"*/*/input.gms"))
@@ -107,6 +112,7 @@ codeCheck <- function(path=".",modulepath="modules", core_files = c("core/*.gms"
   # Remove objects which not follow the naming conventions from declarations set as
   # they would cause otherwise problems in the following
   tmp <- grep("^[qvsfipoxcm]{1}[cqv]?(m|[0-9]{2}|)_",gams$declarations[,"names"],invert=TRUE)
+  tmp <- tmp[gams$declarations[tmp,"type"]!="set"] #remove set entries from analysis
   if(length(tmp)>0) {
     no_ <- gams$declarations[tmp,"names"]
     nodesc_ <- gams$declarations[tmp,"description"]
@@ -125,8 +131,10 @@ codeCheck <- function(path=".",modulepath="modules", core_files = c("core/*.gms"
 
   cat(" Naming conventions check done...       (time elapsed:",format(proc.time()["elapsed"]-ptm,width=6,nsmall=2,digits=2),")\n")
   
-  # Check appearance of objects
-  ap <- checkAppearance(gams) 
+  # Check appearance of objects (exclude sets)
+  gams2 <- gams
+  gams2$declarations <- gams2$declarations[gams2$declarations[,"type"]!="set",]
+  ap <- checkAppearance(gams2) 
   w <- c(w,ap$warnings)
   
   cat(" Investigated variable appearances...   (time elapsed:",format(proc.time()["elapsed"]-ptm,width=6,nsmall=2,digits=2),")\n")  
@@ -296,6 +304,12 @@ codeCheck <- function(path=".",modulepath="modules", core_files = c("core/*.gms"
   
   if(debug) {
     out <- list(interfaceInfo=interfaceInfo,ap=ap,gams=gams,gams_backup=gams_backup,sap=sap,esap=esap,modulesInfo=modulesInfo)
+  } else if(details) {
+    d <- gams$declarations
+    d <- cbind(d,origin=rownames(d))
+    rownames(d) <- NULL
+    d <- as.data.frame(d, stringsAsFactors = FALSE)
+    out <- list(interfaceInfo=interfaceInfo,declarations=d,appearance=ap$appearance)
   } else {
     out <- interfaceInfo
   }

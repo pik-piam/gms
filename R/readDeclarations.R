@@ -6,13 +6,13 @@
 #' @param file A gams file or a vector containing GAMS code.
 #' @param unlist A logical indicating whether the output should be returned as
 #' a list separated by object type or a matrix.
-#' @param types of declarations to be read. In addition to the types used by default it can also read set declarations (keyword "set")
+#' @param types of declarations to be read.
 #' @return Either a list of declared objects or a matrix containing object
 #' name, the sets the object depends on and the description.
 #' @author Jan Philipp Dietrich
 #' @export
 #' @seealso \code{\link{codeCheck}}
-readDeclarations <- function(file, unlist=TRUE, types=c("scalar","(positive |)variable","parameter","table","equation")){
+readDeclarations <- function(file, unlist=TRUE, types=c("scalar","(positive |)variable","parameter","table","equation","set")){
   if(length(file)==1) {
     if(file == "") return(NULL)
     file <- readLines(file,warn=FALSE)
@@ -46,6 +46,7 @@ readDeclarations <- function(file, unlist=TRUE, types=c("scalar","(positive |)va
        return(x[keep])
      }
      tmp <- .rmFilling(tmp)
+     tmp <- gsub("\t","",tmp)
      tmp <- grep("^ *.{0,1} *$",tmp,invert=TRUE,value=TRUE) #remove all lines with no objects in them
      structure <- "^[ \t]*([^ ^,^\\(^\t]+)(\\([^\\)]+\\)|)[ \t]*(.*)$"
      names <- sub(structure,"\\1",tmp) #store name
@@ -62,8 +63,7 @@ readDeclarations <- function(file, unlist=TRUE, types=c("scalar","(positive |)va
   if(unlist) {
     tmp <- NULL
     for(n in names(out)) {
-      #dimnames(out[[n]])[[1]] <- rep(n,dim(out[[n]])[1])
-      tmp <- rbind(tmp,out[[n]])
+      tmp <- rbind(tmp,cbind(out[[n]],type=n))
     }
     out <- tmp
   }
