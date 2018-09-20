@@ -40,7 +40,8 @@ readDeclarations <- function(file, unlist=TRUE, types=c("scalar","(positive |)va
        if(length(n)<2) return(x)
        rm <- NULL
        for(i in seq(1,length(n)-1,2)){
-         rm <- c(rm,n[i]:n[i+1])
+         rm <- c(rm,(n[i]+1):n[i+1])
+         x[n[i]] <- sub("/.*$","",x[n[i]])
        }
        keep <- setdiff(1:length(x),rm)
        return(x[keep])
