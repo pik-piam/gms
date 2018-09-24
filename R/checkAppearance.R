@@ -6,12 +6,14 @@
 #' 
 #' 
 #' @param x A code list as returned by \code{\link{codeExtract}}
-#' @return A list with two elements: appearance and type. Appearance is a
-#' matrix containing values which indicate whether an object appears in a part
-#' of the code or not (e.g. indicates whether "vm_example" appears in
-#' realization "on" of module "test" or not.). 0 means that it does not appear,
+#' @return A list with four elements: appearance, setappearance, type and
+#' warnings. Appearance is a matrix containing values which indicate whether an 
+#' object appears in a part of the code or not (e.g. indicates whether "vm_example" 
+#' appears in realization "on" of module "test" or not.). 0 means that it does not appear,
 #' 1 means that it appears in the code and 2 means that it appears in the
-#' not_used.txt. Type is a vector containing the type of each object.
+#' not_used.txt. setappearance contains the same information but for sets instead of other
+#' objects. Type is a vector containing the type of each object (exluding sets). And warnings
+#' contains a list of warnings created during that process.
 #' @author Jan Philipp Dietrich
 #' @export
 #' @seealso \code{\link{codeCheck}},\code{\link{readDeclarations}}
@@ -60,7 +62,11 @@ checkAppearance <- function(x) {
       a[x$not_used[i,"name"],dimnames(x$not_used)[[1]][i]] <- 2
     }
   }
+  
+  sets <- x$declarations[x$declarations[,"type"]=="set","names"]
+  a_sets <- a[sets,]
+  a <- a[!(rownames(a)%in%sets),]
   type <- sub("^(o|)[^_]*?(m|[0-9]{2}|)_.*$","\\1\\2",dimnames(a)[[1]])
-  names(type) <- rownames
-  return(list(appearance=a,type=type,warnings=w)) 
+  names(type) <- dimnames(a)[[1]]
+  return(list(appearance=a,setappearance=a_sets,type=type,warnings=w)) 
 }

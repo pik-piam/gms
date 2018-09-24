@@ -132,10 +132,8 @@ codeCheck <- function(path=".",modulepath="modules", core_files = c("core/*.gms"
 
   cat(" Naming conventions check done...       (time elapsed:",format(proc.time()["elapsed"]-ptm,width=6,nsmall=2,digits=2),")\n")
   
-  # Check appearance of objects (exclude sets)
-  gams2 <- gams
-  gams2$declarations <- gams2$declarations[gams2$declarations[,"type"]!="set",]
-  ap <- checkAppearance(gams2) 
+  # Check appearance of objects
+  ap <- checkAppearance(gams) 
   w <- c(w,ap$warnings)
   
   cat(" Investigated variable appearances...   (time elapsed:",format(proc.time()["elapsed"]-ptm,width=6,nsmall=2,digits=2),")\n")  
@@ -311,7 +309,7 @@ codeCheck <- function(path=".",modulepath="modules", core_files = c("core/*.gms"
     rownames(d) <- NULL
     d <- as.data.frame(d, stringsAsFactors = FALSE)
     mi <- as.data.frame(modulesInfo,stringsAsFactors = FALSE)
-    out <- list(interfaceInfo=interfaceInfo,declarations=d,appearance=ap$appearance,modulesInfo=mi)
+    out <- list(interfaceInfo=interfaceInfo,declarations=d,appearance=ap$appearance,setappearance=ap$setappearance,modulesInfo=mi)
   } else {
     out <- interfaceInfo
   }
