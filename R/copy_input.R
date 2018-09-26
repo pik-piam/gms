@@ -4,15 +4,14 @@
 #'  
 #' @param x Filepath or data frame containing the mapping of files to be deleted
 #' @param sourcepath Path to folder containing all input files
-#' @param low_res Jans Geheimnis
+#' @param suffix suffix that might be part of input names that should be deleted
 #' @param move If TRUE files will be moved instead of copied (default=FALSE)
 #' @importFrom magclass copy.magpie
 #' @export
 #' @author Jan Philipp Dietrich, David Klein
-#' @examples
-#' \dontrun{copy_input(x = file2destination, sourcepath = "input", low_res = low_res, move = TRUE)}
 
-copy_input <- function(x, sourcepath, low_res, move=FALSE) {
+
+copy_input <- function(x, sourcepath, suffix=NULL, move=FALSE) {
   if(is.character(x)) {
     if(!file.exists(x)) stop("Cannot find file mapping!")
     map <- read.csv(x, sep = ";", stringsAsFactors = FALSE)
@@ -33,7 +32,7 @@ copy_input <- function(x, sourcepath, low_res, move=FALSE) {
     if(file.exists(outputpath)) file.remove(outputpath)
     inputpath <- paste0(sourcepath,"/",x[i])
     if(!file.exists(inputpath)) {
-      inputpath <- Sys.glob(sub("^(.*)\\.[^\\.]*$", paste0(sourcepath,"/\\1_",low_res,".*"), x[i]))
+      inputpath <- Sys.glob(sub("^(.*)\\.[^\\.]*$", paste0(sourcepath,"/\\1_",suffix,".*"), x[i]))
       if(length(inputpath)>1) {
         stop("Problem determining the proper input path for file", x[i], "(more than one possible path found)")
       } else if(length(inputpath)==0) {

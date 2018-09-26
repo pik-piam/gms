@@ -16,7 +16,7 @@
 
  
 get_info <- function(file, grep_expression, sep, pattern="", replacement=""){
-  if(!file.exists(file)) return("#MISSING#")
+  if(!file.exists(file)) return(NULL)
   file <- readLines(file, warn=FALSE)
   tmp <- grep(grep_expression, file, value=TRUE) # pick line
   if(identical(tmp,character(0))) return(NA)
