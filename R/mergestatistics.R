@@ -14,13 +14,14 @@
 #' (assuming that merge statistics are already complete). This is useful if this function is run
 #' frequently and execution time plays a role, but might lead to cases in which the function is not run
 #' even if the merge statistics are incomplete.
+#' @param pattern detection pattern for rda files that should be merged
 #' @return A data table containing the merged run statistics or NULL in case the data was not recalculated
 #' @author Jan Philipp Dietrich
 #' @importFrom data.table as.data.table rbindlist
 #' @importFrom utils type.convert
 #' @export
 
-mergestatistics <- function(dir=".", file=NULL, renew=FALSE, quickcheck=FALSE) {
+mergestatistics <- function(dir=".", file=NULL, renew=FALSE, quickcheck=FALSE, pattern="*\\.[rR]da") {
   if(quickcheck && file.exists(file) && all(file.info(Sys.glob(paste0(dir,"/*")))$mtime<file.info(file)$mtime)) {
     return(NULL)
   }
@@ -33,7 +34,7 @@ mergestatistics <- function(dir=".", file=NULL, renew=FALSE, quickcheck=FALSE) {
   cwd <- getwd()
   on.exit(setwd(cwd))
   setwd(dir)
-  files <- list.files(pattern = "*\\.[rR]da")
+  files <- list.files(pattern = pattern, recursive=TRUE)
   if(length(id)>0) {
     names(files) <- gsub("\\.[rR]da","",files)
     tmp <- setdiff(names(files),id)
@@ -54,9 +55,7 @@ mergestatistics <- function(dir=".", file=NULL, renew=FALSE, quickcheck=FALSE) {
       modelstat <- "infeasible"
     }
     stats$solution <- modelstat
-    if(is.null(stats$id)) {
-      stats$id <- gsub("\\.[rR]da","",f)
-    }
+    stats$id <- gsub("\\.[rR]da","",f)
     outlist[[stats$id]] <- as.data.table(t(unlist(c(stats[c("user","date","version_management","revision","revision_date","solution")],runtime=as.numeric(stats[["runtime"]], units="hours"),stats$config))))
   }
   out <- rbind(out,rbindlist(outlist, fill=TRUE, idcol=TRUE),fill=TRUE)
