@@ -20,7 +20,7 @@
 #' 
 #' \dontrun{buildLibrary()}
 #' 
-buildLibrary<-function(lib=".",cran=TRUE, update_type=NULL){
+buildLibrary<-function(lib=".",cran=TRUE, git=FALSE, update_type=NULL){
   OS<-Sys.info()["sysname"]
   thisdir<-getwd()
   if(lib!=".") setwd(lib)
@@ -71,7 +71,6 @@ buildLibrary<-function(lib=".",cran=TRUE, update_type=NULL){
   #Check for version numbers
   ##########################################################
   #Version number in the man file
-
   
   #Version number in the description file
   descfile<-readLines("DESCRIPTION")
@@ -140,7 +139,7 @@ buildLibrary<-function(lib=".",cran=TRUE, update_type=NULL){
   # Update validation key
   ############################################################
   if(cran) {
-    vkey <- paste("ValidationKey:", validationkey(version,date))
+    vkey <- paste("ValidationKey:", as.numeric(gsub(".","",as.character(version),fixed=TRUE))*as.numeric(date))
   } else {
     vkey <- "ValidationKey: 0"
   }
@@ -149,10 +148,43 @@ buildLibrary<-function(lib=".",cran=TRUE, update_type=NULL){
   } else {
     descfile <- c(descfile,vkey)
   }
-
+  
   ############################################################
   #Write the modified description files
   ############################################################
   writeLines(descfile,"DESCRIPTION")
-  cat("done\n")  
+  cat(paste0("* updating from version"), descfile_version, "to version", toString(version), "... OK\n")
+  
+  ############################################################
+  # Update git tags based on type of update
+  ############################################################
+  
+  # workaround with shell for windows
+  # change validation key back to old definition
+  
+  if(OS == "Linux" & git == TRUE){
+    a <- system2("git", c("config", "-l"), stdout = TRUE)
+    cat("* starting git operations... OK\n")
+    cat("* adding and committing to local working copy...")
+    system("git add .", ignore.stdout = TRUE)
+    system2("git", c("commit -m ", '"type', update_type, 'lucode upgrade"'), stdout = FALSE)
+    cat(" OK\n")
+    
+    cat("* updating tags based on update type...")
+    if(update_type == 1){
+      # create new tag for latest commit
+      system(paste0("git tag ", version), ignore.stdout = TRUE)
+    } else if(update_type %in% c(0,2,3,4)){
+      # remove previous tag and push new tag up to latest commit
+      system("tag=$(git tag) && last=$(echo $tag | awk 'END {print $NF}') && git tag -d $last", ignore.stdout = TRUE)
+      system(paste0("git tag ", version), ignore.stdout = TRUE)
+    }
+    cat(" OK\n")
+    cat("* completed git tagging, to push updates execute the following:\n")
+    cat(rep("=", options()$width/2), "\n", sep="")
+    cat("$ git push -u origin master\n")
+    cat("$ git push --tags\n")
+    cat(rep("=", options()$width/2), "\n", sep="")
+  }
+  cat("done")
 }
