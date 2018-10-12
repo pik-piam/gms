@@ -163,7 +163,6 @@ buildLibrary<-function(lib=".",cran=TRUE, git=FALSE, update_type=NULL){
   # change validation key back to old definition
   
   if(OS == "Linux" & git == TRUE){
-    a <- system2("git", c("config", "-l"), stdout = TRUE)
     cat("* starting git operations... OK\n")
     cat("* adding and committing to local working copy...")
     system("git add .", ignore.stdout = TRUE)
