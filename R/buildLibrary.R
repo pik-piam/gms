@@ -140,7 +140,7 @@ buildLibrary<-function(lib=".",cran=TRUE, git=FALSE, update_type=NULL){
   # Update validation key
   ############################################################
   if(cran) {
-    vkey <- paste("ValidationKey:", validationkey(version,date))
+    vkey <- paste("ValidationKey:", as.numeric(gsub(".","",as.character(version),fixed=TRUE))*as.numeric(date))
   } else {
     vkey <- "ValidationKey: 0"
   }
@@ -157,17 +157,22 @@ buildLibrary<-function(lib=".",cran=TRUE, git=FALSE, update_type=NULL){
   cat(paste0("* updating from version"), descfile_version, "to version", toString(version), "... OK\n")
   
   ############################################################
-  # Update git tags based on type of update (Linux)
+  # Update git tags based on type of update
   ############################################################
+  
+  # workaround with shell for windows
+  # change validation key back to old definition
+  
   if(OS == "Linux" & git == TRUE){
+    a <- system2("git", c("config", "-l"), stdout = TRUE)
     cat("* starting git operations... OK\n")
-    cat("* adding and committing to local repository...")
-    # add and commit local changes from buildLibrary
+    cat("* adding and committing to local working copy...")
     system("git add .", ignore.stdout = TRUE)
     system2("git", c("commit -m ", '"type', update_type, 'lucode upgrade"'), stdout = FALSE)
     cat(" OK\n")
     
     cat("* updating tags based on update type...")
+
     if(update_type %in% c(1,2)){
       # create new tag for latest commit
       system(paste0("git tag ", version), ignore.stdout = TRUE)
