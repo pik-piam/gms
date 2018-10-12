@@ -140,7 +140,7 @@ buildLibrary<-function(lib=".",cran=TRUE, git=FALSE, update_type=NULL){
   # Update validation key
   ############################################################
   if(cran) {
-    vkey <- paste("ValidationKey:", as.numeric(gsub(".","",as.character(version),fixed=TRUE))*as.numeric(date))
+    vkey <- paste("ValidationKey:", validationkey(version,date))
   } else {
     vkey <- "ValidationKey: 0"
   }
