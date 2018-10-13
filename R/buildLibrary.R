@@ -184,7 +184,7 @@ buildLibrary<-function(lib=".",cran=TRUE, git=FALSE, update_type=NULL){
     cat(rep("=", options()$width/2), "\n", sep="")
     # default instructions for pushing to remote
     cat("$ git push -u origin master\n")
-    if(update_type %in% c(0,3,4)){
+    if(update_type %in% c(0,3,4) & last != ""){
       cat(paste0("$ git push --delete origin ", last, "\n"))
     }
     cat("$ git push --tags\n")
