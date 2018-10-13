@@ -174,7 +174,9 @@ buildLibrary<-function(lib=".",cran=TRUE, git=FALSE, update_type=NULL){
     } else if(update_type %in% c(0,3,4)){
       # remove previous tag and push new tag up to latest commit
       last <- system("tag=$(git tag) && last=$(echo $tag | awk 'END {print $NF}') && echo $last", intern = TRUE)
-      system("tag=$(git tag) && last=$(echo $tag | awk 'END {print $NF}') && git tag -d $last", ignore.stdout = TRUE)
+      if(last != ""){
+        system("tag=$(git tag) && last=$(echo $tag | awk 'END {print $NF}') && git tag -d $last", ignore.stdout = TRUE)
+      }
       system(paste0("git tag ", version), ignore.stdout = TRUE)
     }
     cat(" OK\n")
