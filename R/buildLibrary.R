@@ -12,11 +12,6 @@
 #' 
 #' @param lib Path to the package
 #' @param cran If cran-like test is needed
-<<<<<<< b6bed8b805685ceec63b89803780a26ca3b65fbb
-#' @param git logical indicating if local git additions, commits and tag updates should be enacted. A push to a remote repository must be done manually by the user.
-=======
-#' @param git logical indicating if local git additions, commits and tag updates should be enacted. A push to a remote repository must be done manually be the user.
->>>>>>> clean up of code
 #' @param update_type 1 if the update is a major revision, 2 (default) for minor, 3 for patch, 4 only for packages in development stage
 #' @author Anastasis Giannousakis, Jan-Philipp Dietrich, Markus Bonsch
 #' @seealso \code{\link{codeExtract}},\code{\link{readDeclarations}}
