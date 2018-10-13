@@ -176,7 +176,6 @@ buildLibrary<-function(lib=".",cran=TRUE, git=FALSE, update_type=NULL){
       if(last != ""){
         system("tag=$(git tag) && last=$(echo $tag | awk 'END {print $NF}') && git tag -d $last", ignore.stdout = TRUE)
       }
-
       system(paste0("git tag ", version), ignore.stdout = TRUE)
     }
     cat(" OK\n")
