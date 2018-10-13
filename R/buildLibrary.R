@@ -173,6 +173,7 @@ buildLibrary<-function(lib=".",cran=TRUE, git=FALSE, update_type=NULL){
       system(paste0("git tag ", version), ignore.stdout = TRUE)
     } else if(update_type %in% c(0,3,4)){
       # remove previous tag and push new tag up to latest commit
+      last <- system("tag=$(git tag) && last=$(echo $tag | awk 'END {print $NF}') && echo $last", intern = TRUE)
       system("tag=$(git tag) && last=$(echo $tag | awk 'END {print $NF}') && git tag -d $last", ignore.stdout = TRUE)
       system(paste0("git tag ", version), ignore.stdout = TRUE)
     }
@@ -181,6 +182,9 @@ buildLibrary<-function(lib=".",cran=TRUE, git=FALSE, update_type=NULL){
     cat(rep("=", options()$width/2), "\n", sep="")
     # default instructions for pushing to remote
     cat("$ git push -u origin master\n")
+    if(update_type %in% c(0,3,4)){
+      cat(paste0("$ git push --delete origin ", last, "\n"))
+    }
     cat("$ git push --tags\n")
     cat(rep("=", options()$width/2), "\n", sep="")
   }
