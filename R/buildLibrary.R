@@ -12,7 +12,11 @@
 #' 
 #' @param lib Path to the package
 #' @param cran If cran-like test is needed
+<<<<<<< b6bed8b805685ceec63b89803780a26ca3b65fbb
 #' @param git logical indicating if local git additions, commits and tag updates should be enacted. A push to a remote repository must be done manually by the user.
+=======
+#' @param git logical indicating if local git additions, commits and tag updates should be enacted. A push to a remote repository must be done manually be the user.
+>>>>>>> clean up of code
 #' @param update_type 1 if the update is a major revision, 2 (default) for minor, 3 for patch, 4 only for packages in development stage
 #' @author Anastasis Giannousakis, Jan-Philipp Dietrich, Markus Bonsch
 #' @seealso \code{\link{codeExtract}},\code{\link{readDeclarations}}
@@ -157,21 +161,17 @@ buildLibrary<-function(lib=".",cran=TRUE, git=FALSE, update_type=NULL){
   cat(paste0("* updating from version"), descfile_version, "to version", toString(version), "... OK\n")
   
   ############################################################
-  # Update git tags based on type of update
+  # Update git tags based on type of update (Linux)
   ############################################################
-  
-  # workaround with shell for windows
-  # change validation key back to old definition
-  
   if(OS == "Linux" & git == TRUE){
     cat("* starting git operations... OK\n")
-    cat("* adding and committing to local working copy...")
+    cat("* adding and committing to local repository...")
+    # add and commit local changes from buildLibrary
     system("git add .", ignore.stdout = TRUE)
     system2("git", c("commit -m ", '"type', update_type, 'lucode upgrade"'), stdout = FALSE)
     cat(" OK\n")
     
     cat("* updating tags based on update type...")
-
     if(update_type %in% c(1,2)){
       # create new tag for latest commit
       system(paste0("git tag ", version), ignore.stdout = TRUE)
