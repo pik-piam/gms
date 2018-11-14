@@ -36,7 +36,9 @@ updateRepo <- function(path=".", check=TRUE, force_rebuild=FALSE, clean=FALSE, p
     } 
     writeLines(as.character(Sys.getpid()),pidfile)
   }
-  
+  if(file.exists("/webservice")){
+    Sys.setenv("RSTUDIO_PANDOC"="/usr/local/bin/pandoc")
+  }
   if(dir.exists(".svn")) {
     if(clean) system("svn revert -Rq .")
     system("svn update -q")
