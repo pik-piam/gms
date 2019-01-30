@@ -12,7 +12,6 @@
 #' 
 #' @param lib Path to the package
 #' @param cran If cran-like test is needed
-#' @param git logical indicating if local git additions, commits and tag updates should be enacted. A push to a remote repository must be done manually by the user.
 #' @param update_type 1 if the update is a major revision, 2 (default) for minor, 3 for patch, 4 only for packages in development stage
 #' @author Anastasis Giannousakis, Jan-Philipp Dietrich, Markus Bonsch
 #' @seealso \code{\link{codeExtract}},\code{\link{readDeclarations}}
@@ -21,7 +20,7 @@
 #' 
 #' \dontrun{buildLibrary()}
 #' 
-buildLibrary<-function(lib=".",cran=TRUE, git=FALSE, update_type=NULL){
+buildLibrary<-function(lib=".",cran=TRUE, update_type=NULL){
   OS<-Sys.info()["sysname"]
   thisdir<-getwd()
   if(lib!=".") setwd(lib)
@@ -154,42 +153,23 @@ buildLibrary<-function(lib=".",cran=TRUE, git=FALSE, update_type=NULL){
   # Write the modified description files
   ############################################################
   writeLines(descfile,"DESCRIPTION")
-  cat(paste0("* updating from version"), descfile_version, "to version", toString(version), "... OK\n")
   
   ############################################################
-  # Update git tags based on type of update (Linux)
+  # Verbosity for version information and git commands
   ############################################################
-  if(OS == "Linux" & git == TRUE){
-    cat("* starting git operations... OK\n")
-    cat("* adding and committing to local repository...")
-    # add and commit local changes from buildLibrary
-    system("git add .", ignore.stdout = TRUE)
-    system2("git", c("commit -m ", '"type', update_type, 'lucode upgrade"'), stdout = FALSE)
-    cat(" OK\n")
-    
-    cat("* updating tags based on update type...")
-    if(update_type %in% c(1,2)){
-      # create new tag for latest commit
-      system(paste0("git tag ", version), ignore.stdout = TRUE)
-    } else if(update_type %in% c(0,3,4)){
-      # remove previous tag and push new tag up to latest commit
-      last <- system("tag=$(git tag) && last=$(echo $tag | awk 'END {print $NF}') && echo $last", intern = TRUE)
-      if(last != ""){
-        system("tag=$(git tag) && last=$(echo $tag | awk 'END {print $NF}') && git tag -d $last", ignore.stdout = TRUE)
-      }
-      system(paste0("git tag ", version), ignore.stdout = TRUE)
+  
+  if(update_type != 0){
+    cat(paste0("* updating from version"), descfile_version, "to version", toString(version), "... OK\n")
+    if(file.exists(".git")){
+      cat("* git repository detected... OK\n")
+      cat("* command suggestions for updating your git repository:\n")
+      cat(rep("=", options()$width), "\n", sep="")
+      cat(paste0('adding and committing: $ git add . && git commit -m "type ', update_type, ' lucode upgrade"\n'))
+      cat(paste0("version tagging: $ git tag ", version, "\n"))
+      cat("push commits to github: $ git push <remote> <branch>\n")
+      cat("push new tag to github: $ git push --tags\n")
+      cat(rep("=", options()$width), "\n", sep="")
     }
-    cat(" OK\n")
-    cat("* completed local git tagging, to push updates execute the following (generic) commands:\n")
-    cat(rep("=", options()$width/2), "\n", sep="")
-    # default instructions for pushing to remote
-    cat("$ git push -u origin master\n")
-    if(update_type %in% c(0,3,4) & last != ""){
-      cat(paste0("$ git push --delete origin ", last, "\n"))
-    }
-    cat("$ git push --tags\n")
-    cat(rep("=", options()$width/2), "\n", sep="")
   }
-  # issue: workaround with shell for windows
   cat("done")
 }
