@@ -49,20 +49,21 @@ updateRepo <- function(path=".", check=TRUE, force_rebuild=FALSE, clean=FALSE, p
   nchar <- max(nchar(dirs))
   update_PACKAGES <- FALSE
   for(d in dirs) {
+    setwd(d)
+    if(dir.exists(".svn")) {
+      if(clean) system("svn revert -Rq .; svn update -q", wait = FALSE)
+      else system("svn update -q", wait=FALSE)
+    }
+    if(dir.exists(".git")) {
+      if(clean) system("git reset --hard HEAD -q; git clean -fxq; git pull -q", wait = FALSE)
+      else system("git pull -q", wait = FALSE)
+    }  
+    setwd("..")
+  }
+  for(d in dirs) {
     fd <- format(d,width=nchar)
     curversion <- tryCatch(ap[d,"Version"],error=function(e)return(0))
     setwd(d)
-    if(dir.exists(".svn")) {
-      if(clean) system("svn revert -Rq .")
-      system("svn update -q")
-    }
-    if(dir.exists(".git")) {
-      if(clean) {
-        system("git reset --hard HEAD -q")
-        system("git clean -fxq")
-      }
-      system("git pull -q")
-    }
     vkey <- validkey()
     if(as.numeric_version(curversion) < as.numeric_version(vkey$version) | force_rebuild) {
       if(vkey$valid | !check | force_rebuild) {
