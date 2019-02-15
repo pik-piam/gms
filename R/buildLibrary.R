@@ -25,6 +25,7 @@ buildLibrary<-function(lib=".",cran=TRUE, update_type=NULL){
   thisdir<-getwd()
   if(lib!=".") setwd(lib)
   on.exit(setwd(thisdir))
+  
   ####################################################################
   #Remove the auxiliary Rcheck folders
   ###################################################################
@@ -71,8 +72,6 @@ buildLibrary<-function(lib=".",cran=TRUE, update_type=NULL){
   #Check for version numbers
   ##########################################################
   #Version number in the man file
-
-  
   #Version number in the description file
   descfile<-readLines("DESCRIPTION")
   descfile_version<-sub("[^(0-9)]*$","",sub("Version:[^(0-9)]*","",grep("Version",descfile,value=T),perl=T),perl=T)
@@ -149,10 +148,28 @@ buildLibrary<-function(lib=".",cran=TRUE, update_type=NULL){
   } else {
     descfile <- c(descfile,vkey)
   }
-
+  
   ############################################################
-  #Write the modified description files
+  # Write the modified description files
   ############################################################
   writeLines(descfile,"DESCRIPTION")
-  cat("done\n")  
+  
+  ############################################################
+  # Verbosity for version information and git commands
+  ############################################################
+  
+  if(update_type != 0){
+    cat(paste0("* updating from version"), descfile_version, "to version", toString(version), "... OK\n")
+    if(file.exists(".git")){
+      cat("* git repository detected... OK\n")
+      cat("* command suggestions for updating your git repository:\n")
+      cat(rep("=", options()$width), "\n", sep="")
+      cat(paste0('adding and committing: $ git add . && git commit -m "type ', update_type, ' lucode upgrade"\n'))
+      cat(paste0("version tagging: $ git tag ", version, "\n"))
+      cat("push commits to github: $ git push <remote> <branch>\n")
+      cat("push new tag to github: $ git push --tags\n")
+      cat(rep("=", options()$width), "\n", sep="")
+    }
+  }
+  cat("done")
 }
