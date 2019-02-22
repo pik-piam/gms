@@ -84,7 +84,7 @@ updateRepo <- function(path=".", check=TRUE, force_rebuild=FALSE, clean=FALSE, p
     } else message(".:: ",fd," ",format(curversion, width=10)," ok ::.")
     setwd("..")
   }
-  if(update_PACKAGES) tools::write_PACKAGES() 
+  if(update_PACKAGES) tools::write_PACKAGES(unpacked = TRUE) 
   file.remove(pidfile)
   message("done.")
 }
