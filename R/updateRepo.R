@@ -31,7 +31,7 @@ updateRepo <- function(path=".", check=TRUE, force_rebuild=FALSE, clean=FALSE, p
       pid <- readLines(pidfile)
       if(any(grepl(paste0("^ *",pid," "),system("ps -A", intern = TRUE)))) {
         message("Process already running.")
-        return(NULL)
+        return()
       }
     } 
     writeLines(as.character(Sys.getpid()),pidfile)
@@ -85,5 +85,6 @@ updateRepo <- function(path=".", check=TRUE, force_rebuild=FALSE, clean=FALSE, p
     setwd("..")
   }
   if(update_PACKAGES) tools::write_PACKAGES() 
+  file.remove(pidfile)
   message("done.")
 }
