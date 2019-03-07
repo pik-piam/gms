@@ -12,6 +12,7 @@ r_packages:
  - lucode
  - testthat
 install:
+  - Rscript -e "install.packages('testthat')"
   - echo "Dummy entry to ignore DESCRIPTION file"
 script:
   - Rscript ./tests/testthat/test-travisCI.R
