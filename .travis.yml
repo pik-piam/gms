@@ -8,7 +8,3 @@ cache: packages
 latex: false
 pandoc: false
 sudo: false
-install:
-  - Rscript -e "install.packages('testthat');install.packages('lucode')"
-script:
-  - Rscript ./tests/testthat/test-travisCI.R
