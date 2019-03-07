@@ -8,11 +8,7 @@ cache: packages
 latex: false
 pandoc: false
 sudo: false
-r_packages: 
- - lucode
- - testthat
 install:
-  - Rscript -e "install.packages('testthat')"
-  - echo "Dummy entry to ignore DESCRIPTION file"
+  - Rscript -e "install.packages('testthat');install.packages('lucode')"
 script:
   - Rscript ./tests/testthat/test-travisCI.R
