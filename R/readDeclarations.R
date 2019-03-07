@@ -10,6 +10,7 @@
 #' @return Either a list of declared objects or a matrix containing object
 #' name, the sets the object depends on and the description.
 #' @author Jan Philipp Dietrich
+#' @importFrom stringr str_sub str_extract str_replace_all str_replace fixed
 #' @export
 #' @seealso \code{\link{codeCheck}}
 readDeclarations <- function(file, unlist=TRUE, types=c("scalar","(positive |)variable","parameter","table","equation","set")){
@@ -31,6 +32,9 @@ readDeclarations <- function(file, unlist=TRUE, types=c("scalar","(positive |)va
        e <- length(d)
      }
      tmp <- d[s:e] #cut all object declarations of the given type
+     quoted_description <- str_sub(str_extract(tmp,"\"[^\"]*\""),2,-2) # extract quoted descriptions
+     names(quoted_description) <- paste0("[#DESC#",1:length(tmp),"#]")
+     tmp <- str_replace(tmp,"\"[^\"]*\"", names(quoted_description)) # insert placeholders
      tmp <- sub(";","",tmp) # remove ;
      tmp <- sub("^\\$.*","",tmp) # remove $-expressions
      tmp <- sub(paste("^ ?",t,"[^ ]*",sep=""),"",tmp, ignore.case = TRUE) # remove type name
@@ -47,7 +51,7 @@ readDeclarations <- function(file, unlist=TRUE, types=c("scalar","(positive |)va
        return(x[keep])
      }
      tmp <- .rmFilling(tmp)
-     tmp <- gsub("\t","",tmp)
+     tmp <- gsub("\t"," ",tmp)
      tmp <- grep("^ *.{0,1} *$",tmp,invert=TRUE,value=TRUE) #remove all lines with no objects in them
      structure <- "^[ \t]*([^ ^,^\\(^\t]+)(\\([^\\)]+\\)|)[ \t]*(.*)$"
      names <- sub(structure,"\\1",tmp) #store name
@@ -57,6 +61,7 @@ readDeclarations <- function(file, unlist=TRUE, types=c("scalar","(positive |)va
      sets <- gsub(" +","",sets)
      description <- sub("^ *$","",gsub(",","",sub(structure,"\\3",tmp))) #store description (remove "," and empty entries)
      description <- sub(" */.*$","", description) # remove values at the end, if given
+     description <- str_replace_all(description,fixed(quoted_description))
      tmp <- cbind(names,sets,description)
      out[[tname]] <- rbind(out[[tname]],tmp)
    }
