@@ -8,11 +8,11 @@
 #' @usage rename_scenario(map,keep_time_stamp = FALSE)
 #' @param map Named vector, containing the new scenario names as elements and the corresponding old folder names as the emelents' names.
 #' @param keep_time_stamp Logical indicating whether timestamp of old folder name should be transferred to new folder name or not (default = FALSE).
-#' @importFrom magclass write.report read.report getNames<-
 #' @author David Klein
 #' @export
 
 rename_scenario <- function(map,keep_time_stamp = FALSE) {
+
   if (any(duplicated(map))) stop("The list of new names contains duplicates which would cause the first folder to be overwritten with the last!")
   
   for (f in 1:length(map)) {
@@ -55,10 +55,11 @@ rename_scenario <- function(map,keep_time_stamp = FALSE) {
       }
       
       if(file.exists(mif_name)) {
+        if(!requireNamespace("magclass", quietly = TRUE)) stop("The package magclass is required for scenario renaming!")
         cat("mif      from:",mif_name,"\n           -> ",new_mif_name,"\n")
-        a <- read.report(mif_name,as.list=F)
-        getNames(a,dim=1) <- gsub("\\.","",new_scenario)
-        write.report(a,new_mif_name)
+        a <- magclass::read.report(mif_name,as.list=F)
+        magclass::getNames(a,dim=1) <- gsub("\\.","",new_scenario)
+        magclass::write.report(a,new_mif_name)
       } else {
         warning("Could not find",mif_name," nor ",paste0(old_folder,"/report.mif"))
       }

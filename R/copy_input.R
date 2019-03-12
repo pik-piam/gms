@@ -6,12 +6,12 @@
 #' @param sourcepath Path to folder containing all input files
 #' @param suffix suffix that might be part of input names that should be deleted
 #' @param move If TRUE files will be moved instead of copied (default=FALSE)
-#' @importFrom magclass copy.magpie
 #' @export
 #' @author Jan Philipp Dietrich, David Klein
 
 
 copy_input <- function(x, sourcepath, suffix=NULL, move=FALSE) {
+  if(!requireNamespace("magclass", quietly = TRUE)) stop("The package magclass is required for copying files!")
   if(is.character(x)) {
     if(!file.exists(x)) stop("Cannot find file mapping!")
     map <- read.csv(x, sep = ";", stringsAsFactors = FALSE)
@@ -41,7 +41,7 @@ copy_input <- function(x, sourcepath, suffix=NULL, move=FALSE) {
         next
       }
     }
-    copy.magpie(inputpath, outputpath, round=8)
+    magclass::copy.magpie(inputpath, outputpath, round=8)
     if(move & !(i != length(x) &  (x[i] %in% x[i+1:length(x)]))) {
       file.remove(inputpath)
     }
