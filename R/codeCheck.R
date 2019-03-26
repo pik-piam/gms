@@ -212,22 +212,24 @@ codeCheck <- function(path=".",modulepath="modules", core_files = c("core/*.gms"
   esap$type <- sap$type[!(names(sap$type)%in%modules)]
   
   #check whether switches contain which are not module switches and which do not contain a prefix
-  for(i in 1:length(esap$type)) {
-    if(esap$type[i]=="") {
-      w <- .warning("\"",names(esap$type)[i],"\" is neither a module switch nor does it start with prefix \"c\"!",w=w) 
-    } else if(esap$type[i]=="c") {
-      if(any(esap$appearance[names(esap$type)[i],colnames(esap$appearance)!="core"])) {
-        w <- .warning("\"",names(esap$type)[i],"\" should be core only!",w=w) 
-      } 
-    } else if(esap$type[i]=="cm") {
-      #you can add here tests for interface switches!
-    } else if(!suppressWarnings(is.na(as.integer(substring(esap$type[i],2))))) {
-      #check whether switch is only used inside the given module
-      tmp <- modulesInfo[modulesInfo[,"number"]==substring(esap$type[i],2),"name"]
-      tmp2 <- esap$appearance[names(esap$type)[i],grep(paste("^",tmp,"\\.",sep=""),colnames(esap$appearance),invert=TRUE)]
-      if(any(tmp2)) w <- .warning("\"",names(esap$type)[i],"\" does appear in modules ",paste(names(tmp2)[tmp2],collapse=", ")," but should only appear in module ",tmp,"!",w=w) 
-    } else {
-      w <- .warning("\"",names(esap$type)[i],"\" does not follow any of the given name conventions!",w=w) 
+  if(length(esap$type)>0) {
+    for(i in 1:length(esap$type)) {
+      if(esap$type[i]=="") {
+        w <- .warning("\"",names(esap$type)[i],"\" is neither a module switch nor does it start with prefix \"c\"!",w=w) 
+      } else if(esap$type[i]=="c") {
+        if(any(esap$appearance[names(esap$type)[i],colnames(esap$appearance)!="core"])) {
+          w <- .warning("\"",names(esap$type)[i],"\" should be core only!",w=w) 
+        } 
+      } else if(esap$type[i]=="cm") {
+        #you can add here tests for interface switches!
+      } else if(!suppressWarnings(is.na(as.integer(substring(esap$type[i],2))))) {
+        #check whether switch is only used inside the given module
+        tmp <- modulesInfo[modulesInfo[,"number"]==substring(esap$type[i],2),"name"]
+        tmp2 <- esap$appearance[names(esap$type)[i],grep(paste("^",tmp,"\\.",sep=""),colnames(esap$appearance),invert=TRUE)]
+        if(any(tmp2)) w <- .warning("\"",names(esap$type)[i],"\" does appear in modules ",paste(names(tmp2)[tmp2],collapse=", ")," but should only appear in module ",tmp,"!",w=w) 
+      } else {
+        w <- .warning("\"",names(esap$type)[i],"\" does not follow any of the given name conventions!",w=w) 
+      }
     }
   }
   
