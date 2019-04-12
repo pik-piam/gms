@@ -8,9 +8,9 @@
 #' 
 #' @usage update_modules_embedding(modelpath=".", modulepath="modules/",
 #' includefile="modules/include.gms", verbose=FALSE)
-#' @param modelpath Path of the MAgPIE version that should be updated (main
+#' @param modelpath Path to the model that should be updated (main
 #' folder).
-#' @param modulepath Module path within MAgPIE (relative to the MAgPIE main
+#' @param modulepath Module path within the model (relative to the model main
 #' folder)
 #' @param includefile Name and location of the file which includes all modules
 #' (relative to main folder)
@@ -31,6 +31,9 @@
 #' 
 update_modules_embedding <- function(modelpath=".",modulepath="modules/",includefile="modules/include.gms",verbose=FALSE) {
 
+  version <- is.modularGAMS(path=modelpath,modulepath=modulepath,version=TRUE)
+  if(version==0) stop("Model does not follow modular structure.")
+  
   lucode <- NULL
   data("lucode", envir=environment(), package="lucode")
 
@@ -77,7 +80,10 @@ update_modules_embedding <- function(modelpath=".",modulepath="modules/",include
   #create links to module main folders
   code <- NULL
   for(module in modules) {
-    code <- c(code,paste("$include \"",path(".",modulepath,module,module,ftype="gms"),"\"",sep=""))
+    moduleGMSpath <- switch(version,
+                         "1" = path(".",modulepath,module,module,ftype="gms"),
+                         "2" = path(".",modulepath,module,"module",ftype="gms"))
+    code <- c(code,paste("$include \"",moduleGMSpath,"\"",sep=""))
   }
   replace_in_file(path(modelpath,includefile),code,subject="MODULES")
   
@@ -88,9 +94,15 @@ update_modules_embedding <- function(modelpath=".",modulepath="modules/",include
     types <- setdiff(types,lucode$reserved_types)
     code <- NULL  
     for(t in types) {
-        code <- c(code,paste("$Ifi \"%",substring(module,4),"%\" == \"",t,"\" $include \"",path(".",modulepath,module,t,ftype="gms"),"\"",sep="")) 
+       realizationGMSpath <- switch(version,
+                           "1" = path(".",modulepath,module,t,ftype="gms"),
+                           "2" = path(".",modulepath,module,t,"realization",ftype="gms"))
+        code <- c(code,paste("$Ifi \"%",substring(module,4),"%\" == \"",t,"\" $include \"",realizationGMSpath,"\"",sep="")) 
     }
-    replace_in_file(path(fullmodulepath,module,module,ftype="gms"),code,subject="MODULETYPES") 
+    moduleGMSpath <- switch(version,
+                            "1" = path(fullmodulepath,module,module,ftype="gms"),
+                            "2" = path(fullmodulepath,module,"module",ftype="gms"))
+    replace_in_file(moduleGMSpath,code,subject="MODULETYPES") 
   }
   
   #set links to different module phases
@@ -106,24 +118,27 @@ update_modules_embedding <- function(modelpath=".",modulepath="modules/",include
           code <- c(code,paste("$Ifi \"%phase%\" == \"",phase,"\" $include \"",path(".",modulepath,module,t,phase,ftype="gms"),"\"",sep="")) 
         } else if(verbose) cat(module," ",t,": ",phase, "is not used\n")
       }    
-      replace_in_file(path(fullmodulepath,module,t,ftype="gms"),code,subject="PHASES")     
+      realizationGMSpath <- switch(version,
+                                   "1" = path(fullmodulepath,module,t,ftype="gms"),
+                                   "2" = path(fullmodulepath,module,t,"realization",ftype="gms"))
+      replace_in_file(realizationGMSpath,code,subject="PHASES")     
     }
   }
 
   ############# ADD MODULE INFO IN SETS  ###################### START ##########################################
 
-  if(length(grep("module2realisation",readLines("core/sets.gms"))) > 0){
+  if(length(grep("module2realisation",readLines(path(modelpath,"core/sets.gms")))) > 0){
     content <- NULL
     modification_warning <- c(
       '*** THIS CODE IS CREATED AUTOMATICALLY, DO NOT MODIFY THESE LINES DIRECTLY',
       '*** ANY DIRECT MODIFICATION WILL BE LOST AFTER NEXT MODEL START')
     content <- c(modification_warning,'','sets')
     content <- c(content,'','       modules "all the available modules"')
-    content <- c(content,'       /',paste0("       ",getModules("modules/")[,"name"]),'       /')
+    content <- c(content,'       /',paste0("       ",getModules(fullmodulepath)[,"name"]),'       /')
 #    content <- c(content,'','       realisations "all the active realisations"')
 #    content <- c(content,'       /',paste0("       ",unlist(unique(cfg$gms[getModules("modules/")[,"name"]]))),"       /")
     content <- c(content,'','      module2realisation(modules,*) "mapping of modules and active realisations" /')
-    content <- c(content,paste0("       ",getModules("modules/")[,"name"]," . %",getModules("modules/")[,"name"],"%"))
+    content <- c(content,paste0("       ",getModules(fullmodulepath)[,"name"]," . %",getModules(fullmodulepath)[,"name"],"%"))
     content <- c(content,'      /',';')
     replace_in_file('core/sets.gms',content,"MODULES",comment="***")
 
