@@ -3,9 +3,6 @@
 #' This function creates you a module skeleton which you can use to easily
 #' create your own modules.
 #' 
-#' 
-#' @usage module.skeleton(number, name, types, modelpath=".",
-#' modulepath="modules/", includefile="modules/include.gms")
 #' @param number Number of your module, typically something between 0-99. Sorts
 #' the execution of your modules. Please use a number which is not used, yet.
 #' @param name Name of your module (please choose a short name). If you want to
@@ -20,6 +17,7 @@
 #' folder)
 #' @param includefile Name and location of the file which includes all modules
 #' (relative to main folder)
+#' @param version version of the modular GAMS code structure (1 or 2)
 #' @note Module phases are automatically detected checking the main code of the
 #' model, but not checking code in modules. If you want to use additional
 #' phases which are only included within a module, you need to specify them
@@ -32,10 +30,11 @@
 #' 
 #' \dontrun{module.skeleton("bla",c("on","off"))}
 #' 
-module.skeleton <- function(number, name, types,modelpath=".", modulepath="modules/",includefile="modules/include.gms") {
+module.skeleton <- function(number, name, types,modelpath=".", modulepath="modules/",includefile="modules/include.gms", version=is.modularGAMS(modelpath,version=TRUE)) {
   lucode <- NULL
   data("lucode", envir=environment(), package="lucode")
   if(any(lucode$reserved_types %in% types)) stop("You tried to use reserved type name(s) (",paste(lucode$reserved[lucode$reserved_types %in% types],collapse=", "),") Please use different name(s)!")
+
   name <- paste(number,name,sep="_")
   mtypes_raw <- "\n*###################### R SECTION START (MODULETYPES) ##########################\n\n*###################### R SECTION END (MODULETYPES) ############################"
   phases_raw <- "\n*####################### R SECTION START (PHASES) ##############################\n\n*######################## R SECTION END (PHASES) ###############################" 
@@ -82,14 +81,18 @@ module.skeleton <- function(number, name, types,modelpath=".", modulepath="modul
   
   module_folder <- path(modelpath,modulepath,name) 
   if(!file.exists(module_folder)) dir.create(module_folder)
-  mainfile <- path(module_folder,name,ftype="gms")
+  mainfile <- switch(version,
+                     "1" = path(module_folder,name,ftype="gms"),
+                     "2" = path(module_folder,"module",ftype="gms"))
   if(!file.exists(mainfile)) writeLinesDOS(mtypes_raw,mainfile)
   for(t in types) {
-    typefile <- path(module_folder,t,ftype="gms")
-    if(!file.exists(typefile)) writeLinesDOS(phases_raw,typefile)  
     type_folder <- path(module_folder,t)
     if(!file.exists(type_folder)){
       dir.create(type_folder)
+      typefile <- switch(version,
+                         "1" = path(module_folder,t,ftype="gms"),
+                         "2" = path(module_folder,t,"realization",ftype="gms"))
+      if(!file.exists(typefile)) writeLinesDOS(phases_raw,typefile)  
       for(phase in phases) {
         writeLinesDOS("",path(type_folder,phase,ftype="gms"))
       }
