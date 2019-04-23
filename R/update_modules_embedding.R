@@ -56,11 +56,11 @@ update_modules_embedding <- function(modelpath=".",modulepath="modules/",include
     i <- grep("^\\$include",code)[1]
     if(is.na(i)) break
     tmppath <- strsplit(code[i],"\"")[[1]][2]
-    if(length(grep("\\.cs.",tmppath))==0 & file.exists(path(modelpath,tmppath))) {
+    if(length(grep("\\.cs.{1,2}",tmppath))==0 && file.exists(path(modelpath,tmppath))) {
         tmp <- suppressWarnings(readLines(path(modelpath,tmppath)))
         code <- c(code[1:(i-1)],tmp,code[(i+1):length(code)])
     } else {
-      if(!file.exists(path(modelpath,tmppath))) warning("Could not open include ", path(modelpath,tmppath))
+      if(length(grep("\\.cs.{1,2}",tmppath))==0 && !file.exists(path(modelpath,tmppath))) warning("Could not open include ", path(modelpath,tmppath))
       code[i] <- "REMOVED"
     }
   }

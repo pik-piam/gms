@@ -53,8 +53,8 @@ module.skeleton <- function(number, name, types,modelpath=".", modulepath="modul
   repeat {
     i <- grep("$include",code,fixed=TRUE)[1]
     if(is.na(i)) break
-    tmppath <- strsplit(code[i],"\"")[[1]][2]
-    if(length(grep(".csv",tmppath,fixed=TRUE))==0 & length(grep(".inc",tmppath,fixed=TRUE))==0) {
+    tmppath <- strsplit(sub("^.*\\$include","$include",code[i]),"\"")[[1]][2]
+    if(length(grep("\\.(csv|inc|cs3r|cs4r|cs2|cs3|cs4)",tmppath,fixed=FALSE))==0) {
       if(file.exists(path(modelpath,tmppath))) {
         tmp <- suppressWarnings(readLines(path(modelpath,tmppath)))
         code <- c(code[1:(i-1)],tmp,code[(i+1):length(code)])
