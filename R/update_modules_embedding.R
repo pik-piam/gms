@@ -5,9 +5,6 @@
 #' and which files in these modules exist and creates the corresponding include
 #' commands in GAMS
 #' 
-#' 
-#' @usage update_modules_embedding(modelpath=".", modulepath="modules/",
-#' includefile="modules/include.gms", verbose=FALSE)
 #' @param modelpath Path to the model that should be updated (main
 #' folder).
 #' @param modulepath Module path within the model (relative to the model main
@@ -16,6 +13,7 @@
 #' (relative to main folder)
 #' @param verbose Defines whether additional information should be printed or
 #' not.
+#' @param writeLinesDOS Boolean deciding whether DOS line endings should be used
 #' @note Module phases are automatically detected checking the main code of the
 #' model, but not checking code in modules. If you want to use additional
 #' phases which are only included within a module, you need to specify them
@@ -29,7 +27,7 @@
 #' 
 #' \dontrun{update.modules_embedding()}
 #' 
-update_modules_embedding <- function(modelpath=".",modulepath="modules/",includefile="modules/include.gms",verbose=FALSE) {
+update_modules_embedding <- function(modelpath=".",modulepath="modules/",includefile="modules/include.gms",verbose=FALSE, writeLinesDOS=TRUE) {
 
   version <- is.modularGAMS(path=modelpath,modulepath=modulepath,version=TRUE)
   if(version==0) stop("Model does not follow modular structure.")
@@ -85,7 +83,7 @@ update_modules_embedding <- function(modelpath=".",modulepath="modules/",include
                          "2" = path(".",modulepath,module,"module",ftype="gms"))
     code <- c(code,paste("$include \"",moduleGMSpath,"\"",sep=""))
   }
-  replace_in_file(path(modelpath,includefile),code,subject="MODULES")
+  replace_in_file(path(modelpath,includefile),code,subject="MODULES",writeLinesDOS=writeLinesDOS)
   
   #set links to module types
   for(module in modules) {
@@ -102,7 +100,7 @@ update_modules_embedding <- function(modelpath=".",modulepath="modules/",include
     moduleGMSpath <- switch(version,
                             "1" = path(fullmodulepath,module,module,ftype="gms"),
                             "2" = path(fullmodulepath,module,"module",ftype="gms"))
-    replace_in_file(moduleGMSpath,code,subject="MODULETYPES") 
+    replace_in_file(moduleGMSpath,code,subject="MODULETYPES",writeLinesDOS=writeLinesDOS) 
   }
   
   #set links to different module phases
@@ -121,7 +119,7 @@ update_modules_embedding <- function(modelpath=".",modulepath="modules/",include
       realizationGMSpath <- switch(version,
                                    "1" = path(fullmodulepath,module,t,ftype="gms"),
                                    "2" = path(fullmodulepath,module,t,"realization",ftype="gms"))
-      replace_in_file(realizationGMSpath,code,subject="PHASES")     
+      replace_in_file(realizationGMSpath,code,subject="PHASES",writeLinesDOS=writeLinesDOS)     
     }
   }
 
@@ -140,7 +138,7 @@ update_modules_embedding <- function(modelpath=".",modulepath="modules/",include
     content <- c(content,'','      module2realisation(modules,*) "mapping of modules and active realisations" /')
     content <- c(content,paste0("       ",getModules(fullmodulepath)[,"name"]," . %",getModules(fullmodulepath)[,"name"],"%"))
     content <- c(content,'      /',';')
-    replace_in_file('core/sets.gms',content,"MODULES",comment="***")
+    replace_in_file('core/sets.gms',content,"MODULES",comment="***",writeLinesDOS=writeLinesDOS)
 
 
   ############# ADD MODULE INFO IN SETS  ###################### END ############################################
