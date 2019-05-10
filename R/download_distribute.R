@@ -12,6 +12,8 @@
 #' @param modelfolder main model folder
 #' @param additionalDelete information which additonal data should be deleted before new data are downloaded and distributed
 #' @param debug switch for debug mode with additional diagnostic information
+#' @return Information about the download process in form of a data.frame with data sets as row names and repositories
+#' (where it was downloaded from) and corresponding md5sum as columns
 #' @author Jan Philipp Dietrich, Lavinia Baumstark
 #' @export
 
@@ -49,5 +51,5 @@ download_distribute <- function(files,
   # allow a resolution-indepedent gams-sourcecode.
   low_res  <- get_info("input/info.txt","^\\* Output ?resolution:",": ")
   copy_input(x=file2destination, sourcepath="input", suffix=low_res, move=!debug)
-  
+  return(filemap)
 }
