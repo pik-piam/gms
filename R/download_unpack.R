@@ -33,7 +33,14 @@ download_unpack <- function(input, targetdir="input", repositories=NULL, debug=F
   
   if(!dir.exists(targetdir)) dir.create(targetdir)
   
-  writeLines(files,paste0(targetdir,"/source_files.log"))
+  source_log <- paste0(targetdir,"/source_files.log")
+  if(file.exists(source_log)) {
+    previous_files <- readLines(source_log, warn=FALSE)
+    source_log_content <- c(files,"","previously derived from:",previous_files)
+  } else {
+    source_log_content <- files
+  }
+  writeLines(source_log_content,source_log)
   
   # create curl handle
   if(any(grepl("://",names(repositories)))) {
