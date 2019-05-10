@@ -33,15 +33,6 @@ download_unpack <- function(input, targetdir="input", repositories=NULL, debug=F
   
   if(!dir.exists(targetdir)) dir.create(targetdir)
   
-  source_log <- paste0(targetdir,"/source_files.log")
-  if(file.exists(source_log)) {
-    previous_files <- readLines(source_log, warn=FALSE)
-    source_log_content <- c(files,"","previously derived from:",previous_files)
-  } else {
-    source_log_content <- files
-  }
-  writeLines(source_log_content,source_log)
-  
   # create curl handle
   if(any(grepl("://",names(repositories)))) {
     if(!requireNamespace("curl", quietly = TRUE)) stop("The package curl is required for downloading files!")
@@ -100,6 +91,16 @@ download_unpack <- function(input, targetdir="input", repositories=NULL, debug=F
     untar(found[f,"path"],exdir=targetdir)
   }
   message("..done")
+  
+  source_log <- paste0(targetdir,"/source_files.log")
+  if(file.exists(source_log)) {
+    previous_files <- readLines(source_log, warn=FALSE)
+    source_log_content <- c(ifiles,"","previously derived from:",previous_files)
+  } else {
+    source_log_content <- ifiles
+  }
+  writeLines(source_log_content,source_log)
+  
   if(!debug) found$path <- NULL
   attr(found,"warnings") <- warnings()
   return(found)
