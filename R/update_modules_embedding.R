@@ -27,7 +27,7 @@
 #' 
 #' \dontrun{update.modules_embedding()}
 #' 
-update_modules_embedding <- function(modelpath=".",modulepath="modules/",includefile="modules/include.gms",verbose=FALSE, writeLinesDOS=TRUE) {
+update_modules_embedding <- function(modelpath=".",modulepath="modules/",includefile="modules/include.gms",verbose=FALSE, writeLinesDOS=FALSE) {
 
   version <- is.modularGAMS(path=modelpath,modulepath=modulepath,version=TRUE)
   if(version==0) stop("Model does not follow modular structure.")

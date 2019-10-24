@@ -31,7 +31,7 @@
 #' replace_in_file("example.txt",c("bla","blub"),"EXAMPLE",add="top",addfile=TRUE)
 #' 
 
-replace_in_file <- function(file, content, subject='CODE',add=FALSE,addfile=FALSE,comment='*',writeLinesDOS=TRUE) {
+replace_in_file <- function(file, content, subject='CODE',add=FALSE,addfile=FALSE,comment='*',writeLinesDOS=FALSE) {
   start <- paste('#+ R SECTION START \\(',subject,'\\) #+',sep='')
   end   <- paste('#+ R SECTION END \\(',subject,'\\) #+',sep='')
   

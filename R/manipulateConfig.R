@@ -6,7 +6,7 @@
 #' replacement!
 #' 
 #' 
-#' @usage manipulateConfig(configFile, ..., line_endings="win")
+#' @usage manipulateConfig(configFile, ..., line_endings="os")
 #' @param configFile a character string containing the name of the
 #' configuration file, that should be manipulated. Supported file formats are
 #' at the moment "gms", "inc", "cfg" (R-syntax), "php", "opt" and "cmd". Other
@@ -25,7 +25,7 @@
 #' 
 #' 
 #' 
-manipulateConfig<-function (configFile, ..., line_endings="win")
+manipulateConfig<-function (configFile, ..., line_endings="os")
 {
     tmp <- list(...)
     if(length(tmp)==1){

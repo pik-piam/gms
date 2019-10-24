@@ -84,7 +84,7 @@ module.skeleton <- function(number, name, types,modelpath=".", modulepath="modul
   mainfile <- switch(version,
                      "1" = path(module_folder,name,ftype="gms"),
                      "2" = path(module_folder,"module",ftype="gms"))
-  if(!file.exists(mainfile)) writeLinesDOS(mtypes_raw,mainfile)
+  if(!file.exists(mainfile)) writeLines(mtypes_raw,mainfile)
   for(t in types) {
     type_folder <- path(module_folder,t)
     if(!file.exists(type_folder)){
@@ -92,9 +92,9 @@ module.skeleton <- function(number, name, types,modelpath=".", modulepath="modul
       typefile <- switch(version,
                          "1" = path(module_folder,t,ftype="gms"),
                          "2" = path(module_folder,t,"realization",ftype="gms"))
-      if(!file.exists(typefile)) writeLinesDOS(phases_raw,typefile)  
+      if(!file.exists(typefile)) writeLines(phases_raw,typefile)  
       for(phase in phases) {
-        writeLinesDOS("",path(type_folder,phase,ftype="gms"))
+        writeLines("",path(type_folder,phase,ftype="gms"))
       }
     }
   }

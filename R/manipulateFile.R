@@ -4,7 +4,7 @@
 #' manipulate GAMS sourcecode files.
 #' 
 #' 
-#' @usage manipulateFile(file, manipulations,line_endings="win",...)
+#' @usage manipulateFile(file, manipulations,line_endings="os",...)
 #' @param file a connection object or a character string describing the file,
 #' that should be manipulated.
 #' @param manipulations A list of 2 element vectors, containing the search
@@ -21,7 +21,7 @@
 #' #manipulateFile("example.txt",list(c("bla","blub"),c("a","b")))
 #' 
 #' 
-manipulateFile <- function(file,manipulations,line_endings="win",...) {
+manipulateFile <- function(file,manipulations,line_endings="os",...) {
   if(!is.list(manipulations)) manipulations <- list(manipulations)
   f <- readLines(file)
   for(m in manipulations) {
