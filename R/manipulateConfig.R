@@ -13,7 +13,6 @@
 #' formats are currently not supported
 #' @param ... Variables, that should be set to new values, e.g. title="test"
 #' for default.cfg or s_max_timesteps=10 for magpie.gms
-#' in the format of the currently used OS.
 #' @author Jan Philipp Dietrich, Markus Bonsch, David Klein
 #' @export
 #' @seealso \code{\link{replace_in_file}},\code{\link{manipulateFile}}
