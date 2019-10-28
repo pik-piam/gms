@@ -6,15 +6,13 @@
 #' replacement!
 #' 
 #' 
-#' @usage manipulateConfig(configFile, ..., line_endings="win")
+#' @usage manipulateConfig(configFile, ...)
 #' @param configFile a character string containing the name of the
 #' configuration file, that should be manipulated. Supported file formats are
 #' at the moment "gms", "inc", "cfg" (R-syntax), "php", "opt" and "cmd". Other
 #' formats are currently not supported
 #' @param ... Variables, that should be set to new values, e.g. title="test"
 #' for default.cfg or s_max_timesteps=10 for magpie.gms
-#' @param line_endings "win" for windows line endings or "os" for line endings
-#' in the format of the currently used OS.
 #' @author Jan Philipp Dietrich, Markus Bonsch, David Klein
 #' @export
 #' @seealso \code{\link{replace_in_file}},\code{\link{manipulateFile}}
@@ -25,7 +23,7 @@
 #' 
 #' 
 #' 
-manipulateConfig<-function (configFile, ..., line_endings="win")
+manipulateConfig<-function (configFile, ...)
 {
     tmp <- list(...)
     if(length(tmp)==1){
@@ -73,5 +71,5 @@ manipulateConfig<-function (configFile, ..., line_endings="win")
     else {
         stop(paste("Unknown file type", type))
     }
-    manipulateFile(configFile, m, line_endings=line_endings)
+    manipulateFile(configFile, m)
 }

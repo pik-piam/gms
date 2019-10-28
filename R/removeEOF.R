@@ -22,7 +22,7 @@ for (i in 1:length(all_files)) {
   values <- suppressWarnings(readLines(all_files[i]))
   if (grepl("EOF",values[length(values)])) {
     values[length(values)]<-""
-    writeLinesDOS(values,all_files[i])
+    writeLines(values,all_files[i])
   }
 }
 }

@@ -23,7 +23,6 @@
 #' @param comment Symbol which is used to indicate a comment in the language
 #' the file is written that should be manipulated. Only relevant if add or
 #' addfile are used.
-#' @param writeLinesDOS Boolean deciding whether DOS line endings should be used
 #' @author Jan Philipp Dietrich
 #' @export
 #' @examples
@@ -31,7 +30,7 @@
 #' replace_in_file("example.txt",c("bla","blub"),"EXAMPLE",add="top",addfile=TRUE)
 #' 
 
-replace_in_file <- function(file, content, subject='CODE',add=FALSE,addfile=FALSE,comment='*',writeLinesDOS=TRUE) {
+replace_in_file <- function(file, content, subject='CODE',add=FALSE,addfile=FALSE,comment='*') {
   start <- paste('#+ R SECTION START \\(',subject,'\\) #+',sep='')
   end   <- paste('#+ R SECTION END \\(',subject,'\\) #+',sep='')
   
@@ -72,8 +71,7 @@ replace_in_file <- function(file, content, subject='CODE',add=FALSE,addfile=FALS
   if(start_row >= end_row) stop("end pattern found before start pattern")
   
   f <- c(f[1:start_row],content,f[end_row:length(f)])
-  if(writeLinesDOS) writeLinesDOS(f,file)
-  else writeLines(f,file)
+  writeLines(f,file)
 }
 
 cpt<-function(recip) {
