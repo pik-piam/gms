@@ -257,7 +257,7 @@ codeCheck <- function(path=".",modulepath="modules", core_files = c("core/*.gms"
     }
   }
   
-  #are all interfaces of a module adressed in all of its realizations?
+  #are all interfaces of a module addressed in all of its realizations?
   for(m in names(interfaceInfo)) {
     r <- grep(paste("^",m,"(\\.|$)",sep=""),dimnames(ap$appearance)[[2]])
     for(v in interfaceInfo[[m]]) {
@@ -267,7 +267,7 @@ codeCheck <- function(path=".",modulepath="modules", core_files = c("core/*.gms"
         if(interactive) {
           for(i in 1:length(availability)) {
             if(availability[i]==0) {
-              tmp <- .choose_option(options=c("yes","no"),'"',v,'" is not adressed in realization "',realization[i],'" of module "',m,'"! Does that make sense?') 
+              tmp <- .choose_option(options=c("yes","no"),'"',v,'" is not addressed in realization "',realization[i],'" of module "',m,'"! Does that make sense?') 
               if(tmp=="no") stop("You need to fix the model code before we can proceed!")
               if(grepl("^v",v)) {
                   tmp <- .choose_option(options=c("no","yes"),'"',v,'" is a variable. Are you sure that it does not need to be treated in realization "',realization[i],'" (e.g. fixed to a value)?') 
@@ -285,7 +285,7 @@ codeCheck <- function(path=".",modulepath="modules", core_files = c("core/*.gms"
             }
           }
         } else {
-          w <- .warning("\"",v,"\" is not adressed in all realizations of module \"",m,"\"! (",paste(realization,availability,collapse=", ",sep="="),") (0 = missing, 1 = in code, 2 = in not_used.txt)",w=w)
+          w <- .warning("\"",v,"\" is not addressed in all realizations of module \"",m,"\"! (",paste(realization,availability,collapse=", ",sep="="),") (0 = missing, 1 = in code, 2 = in not_used.txt)",w=w)
         }
       }
     }
