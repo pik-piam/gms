@@ -19,7 +19,9 @@
 #' @return A data frame containing the run names and runtime information in
 #' hours.
 #' @author David Klein
+#' @importFrom dplyr group_by summarize arrange
 #' @export
+
 readRuntime <- function(path,plot=FALSE,types=NULL,coupled=FALSE,outfname=NULL) {
   run <- NULL
   runtime <- NULL
@@ -27,22 +29,20 @@ readRuntime <- function(path,plot=FALSE,types=NULL,coupled=FALSE,outfname=NULL) 
   for (d in path) {
     splittedpath <- strsplit(d, "/")[[1]]
     runfolder <- splittedpath[length(splittedpath)]
-    datafile <- paste0(d,"/",runfolder,".RData")
+    datafile <- paste0(d,"/runstatistics.rda")
     if (!file.exists(datafile)) {
-      cat("No file found",paste0(d,"/",runfolder,".RData"),"\n")
+      cat("No file found ",datafile,"\n")
     } else if (file.info(datafile)$size==0) {
-      cat("Empty file",paste0(d,"/",runfolder,".RData"),"\n")
+      cat("Empty file ",datafile,"\n")
     } else {
       # if file exists and it's file size is >0: load it
-      validation <- NULL
+      stats <- NULL
       load(datafile)
       tmp <- NULL
-      if(!is.null(validation) & !is.null(validation$technical$time$magpie.gms)) {
-        tmp <- validation$technical$time$magpie.gms
-      } else if (exists("validation") & !is.null(validation$technical$time$full.gms)) {
-        tmp <- validation$technical$time$full.gms
+      if(!is.null(stats) & !is.null(stats$runtime)) {
+        tmp <- stats$runtime
       } else {
-        cat("No runtime information found in",paste0(d,"/",runfolder,".RData"),"\n")
+        cat("No runtime information found in",datafile,"\n")
       }
       
       # if runtime data was found
@@ -72,7 +72,6 @@ readRuntime <- function(path,plot=FALSE,types=NULL,coupled=FALSE,outfname=NULL) 
   res <- runtime #save runtime for returning it before it is modified below
 
   # generate plots
-  maxi <- max(runtime$value)
   if (plot) {
     cat("\nPreparing pdf with runtime plots.\n")
     out<-lusweave::swopen(template="david")
@@ -88,44 +87,32 @@ readRuntime <- function(path,plot=FALSE,types=NULL,coupled=FALSE,outfname=NULL) 
       runtime$it <- itnumber
       runtime$it <- as.numeric(runtime$it)
       
-      # create list of unique run names
-      tmpuni <- unique(runtime$run) 
-      
-      # Plot: compare runs of a single scenario
-      tot <- c()
-      for (i in tmpuni) {
-        x   <- subset(runtime,run==i)
-        tot[i] <- round(sum(x$value))
-        print(x)
-        p2 <- ggplot2::ggplot(data=x, ggplot2::aes_string(x="it", y="value", fill="type")) + ggplot2::geom_bar(stat="identity", position=ggplot2::position_dodge()) +
-          ggplot2::ggtitle(paste(i,"\nTotal:",tot[i],"hours")) +  ggplot2::scale_x_continuous(breaks = x$it) + 
+      # plot all runs into one plot
+      p0 <- ggplot2::ggplot(data=runtime, ggplot2::aes_string(x="it", y="value", fill="type")) + ggplot2::geom_bar(stat="identity", position=ggplot2::position_dodge()) +
+          ggplot2::scale_x_continuous(breaks = runtime$it) + ggplot2::facet_wrap(~run) +
           ggplot2::xlab("Coupling iteration") + ggplot2::ylab("Hours") + ggplot2::theme(text = ggplot2::element_text(size = 28))
-        lusweave::swfigure(out,print,p2,sw_option="height=9,width=16")
-        lusweave::swlatex(out,"\\clearpage")
-      }
-      maxi <- max(tot)
+      lusweave::swfigure(out,print,p0,sw_option="height=9,width=16")
     }
-    
+
+    # Order runs descending by runtime
+    # step 1: calculate total runtime for each run and order descending (in new data frame)
+    tot <- runtime %>% group_by(run) %>% summarize(total = sum(value)) %>% arrange(total)
+    # step 2: use the order of runs in this new data frame to order levels or "run" in runtime accordingly
+    runtime$run <- ordered(factor(runtime$run),levels=tot$run) 
+
     # Plot: compare runs of all scenarios
     # Convert hours to days if total runtime is longer than 3 days
-    if (maxi > 24*3) {
+    if (max(tot$total) > 24*3) {
       y_unit <- "days"
       runtime$value <- runtime$value/24
     } else {
       y_unit <- "hours"
     }
-    
-    p1 <- ggplot2::ggplot(data=runtime, ggplot2::aes_string(x="run", y="value",fill=ifelse(is.null(types),"NULL","type"))) + ggplot2::geom_bar(stat="identity") + ggplot2::coord_flip() +
-      ggplot2::ylab(y_unit) + ggplot2::theme(text = ggplot2::element_text(size = 20)) 
 
-    runtime <- runtime[order(runtime$value,decreasing=FALSE),]
-    runtime$run <- factor(runtime$run,runtime$run)
-
-    p2 <- ggplot2::ggplot(data=runtime, ggplot2::aes_string(x="run", y="value",fill=ifelse(is.null(types),"NULL","type"))) + ggplot2::geom_bar(stat="identity") + ggplot2::coord_flip() +
+    p1 <- ggplot2::ggplot(data=runtime, ggplot2::aes_string(x="run", y="value",fill=ifelse(is.null(types),"NULL","type"))) + ggplot2::geom_bar(colour="black",stat="identity") + ggplot2::coord_flip() +
       ggplot2::ylab(y_unit) + ggplot2::theme(text = ggplot2::element_text(size = 20)) + ggplot2::ggtitle("Ordered by runtime")
 
     lusweave::swfigure(out,print,p1,sw_option="height=9,width=16")
-    lusweave::swfigure(out,print,p2,sw_option="height=9,width=16")
     
     if (is.null(outfname)) outfname <- "runtime"
     lusweave::swclose(out,outfile=paste0(outfname,".pdf"),clean_output=TRUE)
