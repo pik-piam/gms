@@ -19,7 +19,7 @@
 #' @return A data frame containing the run names and runtime information in
 #' hours.
 #' @author David Klein
-#' @importFrom dplyr group_by summarize arrange
+#' @importFrom dplyr %>% group_by summarize arrange
 #' @export
 
 readRuntime <- function(path,plot=FALSE,types=NULL,coupled=FALSE,outfname=NULL) {
