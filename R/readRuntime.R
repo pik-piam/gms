@@ -25,8 +25,6 @@
 readRuntime <- function(path,plot=FALSE,types=NULL,coupled=FALSE,outfname=NULL) {
   run <- NULL
   runtime <- NULL
-  value <- NULL
-  total <- NULL
   cat("\nReading runtime for",length(path),"runs\n")
   for (d in path) {
     splittedpath <- strsplit(d, "/")[[1]]
