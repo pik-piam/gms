@@ -45,7 +45,7 @@ copy_input <- function(x, sourcepath, suffix=NULL, move=FALSE) {
     if(move & !(i != length(x) &  (x[i] %in% x[i+1:length(x)]))) {
       file.remove(inputpath)
     }
-    cat("   ",format(x[i],width=nmax)," -> ",outputpath, "\n")
+    cat("   ",format(inputpath,width=nmax)," -> ",outputpath, "\n")
   }
   cat("\n")
 }
