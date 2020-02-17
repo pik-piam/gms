@@ -19,7 +19,8 @@
 #' @return A data frame containing the run names and runtime information in
 #' hours.
 #' @author David Klein
-#' @importFrom dplyr %>% group_by_ summarize_ arrange_
+#' @importFrom rlang .data
+#' @importFrom dplyr %>% group_by summarize arrange
 #' @export
 
 readRuntime <- function(path,plot=FALSE,types=NULL,coupled=FALSE,outfname=NULL) {
@@ -96,7 +97,7 @@ readRuntime <- function(path,plot=FALSE,types=NULL,coupled=FALSE,outfname=NULL) 
 
     # Order runs descending by runtime
     # step 1: calculate total runtime for each run and order descending (in new data frame)
-    tot <- runtime %>% group_by_(~run) %>% summarize_(total = sum(~value)) %>% arrange_(~total)
+    tot <- runtime %>% group_by(.data$run) %>% summarize(total = sum(.data$value)) %>% arrange(.data$total)
     # step 2: use the order of runs in this new data frame to order levels or "run" in runtime accordingly
     runtime$run <- ordered(factor(runtime$run),levels=tot$run) 
 
