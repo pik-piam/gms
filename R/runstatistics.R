@@ -19,9 +19,9 @@
 #'  runstatistics(file=f,submit=tempdir())
 #' @export
 
-runstatistics <- function(file="runstatistics.Rda", overwrite=FALSE, submit=NULL, ...) {
+runstatistics <- function(file="runstatistics.Rda", overwrite=TRUE, submit=NULL, ...) {
   x <- list(...)
-  stats <- list(submitted=FALSE)
+  stats <- list()
   if(file.exists(file)) load(file)
   
   overlap <- intersect(names(x), names(stats))
@@ -31,11 +31,9 @@ runstatistics <- function(file="runstatistics.Rda", overwrite=FALSE, submit=NULL
   stats[names(x)] <- x[names(x)]
 
   if(!is.null(submit)) {
-    if(stats$submitted) stop("Statistics had been submitted already. Resubmission is currently not allowed. Please only submit your statistics when they are complete!")
     if(!dir.exists(submit)) {
       cat("Cannot access run statistics repository", submit, "Run statistics are not submitted.\n")
     } else {
-      stats$submitted <- TRUE
       stats$id <- as.character(round(as.numeric(Sys.time())*100000))
       fname <- paste0(stats$id,".Rda")
       save(stats, file=paste0(submit,"/",fname), compress="xz")
