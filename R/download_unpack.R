@@ -13,13 +13,14 @@
 #' no options are required the value has to be NULL. (e.g. 
 #' list("ftp://my_pw_protected_server.de/data"=list(user="me",password=12345), "http://free_server.de/dat"=NULL))
 #' @param debug switch for debug mode with additional diagnostic information
+#' @param unpack if switched off the source files are purley downloaded
 #' @return Information about the download process in form of a data.frame with data sets as row names and repositories
 #' (where it was downloaded from) and corresponding md5sum as columns
 #' @author Jan Philipp Dietrich
 #' @importFrom utils untar
 #' @export
 
-download_unpack <- function(input, targetdir="input", repositories=NULL, debug=FALSE) {
+download_unpack <- function(input, targetdir="input", repositories=NULL, debug=FALSE, unpack=TRUE) {
   
   if(is.list(input)) {
     files <- input$input
@@ -61,19 +62,27 @@ download_unpack <- function(input, targetdir="input", repositories=NULL, debug=F
     for(file in files) {
       path <- paste0(sub("/$","",repo),"/",file)
       if(grepl("://",repo)) {
-        tmpdir <- ifelse(debug,targetdir,tempdir())
-        tmp <- try(curl::curl_download(path,paste0(tmpdir,"/",file),handle=h),silent = !debug)
+        tmpdir <- ifelse((debug | !unpack),targetdir,tempdir())
+        tmp <- try(curl::curl_download(path,paste0(tmpdir,"/tmpdownloadfile"),handle=h),silent = !debug)
         if(!("try-error" %in% class(tmp))) {
           files <- files[-match(file,files)]
           found <- .unpack(file, paste0(tmpdir,"/",file), repo, found)
-        }
+          file.rename(paste0(tmpdir,"/tmpdownloadfile"),paste0(tmpdir,"/",file))
+        } 
       } else if(file.exists(path)) {
         files <- files[-match(file,files)]
         found <- .unpack(file, path, repo, found)
+        if(!unpack) {
+          file.copy(path,paste0(tmpdir,"/",file))
+          found <- .unpack(file, paste0(tmpdir,"/",file), repo, found)
+        } else {
+          found <- .unpack(file, path, repo, found)
+        }
       }
     }
     if(length(files)==0) break
   }
+  
   if(length(files)>0) {
     tmp <- paste0("Following files not found:\n  ",paste(files, collapse = "\n  "))
     warning(tmp)
@@ -85,21 +94,23 @@ download_unpack <- function(input, targetdir="input", repositories=NULL, debug=F
   } 
   #sort files in intial order and unpack
   found <- found[intersect(ifiles,rownames(found)),]
-  message("..unpack files..")
-  for(f in rownames(found)) {
-    message(" -> ",f)
-    untar(found[f,"path"],exdir=targetdir)
-  }
-  message("..done")
+  if(unpack) {
+    message("..unpack files..")
+    for(f in rownames(found)) {
+      message(" -> ",f)
+      untar(found[f,"path"],exdir=targetdir)
+    }
+    message("..done")
   
-  source_log <- paste0(targetdir,"/source_files.log")
-  if(file.exists(source_log)) {
-    previous_files <- readLines(source_log, warn=FALSE)
-    source_log_content <- c(ifiles,"","previously derived from:",previous_files)
-  } else {
-    source_log_content <- ifiles
+    source_log <- paste0(targetdir,"/source_files.log")
+    if(file.exists(source_log)) {
+      previous_files <- readLines(source_log, warn=FALSE)
+      source_log_content <- c(ifiles,"","previously derived from:",previous_files)
+    } else {
+      source_log_content <- ifiles
+    }
+    writeLines(source_log_content,source_log)
   }
-  writeLines(source_log_content,source_log)
   
   if(!debug) found$path <- NULL
   attr(found,"warnings") <- warnings()
