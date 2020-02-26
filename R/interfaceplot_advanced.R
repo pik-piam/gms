@@ -195,9 +195,9 @@ interfaceplot_advanced <- function(x = ".",
   
   # Start with the highlight groups, if they exist.
   if (!is.null(highlight_groups)) {
-    if (rlang::is_empty(nodes_left_to_assign)) break
-    
     for (hlgr in highlight_groups) {
+      if (rlang::is_empty(nodes_left_to_assign)) break
+      
       my_groups$name <- c(my_groups$name, hlgr$name)
       my_groups$color <- c(my_groups$color, hlgr$color)
       my_groups$shape <- c(my_groups$shape, hlgr$shape)
