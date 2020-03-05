@@ -25,6 +25,7 @@
 #' 
 manipulateConfig<-function (configFile, ...)
 {
+    maxchar <- 60
     tmp <- list(...)
     if(length(tmp)==1){
       if(is.list(tmp[[1]])){
@@ -35,12 +36,20 @@ manipulateConfig<-function (configFile, ...)
     type <- substring(configFile, nchar(configFile) - 2)
     if (type == "gms" | type == "inc") {
         for (i in names(tmp)) {
-          m[[paste(i,"_pattern1",sep="")]][1] <- paste("(\\$[sS][eE][tT][gG][lL][oO][bB][aA][lL][\\t ]*", i,"[\\t ]).*?( *!!|$)", sep = "")
-          m[[paste(i,"_pattern1",sep="")]][2] <- paste("\\1 ", tmp[[i]], "\\2", sep = "")
-          m[[paste(i,"_pattern2",sep="")]][1] <- paste("(^[\\t ]*(scalar|parameter|)s?[\\t ]*", i, "[\\t ][^/]*/)[^/]*", sep = "")
-          m[[paste(i,"_pattern2",sep="")]][2] <- paste("\\1 ", tmp[[i]], " ", sep = "")
-          m[[paste(i,"_pattern3",sep="")]][1] <- paste("((^|[\\t ])",i,"[ \\t]*=[ \\t]*[\"\']?)[^\"\';]*",sep = "")
-          m[[paste(i,"_pattern3",sep="")]][2] <- paste("\\1", tmp[[i]], sep = "")
+          if(length(tmp[[i]])>1) {
+            rpl <- capture.output(cat(paste0(tmp[[i]],", "),fill=maxchar))
+            rpl <- paste(rpl,collapse="\n\t\t")
+            rpl <- substr(rpl,1,nchar(rpl)-2)
+          } else {
+            rpl <- tmp[[i]]
+          }
+
+          m[[paste(i,"_pattern1",sep="")]][1] <- paste("(\\$[sS][eE][tT][gG][lL][oO][bB][aA][lL][\\t ]*", i,"[\\t ]).*?( *!!|\\n|$)", sep = "")
+          m[[paste(i,"_pattern1",sep="")]][2] <- paste("\\1 ", rpl, "\\2", sep = "")
+          m[[paste(i,"_pattern2",sep="")]][1] <- paste("((\\n|^)[\\t ]*(scalar|parameter|set|)s?[\\t ]*", i, "(|\\([^\\)]*\\))[\\t ][^/]*/)[^/]*", sep = "")
+          m[[paste(i,"_pattern2",sep="")]][2] <- paste("\\1 ", rpl, " ", sep = "")
+          m[[paste(i,"_pattern3",sep="")]][1] <- paste("((^|[\\n\\t ])",i,"[ \\t]*=[ \\t]*[\"\']?)[^\"\';]*",sep = "")
+          m[[paste(i,"_pattern3",sep="")]][2] <- paste("\\1", rpl, sep = "")
         }
     }
     else if (type == "cfg" | type == "R" | type == "r") {

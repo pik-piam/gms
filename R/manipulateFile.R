@@ -21,7 +21,7 @@
 #' 
 manipulateFile <- function(file,manipulations,...) {
   if(!is.list(manipulations)) manipulations <- list(manipulations)
-  f <- readLines(file)
+  f <- paste(readLines(file),collapse="\n")
   for(m in manipulations) {
     f <- gsub(m[1],m[2],f,perl=TRUE,...)
   }
