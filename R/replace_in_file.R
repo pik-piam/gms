@@ -4,7 +4,7 @@
 #' marked in the text file with an initial "##### R SECTION START (SUBJECT)
 #' #####" and "##### R SECTION END (SUBJECT) #####" as ending. The number of \#
 #' symbols can be chosen by the user, but there has to be at least one at the
-#' beginning and one at the beginning. Furthermore it is allowed to add further
+#' beginning and one at the end. Furthermore it is allowed to add further
 #' symbols at the beginning or the end of the line. "SUBJECT" is chosen by the
 #' user and is used for identification, if a text file has more than one R
 #' section.

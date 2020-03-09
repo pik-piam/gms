@@ -20,11 +20,12 @@
 #' types are level, marginal, upper and lower.
 #' @param ignore regular expression pattern for variables/equations which
 #' should be ignored by fulldataOutput
-#' @author Jan Philipp Dietrich
+#' @param loopset Set over which loop runs
+#' @author Jan Philipp Dietrich, Felicitas Beier
 #' @export
 #' @seealso \code{\link{readDeclarations}},\code{\link{replace_in_file}}
 
-fulldataOutput <- function(declarations_file="declarations.gms",definitions_file="postsolve.gms",warn=TRUE,types=c("level","marginal"),ignore="_dummy$") {
+fulldataOutput <- function(declarations_file="declarations.gms",definitions_file="postsolve.gms",warn=TRUE,types=c("level","marginal"),ignore="_dummy$",loopset="t") {
   if(!file.exists(declarations_file)) {
     if(warn) warning("Declarations file ",declarations_file," does not exist! No action taken!")
     return(FALSE)
@@ -41,8 +42,8 @@ fulldataOutput <- function(declarations_file="declarations.gms",definitions_file
     #if t is already part of the set do not add another t
     for(i in 1:length(out_names)) {
       tmp <- strsplit(d[i,"sets"],split = ",")
-      if(length(tmp$sets) > 0 & any(tmp$sets[1] == "t")) full_out <- c(full_out,sub(",,",",",paste(out_names[i],"(",d[i,"sets"],",type)",sep="")))
-      else full_out <- c(full_out,sub(",,",",",paste(out_names[i],"(t,",d[i,"sets"],",type)",sep="")))
+      if(length(tmp$sets) > 0 & any(tmp$sets[1] == loopset)) full_out <- c(full_out,sub(",,",",",paste(out_names[i],"(",d[i,"sets"],",type)",sep="")))
+      else full_out <- c(full_out,sub(",,",",",paste(out_names[i],"(",loopset,",",d[i,"sets"],",type)",sep="")))
     }
     d <- cbind(d,out_names,full_out)
     charmax <- max(nchar(d[,"full_out"]))

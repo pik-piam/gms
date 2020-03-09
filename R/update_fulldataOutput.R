@@ -12,11 +12,12 @@
 #' folder)
 #' @param corepath Core path within the model (relative to the model main
 #' folder)
-#' @author Jan Philipp Dietrich
+#' @param loopset Set over which loop runs
+#' @author Jan Philipp Dietrich, Felicitas Beier
 #' @export
 #' @seealso \code{\link{fulldataOutput}},\code{\link{replace_in_file}}
 
-update_fulldataOutput <- function(modelpath=".",modulepath="modules",corepath="core") {
+update_fulldataOutput <- function(modelpath=".",modulepath="modules",corepath="core",loopset="t") {
   sets.gms <- suppressWarnings(readLines(path(modelpath,corepath,"sets.gms")))
   types <- strsplit(grep("^[^a-z]*type",sets.gms,value=TRUE),"/")[[1]][2]
   types <- gsub(" ","",strsplit(types,",")[[1]])
@@ -26,7 +27,7 @@ update_fulldataOutput <- function(modelpath=".",modulepath="modules",corepath="c
   for(i in d1) {
     d2 <- base::list.dirs(path=path(modelpath,modulepath,i),full.names = FALSE,recursive = FALSE)
     for(j in d2) {
-      fulldataOutput(path(modelpath,modulepath,i,j,"declarations.gms"),path(modelpath,modulepath,i,j,"postsolve.gms"),types=types,warn=FALSE)
+      fulldataOutput(path(modelpath,modulepath,i,j,"declarations.gms"),path(modelpath,modulepath,i,j,"postsolve.gms"),types=types,warn=FALSE,loopset=loopset)
     }
   }
 }
