@@ -5,7 +5,7 @@
 #' 
 #' 
 #' @usage
-#' update_fulldataOutput(modelpath=".",modulepath="modules",corepath="core")
+#' update_fulldataOutput(modelpath=".",modulepath="modules",corepath="core",loopset="t")
 #' @param modelpath Path of the Model version that should be updated (main
 #' folder).
 #' @param modulepath Module path within the model (relative to the model main
