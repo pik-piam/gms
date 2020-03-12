@@ -1,7 +1,7 @@
 Package: lucode
 Type: Package
 Title: PIK Landuse Group Code Manipulation and Analysis Tools
-Version: 3.10.0
+Version: 3.10.1
 Date: 2020-03-12
 Authors@R: c(person("Jan Philipp", "Dietrich", email = "dietrich@pik-potsdam.de", role = c("aut","cre")),
              person("Anastasis", "Giannousakis", email = "giannou@pik-potsdam.de", role = "aut"),
@@ -18,4 +18,4 @@ License: BSD_2_clause + file LICENSE
 LazyData: no
 Encoding: UTF-8
 RoxygenNote: 7.0.2
-ValidationKey: 56832300
+ValidationKey: 56850633

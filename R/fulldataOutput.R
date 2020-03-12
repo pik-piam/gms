@@ -3,10 +3,6 @@
 #' Creates GAMS code which stores automatically the levels, bounds and
 #' marginals of all equations and variables in time depending parameters.
 #' 
-#' 
-#' @usage fulldataOutput(declarations_file="declarations.gms",
-#' definitions_file="postsolve.gms", warn=TRUE, types=c("level","marginal"),
-#' ignore="_dummy$",loopset="t")
 #' @param declarations_file A GAMS file containing declarations. The function
 #' will read declarations from here and add own declarations in an R
 #' environment as used by \code{\link{replace_in_file}} (used subject = OUTPUT
