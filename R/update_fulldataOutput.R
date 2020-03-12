@@ -2,10 +2,7 @@
 #' 
 #' Creates GAMS code which stores automatically the levels and marginals of all
 #' equations and variables in time depending parameters.
-#' 
-#' 
-#' @usage
-#' update_fulldataOutput(modelpath=".",modulepath="modules",corepath="core")
+#'  
 #' @param modelpath Path of the Model version that should be updated (main
 #' folder).
 #' @param modulepath Module path within the model (relative to the model main

@@ -28,6 +28,8 @@ readRuntime <- function(path,plot=FALSE,types=NULL,coupled=FALSE,outfname=NULL) 
   runtime <- NULL
   maindir <- getwd()
   
+  # ---- Read runtime data ----
+  
   cat("\nReading runtime for",length(path),"runs\n")
   for (d in path) {
     splittedpath <- strsplit(d, "/")[[1]]
@@ -35,9 +37,17 @@ readRuntime <- function(path,plot=FALSE,types=NULL,coupled=FALSE,outfname=NULL) 
     datafile <- paste0(d,"/runstatistics.rda")
     
     # try to read runtime data from runstatistics.rda
-    tmp <- NULL
-    start <- NULL
-    end <- NULL
+    tmp     <- NULL
+    start   <- NULL
+    end     <- NULL
+    section <- NULL
+    timePrepareStart <- NULL
+    timePrepareEnd   <- NULL
+    timeGAMSStart    <- NULL
+    timeGAMSEnd      <- NULL
+    timeOutputStart  <- NULL
+    timeOutputEnd    <- NULL
+    
     if (!file.exists(datafile)) {
       cat("No file found ",datafile,"\n")
     } else if (file.info(datafile)$size==0) {
@@ -46,23 +56,24 @@ readRuntime <- function(path,plot=FALSE,types=NULL,coupled=FALSE,outfname=NULL) 
       # if file exists and it's file size is >0: load it
       stats <- NULL
       load(datafile)
-      #  # read GAMS runtime from file
-      #  if(!is.null(stats) & !is.null(stats$runtime)) {
-      #    tmp <- stats$runtime
-      #  } else {
-      #    cat("No runtime information found in",datafile,"\n")
-      #  }
-      # read start end end of run from file
-      if(!is.null(stats) & !is.null(stats$starttime)) {
+      # try to load detailed runtime information
+      if(!is.null(stats) & !is.null(stats$timePrepareStart)) {
+        timePrepareStart <- stats$timePrepareStart
+        timePrepareEnd   <- stats$timePrepareEnd  
+        timeGAMSStart    <- stats$timeGAMSStart   
+        timeGAMSEnd      <- stats$timeGAMSEnd     
+        timeOutputStart  <- stats$timeOutputStart 
+        timeOutputEnd    <- stats$timeOutputEnd
+      } else if (!is.null(stats) & !is.null(stats$starttime)){
+        # if no detailed information is available load the old one (it's only the gams runtime)
         start <- stats$starttime
         end   <- stats$endtime
-        #cat("Found runtime information in",datafile,"\n")
       }
     }
     
     # if no start and end was extractable from runstatistics.rda 
     # conclude it from timestamps of the files in the results folder
-    if (is.null(start)) {
+    if (is.null(end) & is.null(timePrepareEnd) & is.null(timeGAMSEnd) & is.null(timeOutputEnd)) {
       setwd(d)
       # find all files
       info <- file.info(dir())
@@ -74,6 +85,7 @@ readRuntime <- function(path,plot=FALSE,types=NULL,coupled=FALSE,outfname=NULL) 
       
       if ("report.rds" %in% rownames(info)) {
         # if run has finished normally the report.rds file should exist. In this case take the newest file
+        cat("Using the newest file in",runfolder,"as end\n")
         end <- tail(info$mtime,n=1)
       } else {
         # if report.rds does not exist, this indicates that the run did not finish properly and the mif file has been generated manually later without also producing the report.rds
@@ -84,14 +96,36 @@ readRuntime <- function(path,plot=FALSE,types=NULL,coupled=FALSE,outfname=NULL) 
       setwd(maindir)
     }
     
-    # if runtime data was found
-    if(!all(c(is.null(tmp),is.null(start),is.null(end)))) {
+    # if (total) runtime data was found
+    if(all(c(!is.null(start),!is.null(end)))) {
       # need to be transformed to NA otherwise rbind would not work if one of them is NULL
       tmp <- end-start
       units(tmp)="hours"
       if(is.null(start)) start <- NA
       if(is.null(end))   end   <- NA
-      new <- data.frame(run=runfolder,type="NA",value=tmp,start=start,end=end,stringsAsFactors=FALSE)
+      new <- data.frame(run=runfolder,type="NA", section = "total", value=tmp,start=start,end=end,stringsAsFactors=FALSE)
+      runtime <- rbind(runtime,new)
+    }
+    
+    # if detailed runtime data was found append it
+    if(!is.null(timePrepareEnd)) {
+      tmp <- timePrepareEnd-timePrepareStart
+      units(tmp)="hours"
+      new <- data.frame(run=runfolder,type="NA", section = "prep",value=tmp,start=timePrepareStart,end=timePrepareEnd,stringsAsFactors=FALSE)
+      runtime <- rbind(runtime,new)
+    }
+
+    if(!is.null(timeGAMSEnd)) {
+      tmp <- timeGAMSEnd-timeGAMSStart
+      units(tmp)="hours"
+      new <- data.frame(run=runfolder,type="NA", section = "GAMS",value=tmp,start=timeGAMSStart,end=timeGAMSEnd,stringsAsFactors=FALSE)
+      runtime <- rbind(runtime,new)
+    }
+
+    if(!is.null(timeOutputEnd)) {
+      tmp <- timeOutputEnd-timeOutputStart
+      units(tmp)="hours"
+      new <- data.frame(run=runfolder,type="NA", section = "output",value=tmp,start=timeOutputStart,end=timeOutputEnd,stringsAsFactors=FALSE)
       runtime <- rbind(runtime,new)
     }
   }
@@ -112,7 +146,9 @@ readRuntime <- function(path,plot=FALSE,types=NULL,coupled=FALSE,outfname=NULL) 
   if(is.null(runtime)) {warning("No runtime information found for all runs!")}
   res <- runtime #save runtime for returning it before it is modified below
   
-  # generate plots
+  saveRDS(runtime,file="runtime.rds")
+  
+  # ----  Generate plots ----
   if (plot) {
     cat("\nPreparing pdf with runtime plots.\n")
     out<-lusweave::swopen(template="david")
@@ -128,8 +164,11 @@ readRuntime <- function(path,plot=FALSE,types=NULL,coupled=FALSE,outfname=NULL) 
       runtime$it <- itnumber
       runtime$it <- as.numeric(runtime$it)
       
-      # plot all runs into one plot
-      p_iterations <- ggplot2::ggplot(data=runtime, ggplot2::aes_string(x="it", y="value", fill="type")) + 
+      # plot runtime over iterations of all runs
+      # Calculate total runtime from sub sections
+      tot <- runtime %>% group_by(.data$run,.data$type,.data$it) %>% summarize(total = sum(.data$value))
+
+      p_iterations <- ggplot2::ggplot(data=tot, ggplot2::aes_string(x="it", y="total", fill="type")) + 
         ggplot2::geom_bar(stat="identity", position=ggplot2::position_dodge()) +
         ggplot2::scale_x_continuous(breaks = runtime$it) + 
         ggplot2::facet_wrap(~run) + 
@@ -165,14 +204,24 @@ readRuntime <- function(path,plot=FALSE,types=NULL,coupled=FALSE,outfname=NULL) 
     lusweave::swfigure(out,print,p_sorted,sw_option="height=9,width=16")
     
     # sort runs and levels by starttime
-    dat <- runtime %>% arrange(.data$start) %>% mutate(run = factor(.data$run, levels=rev(unique(.data$run)), ordered=TRUE))
-    
-    p_timeline <- ggplot2::ggplot(dat, ggplot2::aes_string(color = ifelse(is.null(types),"NULL","type"))) +
-      ggplot2::geom_segment(ggplot2::aes_string(x="start", xend="end", y="run", yend="run"), size=3) +
+    #dat <- runtime %>% arrange(.data$start) %>% mutate(run = factor(.data$run, levels=rev(unique(.data$run)), ordered=TRUE))
+    dat <- runtime %>% arrange(.data$start) %>% mutate(run = factor(.data$run, levels=rev(unique(.data$run)), ordered=TRUE),
+                                                   section = factor(.data$section, levels=c("total","prep","GAMS","output"), ordered=TRUE))
+
+    p_timeline <- ggplot2::ggplot(dat, ggplot2::aes_string(color = ifelse(is.null(types),"NULL","type"), alpha="section")) +
+      ggplot2::geom_segment(ggplot2::aes_string(x="start", xend="end", y="run", yend="run"), size=6) + 
+      ggplot2::scale_alpha_manual(values=c("total"=1,"prep"=0.5,"GAMS"=1,"output"=0.5)) +
+      ggplot2::scale_color_manual(values=c("rem"="royalblue3","mag"="seagreen")) + 
       ggplot2::ylab("") + 
       ggplot2::xlab("") + 
-      ggplot2::theme(legend.position = c(.95, .9)) #+ 
-      #ggplot2::scale_x_datetime(labels = date_format("%H:%M\n%b %d", tz="CET")) #, date_minor_breaks = "2 hours")
+      ggplot2::theme(legend.justification=c(1,1), legend.position = c(0.99, 0.99), legend.title=ggplot2::element_blank())
+    
+    #ggplot2::ggplot(dat, ggplot2::aes_string(color = ifelse(is.null(types),"NULL","type"))) +
+    #      ggplot2::geom_segment(ggplot2::aes_string(x="start", xend="end", y="run", yend="run"), size=3) +
+    #      ggplot2::ylab("") + 
+    #      ggplot2::xlab("") + 
+    #      ggplot2::theme(legend.position = c(.95, .9)) #+ 
+    #      #ggplot2::scale_x_datetime(labels = date_format("%H:%M\n%b %d", tz="CET")) #, date_minor_breaks = "2 hours")
     
     lusweave::swfigure(out,print,p_timeline,sw_option="height=9,width=16")
     
@@ -214,7 +263,7 @@ readRuntime <- function(path,plot=FALSE,types=NULL,coupled=FALSE,outfname=NULL) 
     lusweave::swlatex(out,paste0(" Total ",round(sum(as.numeric(x$total_time,units="days")),1)," days\\newline"))
     
     if (is.null(outfname)) outfname <- "runtime"
-    lusweave::swclose(out,outfile=paste0(outfname,".pdf"),clean_output=FALSE)
+    lusweave::swclose(out,outfile=paste0(outfname,".pdf"),clean_output=TRUE)
   }
   invisible(res)
 }
