@@ -214,7 +214,7 @@ readRuntime <- function(path,plot=FALSE,types=NULL,coupled=FALSE,outfname=NULL) 
       ggplot2::scale_color_manual(values=c("rem"="royalblue3","mag"="seagreen")) + 
       ggplot2::ylab("") + 
       ggplot2::xlab("") + 
-      ggplot2::theme(legend.position = c(.95, .9)) 
+      ggplot2::theme(legend.justification=c(1,1), legend.position = c(0.99, 0.99), legend.title=ggplot2::element_blank())
     
     #ggplot2::ggplot(dat, ggplot2::aes_string(color = ifelse(is.null(types),"NULL","type"))) +
     #      ggplot2::geom_segment(ggplot2::aes_string(x="start", xend="end", y="run", yend="run"), size=3) +
