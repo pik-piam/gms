@@ -61,7 +61,7 @@ manipulateConfig<-function (configFile, ...)
     }
     else if (type == "cmd" | type == ".sh") {
         for (i in names(tmp)) {
-            m[[i]][1] <- paste("((^|[\\t ])",i,"[ \\t]*=[ \\t]*[\"\']?)[^\"\']*",sep = "")
+            m[[i]][1] <- paste("((^|[\\t ])",i,"[ \\t]*=[ \\t]*[\"\']?)[^\"\'\\n]*",sep = "")
             m[[i]][2] <- paste("\\1", tmp[[i]], sep = "")
         }
     }
