@@ -42,9 +42,9 @@ setScenario <- function(cfg,scenario,scenario_config="config/scenario_config.csv
         stop("Wrong input format: cfg is neither a list nor a character!")
       }
     }
-    tmp <- read.csv(scenario_config,as.is=TRUE,check.names=FALSE)
+    tmp <- try(read.csv(scenario_config,as.is=TRUE,check.names=FALSE), silent=TRUE)
     #check whether reading the table was succesfull, if not try to read it differently
-    if(all(dimnames(tmp)[[1]]==as.character(1:dim(tmp)[1]))) {
+    if(class(tmp)=="try-error" || all(dimnames(tmp)[[1]]==as.character(1:dim(tmp)[1]))) {
       tmp <- read.csv(scenario_config,as.is=TRUE,sep=";",check.names=FALSE)
       dimnames(tmp)[[1]] <- tmp[,1]
       tmp <- tmp[,-1]
@@ -69,6 +69,7 @@ setScenario <- function(cfg,scenario,scenario_config="config/scenario_config.csv
       if(from!=to & to!=""){
         cat("  Update setting | ",i,":",from, " -> ",to,"\n")
         if(suppressWarnings(!is.na(as.numeric(to)))) to <- as.numeric(to)
+        if(grepl(",",to,fixed=TRUE)) to <- strsplit(to,",")[[1]]
         # finally set the switch
         eval(parse(text=paste0("cfg$",i, "<- to")))
       }   
