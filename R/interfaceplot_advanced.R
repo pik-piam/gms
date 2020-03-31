@@ -400,7 +400,7 @@ interfaceplot_advanced <- function(x = ".",
       params$edge.labels <- lab_edges
       # Change some default edge.label parameters, if not already given by ...
       if (!"edge.label.position" %in% names(params)) params$edge.label.position <- 0.4
-      if (!"edge.label.margin" %in% names(params)) params$edge.label.margin <- 0.1
+      if (!"edge.label.margin" %in% names(params)) params$edge.label.margin <- 0.02
       if (!"edge.label.cex" %in% names(params)) params$edge.label.cex <- if_else(num_nodes<=9, 
                                                                                  0.65, 
                                                                                  0.65-0.05*(num_nodes-9))
