@@ -63,6 +63,6 @@ mergestatistics <- function(dir=".", file=NULL, renew=FALSE, quickcheck=FALSE, p
   names(out) <- make.unique(names(out))
   out <- out[!is.na(out$user),]
   setwd(cwd)
-  if(!is.null(file)) saveRDS(out, file=file)
+  if(!is.null(file)) saveRDS(out, file=file, version = 2)
   return(out)
 }
