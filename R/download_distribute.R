@@ -42,7 +42,7 @@ download_distribute <- function(files,
   
   ########## DATA DOWNLOAD ###################################################
   # load data from source and unpack it
-  filemap <- download_unpack(input=files, targetdir="input", repositories=repositories, debug=FALSE)
+  filemap <- download_unpack(input=files, targetdir="input", repositories=repositories, debug=debug)
   
   ########## COPY MAGPIE INPUT FILES #########################################
   # In the following input files in MAgPIE format are converted (if required) to
