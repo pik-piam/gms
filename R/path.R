@@ -7,7 +7,6 @@
 #' 
 #' 
 #' @aliases path path
-#' @usage path(..., ftype=NULL)
 #' @param ... the folders and the file name that should be pasted to a
 #' file/folder path
 #' @param ftype file type

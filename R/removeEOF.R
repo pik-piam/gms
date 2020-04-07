@@ -3,7 +3,6 @@
 #' remove EOF text from all files in the code
 #' 
 #' 
-#' @usage removeEOF(path = ".",filetypes=c("inc","prn","gms"))
 #' @param path path to the main folder of the model
 #' @param filetypes file types the function should be applied to
 #' @author Anastasis Giannousakis

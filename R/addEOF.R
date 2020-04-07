@@ -3,7 +3,6 @@
 #' Add EOF text to all files in the code in order to ease debugging
 #' 
 #' 
-#' @usage addEOF(path = ".",filetypes=c("inc","prn","gms"))
 #' @param path path to the main folder of the model
 #' @param filetypes file types the function should be applied to
 #' @author Anastasis Giannousakis

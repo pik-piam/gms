@@ -5,8 +5,6 @@
 #' config. Settings not defined by the scenario remain unchanged.
 #' 
 #' 
-#' @usage
-#' setScenario(cfg,scenario,scenario_config="config/scenario_config.csv")
 #' @param cfg Input config which should be adapted to the given scenario
 #' @param scenario name of scenario (e.g. "SSP2"). Can also be a vector of
 #' scenarios. In this case scenario settings are applied in the given order

@@ -6,8 +6,6 @@
 #' This function is based on an idea posted at stack overflow:
 #' http://stackoverflow.com/questions/1358003/tricks-to-manage-the-available-memory-in-an-r-session
 #' 
-#' @usage memCheck(order.by="Size",decreasing=TRUE, n=NULL,
-#' envir=parent.frame(), gc=TRUE)
 #' @param order.by Column based on which the data should be sorted
 #' @param decreasing Determines whether the values should be in an increasing
 #' or decreasing order

@@ -4,7 +4,6 @@
 #' manipulate GAMS sourcecode files.
 #' 
 #' 
-#' @usage manipulateFile(file, manipulations,...)
 #' @param file a connection object or a character string describing the file,
 #' that should be manipulated.
 #' @param manipulations A list of 2 element vectors, containing the search

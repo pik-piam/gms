@@ -5,7 +5,6 @@
 #' packages are created (for zip files a Windows system is required).
 #' 
 #' 
-#' @usage maintain_libraries(libpath=".")
 #' @param libpath Parent path of the library folder
 #' @author Jan Philipp Dietrich
 #' @export

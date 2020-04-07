@@ -8,8 +8,6 @@
 #' module which does not exist, not allowed setting combinations.
 #' 
 #' 
-#' @usage check_config(icfg, reference_file="config/default.cfg",
-#' modulepath="modules/", settings_config=NULL)
 #' @param icfg Input config which should be checked for consistency (either as
 #' the config itself or as a file path linking to the config)
 #' @param reference_file Reference config which is having the right format

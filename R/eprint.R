@@ -4,7 +4,6 @@
 #' to use for a log-file
 #' 
 #' 
-#' @usage eprint(var_name, envir=parent.frame())
 #' @param var_name name of the variable that should be printed as string
 #' @param envir environment from which the variable should be read (by default
 #' the environment from which the function is called)

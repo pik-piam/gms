@@ -4,7 +4,6 @@
 #' in hours and is the runtime of GAMS.
 #' 
 #' 
-#' @usage readRuntime(path,plot=FALSE,types=NULL,coupled=FALSE,outfname=NULL)
 #' @param path Path to a run or a vector of paths.
 #' @param plot Logical indicating whether the output should be plotted to a pdf
 #' with the name runtime.pdf.

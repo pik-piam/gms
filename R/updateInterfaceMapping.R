@@ -3,7 +3,6 @@
 #' Function to update the mapping between interfaces and their origin modules.
 #' 
 #' 
-#' @usage updateInterfaceMapping(path=".",modulepath="modules")
 #' @param path path of the main folder of the model
 #' @param modulepath path to the module folder relative to "path"
 #' @author Jan Philipp Dietrich

@@ -3,7 +3,6 @@
 #' Extract module information of a GAMS model.
 #' 
 #' 
-#' @usage getModules(modulepath)
 #' @param modulepath The path where the modules are stored.
 #' @return A matrix containing the different modules with name, corresponding
 #' module number and corresponding realizations

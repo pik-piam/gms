@@ -5,7 +5,6 @@
 #' folders.
 #' 
 #' 
-#' @usage findCoupledruns(resultsfolder)
 #' @param resultsfolder Path to an output folder.
 #' @return A vector containing the names of the scenarios.
 #' @author David Klein

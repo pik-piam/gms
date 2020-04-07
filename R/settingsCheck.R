@@ -5,7 +5,6 @@
 #' realization which does not exist.
 #' 
 #' 
-#' @usage settingsCheck(path=".",modulepath="modules")
 #' @param path path of the main folder of the model
 #' @param modulepath path to the module folder relative to "path"
 #' @return Nothing is returned.

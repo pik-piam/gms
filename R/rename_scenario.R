@@ -5,7 +5,6 @@
 #' This can be useful if the initial name of a run was not meaningful. However, inconsistencies will
 #' remain, since the function will NOT rename the scenario in the list file, the gdx, and the results database.
 #' 
-#' @usage rename_scenario(map,keep_time_stamp = FALSE)
 #' @param map Named vector, containing the new scenario names as elements and the corresponding old folder names as the emelents' names.
 #' @param keep_time_stamp Logical indicating whether timestamp of old folder name should be transferred to new folder name or not (default = FALSE).
 #' @author David Klein

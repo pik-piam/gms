@@ -4,7 +4,6 @@
 #' "name=value" and converts it to an appropriate format
 #' 
 #' 
-#' @usage extract_arguments(input_arg)
 #' @param input_arg string of the structure "name=value"
 #' @return \item{value }{the value (right-hand-side) of the string converted
 #' into an appropriate format}

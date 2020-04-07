@@ -3,7 +3,6 @@
 #' Cleans GAMS code supplied from empty lines and comments.
 #' 
 #' 
-#' @usage GAMScodeFilter(x)
 #' @param x A vector with lines of GAMS code (as you get by reading the code
 #' with readLines)
 #' @return The cleaned GAMS code

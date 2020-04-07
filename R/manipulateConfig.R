@@ -6,7 +6,6 @@
 #' replacement!
 #' 
 #' 
-#' @usage manipulateConfig(configFile, ...)
 #' @param configFile a character string containing the name of the
 #' configuration file, that should be manipulated. Supported file formats are
 #' at the moment "gms", "inc", "cfg" (R-syntax), "php", "opt" and "cmd". Other

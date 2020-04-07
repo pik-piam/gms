@@ -4,7 +4,6 @@
 #' used library paths and installed libraries)
 #' 
 #' 
-#' @usage setup_info()
 #' @return A list with information about the current session and the currently
 #' used R setup.
 #' @author Jan Philipp Dietrich

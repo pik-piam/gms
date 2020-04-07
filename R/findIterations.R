@@ -5,7 +5,6 @@
 #' sorted by the modification time of the respective fulldata.gdx
 #' 
 #' 
-#' @usage findIterations(runname,modelpath=".",latest=FALSE)
 #' @param runname Scenarioname or vector of scenarionames.
 #' @param modelpath Path or vector of paths where iterations are searched for.
 #' @param latest Logical indicating if only the latest iteration of a runname

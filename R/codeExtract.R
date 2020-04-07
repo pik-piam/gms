@@ -3,7 +3,6 @@
 #' Returns aggregated and cleaned GAMS code together with declaration matrix
 #' 
 #' 
-#' @usage codeExtract(codeFiles,name)
 #' @param codeFiles A vector of file names of GAMS code files.
 #' @param name A name indicating what collection of code files this is (e.g.
 #' module name)

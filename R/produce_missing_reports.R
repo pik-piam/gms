@@ -5,7 +5,6 @@
 #' checks for the remaining runs whether there is a reporting. Produces the 
 #' reporting if it is missing.
 #' #' 
-#' @usage produce_missing_reports(modeldir)
 #' @param modeldir Path to the main folder of REMIND or MAgPIE.
 #' @importFrom utils read.delim
 #' @author David Klein

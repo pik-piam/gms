@@ -3,7 +3,6 @@
 #' Reads all setglobals given in a GAMS code and returns them.
 #' 
 #' 
-#' @usage readSetglobals(file)
 #' @param file A gams file or a vector containing GAMS code.
 #' @return A vector of values the setglobal variables are set to with setglobal
 #' variables as names.

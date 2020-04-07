@@ -5,7 +5,6 @@
 #' object of module xy,...)
 #' 
 #' 
-#' @usage checkSwitchAppearance(code)
 #' @param code Model code returned by \code{\link{codeExtract}}
 #' @return A list with three elements: switches, appearance and type. Switches
 #' is a vector containing all switches. The names of the vector contain the

@@ -4,7 +4,6 @@
 #' a single GAMS file.
 #' 
 #' 
-#' @usage singleGAMSfile(modelpath=".",mainfile="main.gms",output="full.gms")
 #' @param modelpath The path where the model is stored
 #' @param mainfile The path to the main gams file (relative to the model path)
 #' @param output Name of the single output GAMS file.

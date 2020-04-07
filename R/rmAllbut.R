@@ -5,7 +5,6 @@
 #' Helps to clean the workspace. Only objects specified in \code{...} survive.
 #' Specify clean =TRUE to really free the memory.
 #' 
-#' @usage rmAllbut(...,list=character(),clean=TRUE)
 #' @param ... Objects that should be kept
 #' @param list List specifying the objects to be kept. Same as in
 #' \code{\link[base]{rm}}.
