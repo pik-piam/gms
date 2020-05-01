@@ -178,9 +178,9 @@ readRuntime <- function(path,plot=FALSE,types=NULL,coupled=FALSE,outfname=NULL) 
     }
     
     # Order runs descending by runtime
-    # step 1: calculate total runtime for each run and order descending (in new data frame)
+    # step 1: calculate total runtime for each run and order ascending (in new data frame)
     tot <- runtime %>% group_by(.data$run) %>% summarize(total = sum(.data$value)) %>% arrange(.data$total)
-    # step 2: use the order of runs in this new data frame to order levels or "run" in runtime accordingly
+    # step 2: use the order of runs in this new data frame to order levels of "run" in runtime accordingly
     runtime$run <- ordered(factor(runtime$run),levels=tot$run) 
     
     # Plot: compare runs of all scenarios
@@ -202,8 +202,7 @@ readRuntime <- function(path,plot=FALSE,types=NULL,coupled=FALSE,outfname=NULL) 
     
     lusweave::swfigure(out,print,p_sorted,sw_option="height=9,width=16")
     
-    # sort runs and levels by starttime
-    #dat <- runtime %>% arrange(.data$start) %>% mutate(run = factor(.data$run, levels=rev(unique(.data$run)), ordered=TRUE))
+    # sort runs and levels by starttime (to have the right order in the plots)
     dat <- runtime %>% arrange(.data$start) %>% mutate(run = factor(.data$run, levels=rev(unique(.data$run)), ordered=TRUE),
                                                    section = factor(.data$section, levels=c("total","prep","GAMS","output"), ordered=TRUE))
 
@@ -232,7 +231,7 @@ readRuntime <- function(path,plot=FALSE,types=NULL,coupled=FALSE,outfname=NULL) 
     
     #cat("Average runtime:","\n")
     lusweave::swlatex(out,"Average runtime:\\newline")
-    x <- dat %>% group_by(.data$model) %>% summarize(duration_single_mean = mean(.data$duration))
+    x <- dat %>% group_by(.data$model,.data$run) %>% summarize(total=sum(.data$duration)) %>% summarize(duration_single_mean = mean(.data$total))
     for (m in x$model) {
       #cat("  ",m, round(x[x$model==m,]$duration_single_mean,1),"hours \n")
       lusweave::swlatex(out,paste0(" ",m," ",round(x[x$model==m,]$duration_single_mean,1)," hours\\newline" ))
@@ -244,7 +243,7 @@ readRuntime <- function(path,plot=FALSE,types=NULL,coupled=FALSE,outfname=NULL) 
     
     #cat("Number of runs:\n")
     lusweave::swlatex(out,"Number of runs:\\newline")
-    x <- dat %>% group_by(.data$model) %>% summarize(no_of_runs = length(.data$model))
+    x <- dat %>% group_by(.data$model,.data$section) %>% summarize(no_of_runs = length(.data$model)) %>% summarize(no_of_runs = mean(.data$no_of_runs))
     for (m in x$model) {
       #cat("  ",m, x[x$model==m,]$no_of_runs,"\n")
       lusweave::swlatex(out,paste0(m," ",x[x$model==m,]$no_of_runs,"\\newline"))
