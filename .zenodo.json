@@ -1,0 +1,31 @@
+{
+  "title": "lucode: PIK Landuse Group Code Manipulation and Analysis Tools",
+  "version": "3.18.0",
+  "description": "<p>A collection of tools which allow to manipulate and analyze code.<\/p>",
+  "creators": [
+    {
+      "name": "Dietrich, Jan Philipp"
+    },
+    {
+      "name": "Klein, David"
+    },
+    {
+      "name": "Giannousakis, Anastasis"
+    },
+    {
+      "name": "Baumstark, Lavinia"
+    },
+    {
+      "name": "Bonsch, Markus"
+    },
+    {
+      "name": "Bodirsky, Benjamin Leon"
+    },
+    {
+      "name": "Beier, Felicitas"
+    },
+    {
+      "name": "Koch, Johannes"
+    }
+  ]
+}

@@ -13,8 +13,9 @@
 #' @param lib Path to the package
 #' @param cran If cran-like test is needed
 #' @param update_type 1 if the update is a major revision, 2 (default) for minor, 3 for patch, 4 only for packages in development stage
-#' @author Anastasis Giannousakis, Jan-Philipp Dietrich, Markus Bonsch
+#' @author Jan Philipp Dietrich, Anastasis Giannousakis, Markus Bonsch
 #' @seealso \code{\link{codeExtract}},\code{\link{readDeclarations}}
+#' @importFrom citation package2zenodo
 #' @export
 #' @examples
 #' 
@@ -150,9 +151,10 @@ buildLibrary<-function(lib=".",cran=TRUE, update_type=NULL){
   }
   
   ############################################################
-  # Write the modified description files
+  # Write the modified description files and update metadata
   ############################################################
   writeLines(descfile,"DESCRIPTION")
+  package2zenodo(".")
   
   ############################################################
   # Verbosity for version information and git commands
