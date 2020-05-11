@@ -160,11 +160,12 @@ buildLibrary<-function(lib=".",cran=TRUE, update_type=NULL){
     descfile <- c(descfile,vkey)
   }
   
-  ############################################################
-  # Write the modified description files and update metadata
-  ############################################################
+  ##################################################################
+  # Write the modified description files, update metadata and readme
+  ##################################################################
   writeLines(descfile,"DESCRIPTION")
   package2zenodo(".")
+  package2readme(".")
   
   ############################################################
   # Verbosity for version information and git commands

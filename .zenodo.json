@@ -1,6 +1,6 @@
 {
-  "title": "lucode: PIK Landuse Group Code Manipulation and Analysis Tools",
-  "version": "3.18.1",
+  "title": "lucode: Code Manipulation and Analysis Tools",
+  "version": "3.19.0",
   "description": "<p>A collection of tools which allow to manipulate and analyze code.<\/p>",
   "creators": [
     {
