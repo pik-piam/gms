@@ -22,6 +22,27 @@
 #' \dontrun{buildLibrary()}
 #' 
 buildLibrary<-function(lib=".",cran=TRUE, update_type=NULL){
+
+    get_line <- function(){
+    # gets characters (line) from the terminal or from a connection
+    # and returns it
+    if(interactive()){
+      s <- readline()
+    } else {
+      con <- file("stdin")
+      s <- readLines(con, 1, warn=FALSE)
+      on.exit(close(con))
+    }
+    return(s);
+  }  
+  
+  didYouPull <- function() {
+    cat("Is your repository up-to-date? Did you pull immediatly before running this check? (yes/no)") 
+    s <- get_line()
+    if(!(tolower(s) %in% c("y","yes"))) stop("Please update your repository first, before you proceed!")
+  }
+  didYouPull()
+  
   OS<-Sys.info()["sysname"]
   thisdir<-getwd()
   if(lib!=".") setwd(lib)
@@ -93,18 +114,7 @@ buildLibrary<-function(lib=".",cran=TRUE, update_type=NULL){
     old_version <- old_version[1,1:max(upt,defLengths)]
     return(old_version)
   }
-  get_line <- function(){
-    # gets characters (line) from the terminal or from a connection
-    # and returns it
-    if(interactive()){
-      s <- readline()
-    } else {
-      con <- file("stdin")
-      s <- readLines(con, 1, warn=FALSE)
-      on.exit(close(con))
-    }
-    return(s);
-  }
+
   
   choose_module <- function(Rfolder,title="Package check successful! Please choose an update type") {
     update_type <- c("major revision (for major rewrite of the whole package)", 
