@@ -65,6 +65,9 @@ updateRepo <- function(path=".", check=TRUE, force_rebuild=FALSE, clean=FALSE, p
     curversion <- tryCatch(ap[d,"Version"],error=function(e)return(0))
     setwd(d)
     vkey <- validkey()
+    pattern <- paste0(d,"_(.*)\\.tar\\.gz")
+    build_version <- max(as.numeric_version(sub(pattern,"\\1",dir("..",pattern=pattern))))
+    
     if(as.numeric_version(curversion) < as.numeric_version(vkey$version) | force_rebuild) {
       if(vkey$valid | !check | force_rebuild) {
         error <- NULL
@@ -80,6 +83,15 @@ updateRepo <- function(path=".", check=TRUE, force_rebuild=FALSE, clean=FALSE, p
       } else {
         message(".:: ",fd," ",curversion," -> ",vkey$version," invalid commit ::.")
         if(dir.exists(".git")) system("git --no-pager show -s --format='(%h) %s \n%an <%ae>' HEAD")
+      }
+    } else if(as.numeric_version(curversion)==as.numeric_version(vkey$version) && 
+              as.numeric_version(curversion)!=build_version){ 
+      error <- try(devtools::build())
+      if("try-error" %in% class(error)) {
+        message(".:: ",fd," ",curversion," -> package build failed ::.")
+        if(dir.exists(".git")) system("git --no-pager show -s --format='(%h) %s \n%an <%ae>' HEAD")
+      } else {
+        message(".:: ",fd," ",curversion," -> package build success ::.")
       }
     } else message(".:: ",fd," ",format(curversion, width=10)," ok ::.")
     setwd("..")
