@@ -1,7 +1,7 @@
 Package: lucode
 Type: Package
 Title: Code Manipulation and Analysis Tools
-Version: 3.19.2
+Version: 3.19.3
 Date: 2020-05-13
 Authors@R: c(person("Jan Philipp", "Dietrich", email = "dietrich@pik-potsdam.de", role = c("aut","cre")),
              person("David", "Klein", role = "aut"),
@@ -20,4 +20,4 @@ License: BSD_2_clause + file LICENSE
 LazyData: no
 Encoding: UTF-8
 RoxygenNote: 7.1.0
-ValidationKey: 58716840
+ValidationKey: 58735235
