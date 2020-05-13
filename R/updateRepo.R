@@ -65,7 +65,7 @@ updateRepo <- function(path=".", check=TRUE, force_rebuild=FALSE, clean=FALSE, p
     curversion <- tryCatch(ap[d,"Version"],error=function(e)return(0))
     setwd(d)
     vkey <- validkey()
-    pattern <- paste0(d,"_(.*)\\.tar\\.gz")
+    pattern <- paste0("^",d,"_(.*)\\.tar\\.gz")
     build_version <- max(as.numeric_version(sub(pattern,"\\1",dir("..",pattern=pattern))))
     
     if(as.numeric_version(curversion) < as.numeric_version(vkey$version) | force_rebuild) {
