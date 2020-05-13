@@ -75,7 +75,7 @@ codeCheck <- function(path=".",modulepath="modules", core_files = c("core/*.gms"
     return(options[identifier])
   }
   
-  cat("\n Running codeCheck...\n")
+  message("\n Running codeCheck...")
   ptm <- proc.time()["elapsed"]
   all_files <-list.files(path=path,pattern="\\.gms$",recursive=TRUE)
   module_files <-  path(path,grep(paste("^",modulepath,sep=""),all_files,value=TRUE))
@@ -100,7 +100,7 @@ codeCheck <- function(path=".",modulepath="modules", core_files = c("core/*.gms"
 
   gams <- list(code=c(core$code,modules$code),declarations=rbind(core$declarations,modules$declarations),not_used = modules$not_used)
 
-  cat(" Finished data collection...            (time elapsed:",format(proc.time()["elapsed"]-ptm,width=6,nsmall=2,digits=2),")\n")
+  message(" Finished data collection...            (time elapsed: ",format(proc.time()["elapsed"]-ptm,width=6,nsmall=2,digits=2),")")
   if(debug) gams_backup <- gams
 
   # from here on core contains the core code (without comments) and the corresponding declarations
@@ -130,13 +130,13 @@ codeCheck <- function(path=".",modulepath="modules", core_files = c("core/*.gms"
     }
   }
 
-  cat(" Naming conventions check done...       (time elapsed:",format(proc.time()["elapsed"]-ptm,width=6,nsmall=2,digits=2),")\n")
+  message(" Naming conventions check done...       (time elapsed: ",format(proc.time()["elapsed"]-ptm,width=6,nsmall=2,digits=2),")")
   
   # Check appearance of objects
   ap <- checkAppearance(gams) 
   w <- c(w,ap$warnings)
   
-  cat(" Investigated variable appearances...   (time elapsed:",format(proc.time()["elapsed"]-ptm,width=6,nsmall=2,digits=2),")\n")  
+  message(" Investigated variable appearances...   (time elapsed: ",format(proc.time()["elapsed"]-ptm,width=6,nsmall=2,digits=2),")")  
   
     
   #are any non-interface core variables used in other places than the core?
@@ -163,12 +163,12 @@ codeCheck <- function(path=".",modulepath="modules", core_files = c("core/*.gms"
     w <- .warning(v, " uses the number of a non-existing module!",w=w)
   } 
   
-  cat(" Appearance check done...               (time elapsed:",format(proc.time()["elapsed"]-ptm,width=6,nsmall=2,digits=2),")\n")  
+  message(" Appearance check done...               (time elapsed: ",format(proc.time()["elapsed"]-ptm,width=6,nsmall=2,digits=2),")")  
   
   sap <- checkSwitchAppearance(gams$code)
   
 
-  cat(" Switch Appearance check done...               (time elapsed:",format(proc.time()["elapsed"]-ptm,width=6,nsmall=2,digits=2),")\n")  
+  message(" Switch Appearance check done...        (time elapsed: ",format(proc.time()["elapsed"]-ptm,width=6,nsmall=2,digits=2),")")  
   
   
   #setting up a list of used interfaces for each module
@@ -248,7 +248,7 @@ codeCheck <- function(path=".",modulepath="modules", core_files = c("core/*.gms"
               tmp <- tmp[tmp$name != v,]
               write.table(tmp,n,sep=",",quote = FALSE,row.names = FALSE)
             }
-            cat('"',v,'" has been removed from not_used.txt files!\n',sep="")
+            message('"',v,'" has been removed from not_used.txt files!\n')
           }
         } else {
           w <- .warning("\"",v,"\" appears in some not_used.txt files of module \"",m,"\" but is not used in the code!",w=w)
@@ -280,7 +280,7 @@ codeCheck <- function(path=".",modulepath="modules", core_files = c("core/*.gms"
                 if(!file.exists(not_used)) w <- .warning('Do not forget to add the not_used.txt file in realization "',realization[i],'" of module "',m,'" to the repository!',w=w)
                 tmp <- data.frame(name=v,type="input",reason="questionnaire")
                 write.table(tmp,not_used,sep=",",quote = FALSE,row.names = FALSE, append=file.exists(not_used), col.names = !file.exists(not_used))
-                cat('"',v,'" has been written to not_used.txt!\n',sep="")
+                message('"',v,'" has been written to not_used.txt!')
               }
             }
           }
@@ -291,17 +291,17 @@ codeCheck <- function(path=".",modulepath="modules", core_files = c("core/*.gms"
     }
   }
   
-  cat(" Interface collection and check done... (time elapsed:",format(proc.time()["elapsed"]-ptm,width=6,nsmall=2,digits=2),")\n")
+  message(" Interface collection and check done... (time elapsed: ",format(proc.time()["elapsed"]-ptm,width=6,nsmall=2,digits=2),")")
   
 
   w <- .check_input_files(w=w,path=path,modulepath=modulepath)
-  cat(" Input folder check done...             (time elapsed:",format(proc.time()["elapsed"]-ptm,width=6,nsmall=2,digits=2),")\n")
+  message(" Input folder check done...             (time elapsed: ",format(proc.time()["elapsed"]-ptm,width=6,nsmall=2,digits=2),")")
   
   
   # Do all declarations come with a description?
   w <- checkDescription(gams,w)
   
-  cat(" Description check done...              (time elapsed:",format(proc.time()["elapsed"]-ptm,width=6,nsmall=2,digits=2),")\n\n")
+  message(" Description check done...              (time elapsed: ",format(proc.time()["elapsed"]-ptm,width=6,nsmall=2,digits=2),")")
   
   if(debug) {
     out <- list(interfaceInfo=interfaceInfo,ap=ap,gams=gams,gams_backup=gams_backup,sap=sap,esap=esap,modulesInfo=modulesInfo)
@@ -317,10 +317,10 @@ codeCheck <- function(path=".",modulepath="modules", core_files = c("core/*.gms"
   }
 
   if(is.null(w)) {
-    message("All codeCheck tests passed!")
+    message(" All codeCheck tests passed!")
   } else {
     if(strict) stop("codeCheck returned warnings. Fix warnings to proceed!")
-    message("codeCheck reported code inconsistencies. Please fix the given warnings!")
+    message(" codeCheck reported code inconsistencies. Please fix the given warnings!")
   }
   attr(out,"last.warning") <- w
   return(out)

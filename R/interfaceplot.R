@@ -379,7 +379,7 @@ interfaceplot <- function(x = ".",
     }
     
     if (add_nodeName_legend) {
-      cat("Groups will not be shown in the legend, since they are all composed of a single node.\n")
+      message("Groups will not be shown in the legend, since they are all composed of a single node.")
       add_nodeName_legend <- FALSE
     }
   }
@@ -399,12 +399,12 @@ interfaceplot <- function(x = ".",
       if (!any(duplicated(z))) {
         return(n)
       } else {
-        cat(paste0("Couldn't truncate node names after ", n, " letters (would have resulted in duplicate names)... "))
+        message(paste0("Couldn't truncate node names after ", n, " letters (would have resulted in duplicate names)... "))
         while (any(duplicated(z))) {
           n <- n + 1 
           z <- str_trunc(y, n, ellipsis=".")
         }
-        cat(paste0("truncating after ", n, " letters instead.\n"))
+        message(paste0("truncating after ", n, " letters instead."))
       }
       return(n)
     }

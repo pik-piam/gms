@@ -19,7 +19,7 @@
 #' @seealso \code{\link{codeCheck}},\code{\link{readDeclarations}}
 checkAppearance <- function(x) {
   ptm <- proc.time()["elapsed"]
-  cat("  Running checkAppearance...\n")
+  message("  Running checkAppearance...")
   colnames <- unique(names(x$code))
   rownames <- unique(x$declarations[,"names"])
   if(!is.null(x$not_used)) rownames <- unique(c(rownames,x$not_used[,"name"])) 
@@ -42,14 +42,14 @@ checkAppearance <- function(x) {
     tmp <- c(tmp,mtmp)
     colnames <- c(colnames,missing)
   }
-  cat("  Start variable matching...    (time elapsed:",format(proc.time()["elapsed"]-ptm,width=6,nsmall=2,digits=2),")\n")
+  message("  Start variable matching...            (time elapsed: ",format(proc.time()["elapsed"]-ptm,width=6,nsmall=2,digits=2),")")
   # This part is the most time consuming (90% of the time in codeCheck) Here, the variable names are searched for in
   # all module realizations. This process primarily seems to scale with the number of variables and not with the number 
   # of module realizations.It is hard to optimize since the number of variables that the code has to look for can 
   # hardly be reduced
   a <- t(sapply(paste("(^|[^[:alnum:]_])",escapeRegex(rownames),"($|[^[:alnum:]_])",sep=""),grepl,tmp))
   
-  cat("  Finished variable matching... (time elapsed:",format(proc.time()["elapsed"]-ptm,width=6,nsmall=2,digits=2),")\n")
+  message("  Finished variable matching...         (time elapsed: ",format(proc.time()["elapsed"]-ptm,width=6,nsmall=2,digits=2),")")
    
   dimnames(a)[[1]] <- rownames
   dimnames(a)[[2]] <- colnames
