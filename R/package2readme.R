@@ -40,6 +40,18 @@ package2readme <- function(package=".") {
     return(out)
   }
   
+  fillCodecov <- function(d,folder) {
+    travisfile <- paste0(folder,"/.travis.yml")
+    if(is.null(folder) || !file.exists(travisfile)) return("")
+    tmp <- readLines(travisfile)
+    if(!(any(grepl("codecov",tmp)))) return("")
+    out <- paste0("[![codecov](https://codecov.io/gh/pik-piam/", d$get("Package"),
+                  "/branch/master/graph/badge.svg)](https://codecov.io/gh/pik-piam/", 
+                  d$get("Package"),")")
+    return(out)
+  }
+  
+  
   fillCite <- function(d) {
     out <- c("\nTo cite package **",d$get("Package"),"** in publications use:\n\n",
              format(citation(package=d$get("Package")),style="text"),
@@ -88,6 +100,7 @@ package2readme <- function(package=".") {
                maintainer  = d$get_maintainer(),
                zenodo      = fillZenodo(d),
                travis      = fillTravis(d),
+               codecov     = fillCodecov(d,folder),
                cite        = fillCite(d),
                vignette    = fillVignette(d))
   
