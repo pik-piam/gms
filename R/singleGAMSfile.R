@@ -19,6 +19,10 @@
 
 singleGAMSfile <- function(modelpath=".",mainfile="main.gms",output="full.gms") {
 
+  cwd <- getwd()
+  on.exit(setwd(cwd))
+  setwd(modelpath)
+  
   .insertIncludeFile <- function(code,i,path) {
     path <- gsub(";","",path)
     if(file.exists(path)) {
@@ -33,7 +37,7 @@ singleGAMSfile <- function(modelpath=".",mainfile="main.gms",output="full.gms") 
   #set LC_ALL to C to avoid locale warnings
   Sys.setlocale('LC_ALL','C') 
   
-  code <- suppressWarnings(readLines(path(modelpath,mainfile)))
+  code <- readLines(mainfile,warn = FALSE)
   code <- c("* #### CODE MERGED WITH FUNCTION singleGAMSfile (LIBRARY lucode) ####","",code)
   
   setglobals <- list()
@@ -87,5 +91,6 @@ singleGAMSfile <- function(modelpath=".",mainfile="main.gms",output="full.gms") 
       warning("Catched a command which could not be translated (",code[i],")")
     }
   }
+ setwd(cwd)
  writeLines(code,output)  
 }

@@ -112,7 +112,7 @@ package2readme <- function(package=".") {
     else message("Added README.md file")
     writeLines(out,readmefile)
   } else {
-    cat(out,sep="\n")
+    message(paste(out,collapse="\n"))
   }
   invisible(out)
 }
