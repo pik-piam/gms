@@ -15,3 +15,5 @@ r_packages:
   - lucode
 script:
   - Rscript -e 'devtools::test()'
+after_success:
+  - Rscript -e 'covr::codecov()'
