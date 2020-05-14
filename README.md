@@ -1,5 +1,7 @@
 # Code Manipulation and Analysis Tools
-#### R package **lucode**, version **3.20.0**
+
+R package **lucode**, version **3.20.1**
+
 [![Travis build status](https://travis-ci.com/pik-piam/lucode.svg?branch=master)](https://travis-ci.com/pik-piam/lucode) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1158596.svg)](https://doi.org/10.5281/zenodo.1158596) 
 
 ## Purpose and Functionality
@@ -38,7 +40,7 @@ To cite package **lucode** in publications use:
 
 Dietrich J, Klein D, Giannousakis A, Baumstark L, Bonsch M, Bodirsky B, Beier F, Koch J (2020). _lucode: Code
 Manipulation and Analysis Tools_. doi: 10.5281/zenodo.1158596 (URL: https://doi.org/10.5281/zenodo.1158596), R
-package version 3.20.0, <URL: https://github.com/pik-piam/lucode>.
+package version 3.20.1, <URL: https://github.com/pik-piam/lucode>.
 
 A BibTeX entry for LaTeX users is
 
@@ -47,7 +49,7 @@ A BibTeX entry for LaTeX users is
   title = {lucode: Code Manipulation and Analysis Tools},
   author = {Jan Philipp Dietrich and David Klein and Anastasis Giannousakis and Lavinia Baumstark and Markus Bonsch and Benjamin Leon Bodirsky and Felicitas Beier and Johannes Koch},
   year = {2020},
-  note = {R package version 3.20.0},
+  note = {R package version 3.20.1},
   doi = {10.5281/zenodo.1158596},
   url = {https://github.com/pik-piam/lucode},
 }

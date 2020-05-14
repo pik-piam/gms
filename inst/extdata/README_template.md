@@ -1,5 +1,7 @@
 # [:title:]
-#### R package **[:package:]**, version **[:version:]**
+
+R package **[:package:]**, version **[:version:]**
+
 [:travis:] [:zenodo:] [:codecov:]
 
 ## Purpose and Functionality
