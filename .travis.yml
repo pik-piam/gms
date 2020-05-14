@@ -13,6 +13,9 @@ r_packages:
   - devtools
   - testthat
   - lucode
+install:
+  - Rscript -e "if(!requireNamespace('devtools')) install.packages('devtools')"
+  - Rscript -e "if(!requireNamespace('lucode')) devtools::install_github('pik-piam/lucode')"
 script:
   - Rscript -e 'devtools::test()'
 after_success:
