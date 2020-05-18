@@ -60,19 +60,31 @@ package2readme <- function(package=".") {
     return(paste(out,collapse=""))
   }
   
-  fillVignette <- function(d) {
-    v <- vignette(package=d$get("Package"))
-    if(dim(v$results)[1]==0) return("")
-    else if(dim(v$results)[1]==1) {
+  fillVignette <- function(d,folder) {
+    if(is.null(folder)) {
+      v <- vignette(package=d$get("Package"))$results
+    } else {
+      v <- matrix(nrow=0,ncol=2,dimnames=list(NULL,c("Item","Title")))
+      path <- paste0(folder,"/vignettes/")
+      vig <- dir(path,pattern = "*.Rmd")
+      for(i in vig) {
+        tmp <- readLines(paste0(path,i),n = 5)
+        tmp <- c(Item = sub(".Rmd","",i,fixed=TRUE),
+                 Title= gsub("title: \"(.*)\"$","\\1",grep("title:",tmp, value=TRUE)))
+        v <- rbind(v,tmp)
+      }
+    }
+    if(dim(v)[1]==0) return("")
+    else if(dim(v)[1]==1) {
       vtext <- "a vignette"
       vtext2 <- "it"
     } else {
       vtext <- "vignettes"
       vtext2 <- "them"
     }
-    tmp <- paste0("vignette(",v$results[,"Item"],")")
+    tmp <- paste0("vignette(",v[,"Item"],")")
     tmp <- format(tmp,width = max(nchar(tmp)))
-    vig <- paste0(tmp," # ", sub("(source, html)","",v$results[,"Title"],fixed=TRUE), 
+    vig <- paste0(tmp," # ", sub("(source, html)","",v[,"Title"],fixed=TRUE), 
                   collapse="\n")
     out <- c("\n## Tutorial\n\n",
              "The package comes with ",vtext," describing the basic functionality ",
@@ -102,7 +114,7 @@ package2readme <- function(package=".") {
                travis      = fillTravis(d),
                codecov     = fillCodecov(d,folder),
                cite        = fillCite(d),
-               vignette    = fillVignette(d))
+               vignette    = fillVignette(d,folder))
   
   out <- fillTemplate(template, fill)
 
