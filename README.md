@@ -1,6 +1,6 @@
 # Tools package for modular GAMS code
 
-R package **gmod**, version **0.1.0**
+R package **gmod**, version **0.2.0**
 
 [![Travis build status](https://travis-ci.com/pik-piam/gmod.svg?branch=master)](https://travis-ci.com/pik-piam/gmod)  [![codecov](https://codecov.io/gh/pik-piam/gmod/branch/master/graph/badge.svg)](https://codecov.io/gh/pik-piam/gmod)
 
@@ -38,17 +38,17 @@ In case of questions / problems please contact Jan Philipp Dietrich <dietrich@pi
 
 To cite package **gmod** in publications use:
 
-Dietrich J, Beier F, Giannousakis A, Koch J (2020). _gmod: Tools package for modular GAMS
-code_. R package version 0.1.0.
+Dietrich J, Klein D, Giannousakis A, Beier F, Koch J, Baumstark L (2020). _gmod: Tools
+package for modular GAMS code_. R package version 0.2.0.
 
 A BibTeX entry for LaTeX users is
 
  ```latex
 @Manual{,
   title = {gmod: Tools package for modular GAMS code},
-  author = {Jan Philipp Dietrich and Felicitas Beier and Anastasis Giannousakis and Johannes Koch},
+  author = {Jan Philipp Dietrich and David Klein and Anastasis Giannousakis and Felicitas Beier and Johannes Koch and Lavinia Baumstark},
   year = {2020},
-  note = {R package version 0.1.0},
+  note = {R package version 0.2.0},
 }
 ```
 

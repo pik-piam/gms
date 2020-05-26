@@ -11,12 +11,4 @@ test_that("interfaceplot creation works", {
   cc <- codeCheck(system.file("dummymodel",package="gmod"))
   ifp <- interfaceplot(cc)
   expect_identical(ifp,expected_result)
-  
-  expected_result2 <- structure(c("core", "fancymodule", "fancymodule", "crazymodule", 
-                                "1", "1", "pm_global", "vm_exchange"), .Dim = c(2L, 4L))
-  
-  expect_silent(ifp2 <- interfaceplot_legacy(cc, interactive=FALSE))
-  expect_identical(ifp2,expected_result2)
-  expect_silent(ifp3 <- interfaceplot_legacy(cc, interactive=TRUE))
-  
 })

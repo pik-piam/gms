@@ -1,19 +1,25 @@
 {
   "title": "gmod: Tools package for modular GAMS code",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "<p>A collection of tools to create and use modularized GAMS code.<\/p>",
   "creators": [
     {
       "name": "Dietrich, Jan Philipp"
     },
     {
-      "name": "Beier, Felicitas"
+      "name": "Klein, David"
     },
     {
       "name": "Giannousakis, Anastasis"
     },
     {
+      "name": "Beier, Felicitas"
+    },
+    {
       "name": "Koch, Johannes"
+    },
+    {
+      "name": "Baumstark, Lavinia"
     }
   ]
 }
