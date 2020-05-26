@@ -1,12 +1,12 @@
-# Code Manipulation and Analysis Tools
+# Tools package for modular GAMS code
 
-R package **lucode**, version **3.20.6**
+R package **gmod**, version **0.1.0**
 
-[![Travis build status](https://travis-ci.com/pik-piam/lucode.svg?branch=master)](https://travis-ci.com/pik-piam/lucode) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1158596.svg)](https://doi.org/10.5281/zenodo.1158596) [![codecov](https://codecov.io/gh/pik-piam/lucode/branch/master/graph/badge.svg)](https://codecov.io/gh/pik-piam/lucode)
+[![Travis build status](https://travis-ci.com/pik-piam/gmod.svg?branch=master)](https://travis-ci.com/pik-piam/gmod)  [![codecov](https://codecov.io/gh/pik-piam/gmod/branch/master/graph/badge.svg)](https://codecov.io/gh/pik-piam/gmod)
 
 ## Purpose and Functionality
 
-A collection of tools which allow to manipulate and analyze code.
+A collection of tools to create and use modularized GAMS code.
 
 
 ## Installation
@@ -21,7 +21,7 @@ The additional repository can be made available permanently by adding the line a
 After that the most recent version of the package can be installed using `install.packages`:
 
 ```r 
-install.packages("lucode")
+install.packages("gmod")
 ```
 
 Package updates can be installed using `update.packages` (make sure that the additional repository has been added before running that command):
@@ -36,23 +36,19 @@ In case of questions / problems please contact Jan Philipp Dietrich <dietrich@pi
 
 ## Citation
 
-To cite package **lucode** in publications use:
+To cite package **gmod** in publications use:
 
-Dietrich J, Klein D, Giannousakis A, Baumstark L, Bonsch M, Bodirsky B, Beier
-F, Koch J (2020). _lucode: Code Manipulation and Analysis Tools_. doi:
-10.5281/zenodo.1158596 (URL: https://doi.org/10.5281/zenodo.1158596), R package
-version 3.20.6, <URL: https://github.com/pik-piam/lucode>.
+Dietrich J, Beier F, Giannousakis A, Koch J (2020). _gmod: Tools package for modular GAMS
+code_. R package version 0.1.0.
 
 A BibTeX entry for LaTeX users is
 
  ```latex
 @Manual{,
-  title = {lucode: Code Manipulation and Analysis Tools},
-  author = {Jan Philipp Dietrich and David Klein and Anastasis Giannousakis and Lavinia Baumstark and Markus Bonsch and Benjamin Leon Bodirsky and Felicitas Beier and Johannes Koch},
+  title = {gmod: Tools package for modular GAMS code},
+  author = {Jan Philipp Dietrich and Felicitas Beier and Anastasis Giannousakis and Johannes Koch},
   year = {2020},
-  note = {R package version 3.20.6},
-  doi = {10.5281/zenodo.1158596},
-  url = {https://github.com/pik-piam/lucode},
+  note = {R package version 0.1.0},
 }
 ```
 

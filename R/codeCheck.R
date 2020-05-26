@@ -34,7 +34,7 @@
 codeCheck <- function(path=".",modulepath="modules", core_files = c("core/*.gms","main.gms"), debug=FALSE, interactive=FALSE, test_switches=TRUE, strict=FALSE, details=FALSE) {
 
 .check_input_files <- function(w,path=".", modulepath="modules") {
-  inputgms <- Sys.glob(path(path, modulepath,"*/*/input.gms"))
+  inputgms <- Sys.glob(paste0(path,"/",modulepath,"/*/*/input.gms"))
   for(gms in inputgms) {
     #read $include lines
     includes <- grep("\\$include",readLines(gms,warn = FALSE),value = TRUE)
@@ -45,7 +45,7 @@ codeCheck <- function(path=".",modulepath="modules", core_files = c("core/*.gms"
     folderok <- grepl("^input",tmp)
     #folderok <- (inputfolders %in% c("input",paste0(realization,"/input")))
     if(any(!folderok)) {
-      for(f in which(!folderok)) w <- .warning("Input file in ",sub(path(path,modulepath),"",gms)," read from illegal location (",includes[f],"). Allowed folders are <module>/input or <module>/<realization>/input.",w=w)
+      for(f in which(!folderok)) w <- .warning("Input file in ",sub(paste0(path,"/",modulepath),"",gms)," read from illegal location (",includes[f],"). Allowed folders are <module>/input or <module>/<realization>/input.",w=w)
     }
   }
   return(w)
@@ -78,18 +78,18 @@ codeCheck <- function(path=".",modulepath="modules", core_files = c("core/*.gms"
   message("\n Running codeCheck...")
   ptm <- proc.time()["elapsed"]
   all_files <-list.files(path=path,pattern="\\.gms$",recursive=TRUE)
-  module_files <-  path(path,grep(paste("^",modulepath,sep=""),all_files,value=TRUE))
+  module_files <-  paste0(path,"/",grep(paste("^",modulepath,sep=""),all_files,value=TRUE))
   core_files <- Sys.glob(paste0(path,"/",core_files))
   core <- codeExtract(core_files,"core")
-  modulesInfo <- getModules(path(path,modulepath))
+  modulesInfo <- getModules(paste0(path,"/",modulepath))
   modules <- list()
   for (i in 1:dim(modulesInfo)[1]) {
       m <- modulesInfo[i, ]
       for (j in strsplit(m["realizations"], ",")[[1]]) {
-          tmp <- codeExtract(grep(path(m["folder"], j,""), module_files,value = TRUE),name=paste(m["name"],j,sep="."))
+          tmp <- codeExtract(grep(paste0(m["folder"],"/",j,"/"), module_files,value = TRUE),name=paste(m["name"],j,sep="."))
           modules$code <- c(modules$code, tmp$code)
           modules$declarations <- rbind(modules$declarations, tmp$declarations)
-          not_used <- path(path, modulepath, m["folder"], j,"not_used.txt")
+          not_used <- paste0(path,"/",modulepath,"/",m["folder"],"/", j,"/not_used.txt")
           if (file.exists(not_used)) {
               tmp <- as.matrix(suppressWarnings(read.csv(not_used, as.is = TRUE, comment.char = "#")))
               dimnames(tmp)[[1]] <- rep(paste(m["name"], j,sep = "."), dim(tmp)[1])
@@ -205,7 +205,7 @@ codeCheck <- function(path=".",modulepath="modules", core_files = c("core/*.gms"
   }
   
   #create an object containing switches not related to modules
-  modules <- c("core",getModules(path(path,modulepath))[,"name"])
+  modules <- c("core",getModules(paste0(path,"/",modulepath))[,"name"])
   esap <- sap
   esap$switches <- sap$switches[!(sap$switches%in%modules)]
   esap$appearance <- sap$appearance[!(rownames(sap$appearance)%in%modules),]
@@ -241,7 +241,7 @@ codeCheck <- function(path=".",modulepath="modules", core_files = c("core/*.gms"
         if(interactive) {
           tmp <- .choose_option(options=c("yes","no"),"\"",v,"\" appears in some not_used.txt files of module \"",m,"\" but is not used in the code! Should it be removed?") 
           if(tmp=="yes") {
-            tmp_path <- path(path, modulepath, paste0("[0-9]*_",m), "*/not_used.txt") 
+            tmp_path <- paste(path, modulepath, paste0("[0-9]*_",m), "*/not_used.txt", sep="/") 
             not_used <- Sys.glob(tmp_path)
             for(n in not_used) {
               tmp <- read.csv(n,stringsAsFactors = FALSE, comment.char = "#") 
@@ -275,7 +275,7 @@ codeCheck <- function(path=".",modulepath="modules", core_files = c("core/*.gms"
               }  
               tmp <- .choose_option(options=c("yes","no"),'Should "',v,'" be written to not_used.txt in realization "',realization[i],'" of module "',m,'"?')
               if(tmp=="yes") {
-                tmp_path <- path(path, modulepath, paste0("[0-9]*_",m), realization[i])
+                tmp_path <- paste(path, modulepath, paste0("[0-9]*_",m), realization[i], sep="/")
                 not_used <- paste(Sys.glob(tmp_path),"not_used.txt",sep="/")
                 if(!file.exists(not_used)) w <- .warning('Do not forget to add the not_used.txt file in realization "',realization[i],'" of module "',m,'" to the repository!',w=w)
                 tmp <- data.frame(name=v,type="input",reason="questionnaire")

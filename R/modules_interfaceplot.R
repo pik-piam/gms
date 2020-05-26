@@ -12,7 +12,7 @@
 #' @param writetable Logical deciding whether a csv containing the interfaces
 #'   should be written as well.
 #' @param includeCore Logical to create plot for core or not, default FALSE.
-#' @param ... Optional arguments to \code{\link[lucode]{interfaceplot}}.
+#' @param ... Optional arguments to \code{\link{interfaceplot}}.
 #'
 #' @return A list with interface tables for each module
 #' @author Jan Philipp Dietrich

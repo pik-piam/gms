@@ -38,7 +38,7 @@ singleGAMSfile <- function(modelpath=".",mainfile="main.gms",output="full.gms") 
   Sys.setlocale('LC_ALL','C') 
   
   code <- readLines(mainfile,warn = FALSE)
-  code <- c("* #### CODE MERGED WITH FUNCTION singleGAMSfile (LIBRARY lucode) ####","",code)
+  code <- c("* #### CODE MERGED WITH FUNCTION singleGAMSfile (LIBRARY gmod) ####","",code)
   
   setglobals <- list()
   i <- 1

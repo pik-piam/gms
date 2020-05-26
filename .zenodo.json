@@ -1,28 +1,16 @@
 {
-  "title": "lucode: Code Manipulation and Analysis Tools",
-  "version": "3.20.6",
-  "description": "<p>A collection of tools which allow to manipulate and analyze code.<\/p>",
+  "title": "gmod: Tools package for modular GAMS code",
+  "version": "0.1.0",
+  "description": "<p>A collection of tools to create and use modularized GAMS code.<\/p>",
   "creators": [
     {
       "name": "Dietrich, Jan Philipp"
     },
     {
-      "name": "Klein, David"
+      "name": "Beier, Felicitas"
     },
     {
       "name": "Giannousakis, Anastasis"
-    },
-    {
-      "name": "Baumstark, Lavinia"
-    },
-    {
-      "name": "Bonsch, Markus"
-    },
-    {
-      "name": "Bodirsky, Benjamin Leon"
-    },
-    {
-      "name": "Beier, Felicitas"
     },
     {
       "name": "Koch, Johannes"

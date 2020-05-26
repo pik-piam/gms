@@ -19,7 +19,7 @@
 #' (graph/legend size ratio, edge.label.cex (size of the edge label font)).
 #'
 #' @param x Either an interface list as returned by
-#'   \code{\link[lucode]{codecheck}} or the path to the main folder of the
+#'   \code{\link{codeCheck}} or the path to the main folder of the
 #'   model.
 #' @param modules_to_include NULL (default value) or a vector of strings with
 #'   names of modules to include, e.g. c("core", "macro"). If NULL all modules

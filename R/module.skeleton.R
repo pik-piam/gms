@@ -31,9 +31,8 @@
 #' \dontrun{module.skeleton("bla",c("on","off"))}
 #' 
 module.skeleton <- function(number, name, types,modelpath=".", modulepath="modules/",includefile="modules/include.gms", version=is.modularGAMS(modelpath,version=TRUE)) {
-  lucode <- NULL
-  data("lucode", envir=environment(), package="lucode")
-  if(any(lucode$reserved_types %in% types)) stop("You tried to use reserved type name(s) (",paste(lucode$reserved[lucode$reserved_types %in% types],collapse=", "),") Please use different name(s)!")
+  reserved_types <- readRDS(system.file("extdata/reserved_types.rds",package="gmod"))
+  if(any(reserved_types %in% types)) stop("You tried to use reserved type name(s) (",paste(reserved_types[reserved_types %in% types],collapse=", "),") Please use different name(s)!")
 
   name <- paste(number,name,sep="_")
   mtypes_raw <- "\n*###################### R SECTION START (MODULETYPES) ##########################\n\n*###################### R SECTION END (MODULETYPES) ############################"

@@ -1,4 +1,4 @@
 library(testthat)
-library(lucode)
+library(gmod)
 
-test_check("lucode")
+test_check("gmod")
