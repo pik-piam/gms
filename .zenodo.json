@@ -1,7 +1,7 @@
 {
-  "title": "gmod: Tools package for modular GAMS code",
-  "version": "0.2.0",
-  "description": "<p>A collection of tools to create and use modularized GAMS code.<\/p>",
+  "title": "gms: GAMS modularization support package",
+  "version": "0.2.1",
+  "description": "<p>A collection of tools to create, use and maintain modularized model code written in the modeling language GAMS (https://www.gams.com/).<\/p>",
   "creators": [
     {
       "name": "Dietrich, Jan Philipp"

@@ -13,10 +13,6 @@
 #' @return A string containing the path combined of folder, filename and
 #' filetype
 #' @author Jan Philipp Dietrich
-#' @examples
-#' 
-#'   gmod:::path("bla","blub","test",ftype="jpd")
-#' 
 path <- function(...,ftype=NULL) {
   if(!is.null(ftype)) if(substring(ftype,1,1)!='.') ftype <- paste('.',ftype,sep='')
   out <- paste(...,sep="/")

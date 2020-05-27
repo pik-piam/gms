@@ -1,4 +1,4 @@
-* #### CODE MERGED WITH FUNCTION singleGAMSfile (LIBRARY gmod) ####
+* #### CODE MERGED WITH FUNCTION gms::singleGAMSfile ####
 
 $title dummymodel
 

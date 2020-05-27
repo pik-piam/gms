@@ -31,8 +31,6 @@ update_modules_embedding <- function(modelpath=".",modulepath="modules/",include
   version <- is.modularGAMS(path=modelpath,modulepath=modulepath,version=TRUE)
   if(version==0) stop("Model does not follow modular structure.")
   
-  reserved_types <- readRDS(system.file("extdata/reserved_types.rds",package="gmod"))
-
   #set LC_ALL to C to avoid locale warnings
   Sys.setlocale('LC_ALL','C') 
   #extract phases in the order as it is used in the code
@@ -87,7 +85,7 @@ update_modules_embedding <- function(modelpath=".",modulepath="modules/",include
   for(module in modules) {
     types <- base::list.dirs(path=path(fullmodulepath,module),full.names = FALSE,recursive = FALSE)
     #remove reserved module type names
-    types <- setdiff(types,reserved_types)
+    types <- setdiff(types,getOption("gms_reserved_types"))
     code <- NULL  
     for(t in types) {
        realizationGMSpath <- switch(version,
@@ -105,7 +103,7 @@ update_modules_embedding <- function(modelpath=".",modulepath="modules/",include
   for(module in modules) {
     types <- base::list.dirs(path=path(fullmodulepath,module),full.names = FALSE,recursive = FALSE)
     #remove reserved module type names
-    types <- setdiff(types,reserved_types)
+    types <- setdiff(types,getOption("gms_reserved_types"))
     for(t in types) {
       code <- NULL 
       for(phase in phases) {

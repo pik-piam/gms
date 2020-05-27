@@ -1,4 +1,4 @@
 library(testthat)
-library(gmod)
+library(gms)
 
-test_check("gmod")
+test_check("gms")

@@ -1,12 +1,12 @@
-# Tools package for modular GAMS code
+# GAMS modularization support package
 
-R package **gmod**, version **0.2.0**
+R package **gms**, version **0.2.1**
 
-[![Travis build status](https://travis-ci.com/pik-piam/gmod.svg?branch=master)](https://travis-ci.com/pik-piam/gmod)  [![codecov](https://codecov.io/gh/pik-piam/gmod/branch/master/graph/badge.svg)](https://codecov.io/gh/pik-piam/gmod)
+[![Travis build status](https://travis-ci.com/pik-piam/gms.svg?branch=master)](https://travis-ci.com/pik-piam/gms)  [![codecov](https://codecov.io/gh/pik-piam/gms/branch/master/graph/badge.svg)](https://codecov.io/gh/pik-piam/gms)
 
 ## Purpose and Functionality
 
-A collection of tools to create and use modularized GAMS code.
+A collection of tools to create, use and maintain modularized model code written in the modeling language GAMS (https://www.gams.com/).
 
 
 ## Installation
@@ -21,7 +21,7 @@ The additional repository can be made available permanently by adding the line a
 After that the most recent version of the package can be installed using `install.packages`:
 
 ```r 
-install.packages("gmod")
+install.packages("gms")
 ```
 
 Package updates can be installed using `update.packages` (make sure that the additional repository has been added before running that command):
@@ -36,19 +36,19 @@ In case of questions / problems please contact Jan Philipp Dietrich <dietrich@pi
 
 ## Citation
 
-To cite package **gmod** in publications use:
+To cite package **gms** in publications use:
 
-Dietrich J, Klein D, Giannousakis A, Beier F, Koch J, Baumstark L (2020). _gmod: Tools
-package for modular GAMS code_. R package version 0.2.0.
+Dietrich J, Klein D, Giannousakis A, Beier F, Koch J, Baumstark L (2020). _gms: GAMS
+modularization support package_. R package version 0.2.1.
 
 A BibTeX entry for LaTeX users is
 
  ```latex
 @Manual{,
-  title = {gmod: Tools package for modular GAMS code},
+  title = {gms: GAMS modularization support package},
   author = {Jan Philipp Dietrich and David Klein and Anastasis Giannousakis and Felicitas Beier and Johannes Koch and Lavinia Baumstark},
   year = {2020},
-  note = {R package version 0.2.0},
+  note = {R package version 0.2.1},
 }
 ```
 

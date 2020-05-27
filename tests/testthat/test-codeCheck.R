@@ -8,7 +8,7 @@ test_that("interfaceplot creation works", {
                                row.names = c(NA, -2L), 
                                class = c("tbl_df","tbl", "data.frame"))
   
-  cc <- codeCheck(system.file("dummymodel",package="gmod"))
+  cc <- codeCheck(system.file("dummymodel",package="gms"))
   ifp <- interfaceplot(cc)
   expect_identical(ifp,expected_result)
 })

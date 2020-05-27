@@ -12,13 +12,12 @@
 #' @seealso \code{\link{codeCheck}}
 getModules <- function(modulepath) {
   if(!dir.exists(modulepath)) stop("Module path ",modulepath," does not exist!")
-  reserved_types <- readRDS(system.file("extdata/reserved_types.rds",package="gmod"))
   folder <- base::list.dirs(path=modulepath,full.names = FALSE,recursive = FALSE)
   name   <- gsub("[0-9]+\\_","",folder)
   number <- gsub("([0-9]+)\\_.*","\\1",folder) 
   out    <- cbind(name,number,folder)
   realizations <- folder
-  for(i in 1:dim(out)[1]) realizations[i] <- paste(setdiff(base::list.dirs(path=paste0(modulepath,"/",out[i,"folder"]),full.names = FALSE,recursive = FALSE),reserved_types),collapse=",")
+  for(i in 1:dim(out)[1]) realizations[i] <- paste(setdiff(base::list.dirs(path=paste0(modulepath,"/",out[i,"folder"]),full.names = FALSE,recursive = FALSE),getOption("gms_reserved_types")),collapse=",")
   out <- cbind(out,realizations)
   rownames(out) <- out[,"name"]
   return(out)  
