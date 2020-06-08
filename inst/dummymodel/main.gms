@@ -3,7 +3,7 @@ $title dummymodel
 *' @title Dummy Model
 *'
 *' @description The *Dummy Model* (DumM) is a simple test model to test and
-*' present the basic functionality of the lucode and goxygen packages (@lucode, @goxygen).
+*' present the basic functionality of the gms and goxygen packages (@gms, @goxygen).
 *'
 *' It has the structure of a module GAMS model, and therefore can be interpreted
 *' by goxygen, but has not content and cannot be solved with GAMS. It can serve as 
