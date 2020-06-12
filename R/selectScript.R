@@ -1,4 +1,25 @@
-selectScript <- function(folder=".", title="Please choose an outputmodule", ending="R") {
+#' selectScript
+#' 
+#' Functions which allows for interactive selection of scripts/files.
+#' 
+#' 
+#' @param folder Folder in which the files/scripts are located which should 
+#' be selected from.
+#' @param ending File ending of the files to be selected (without dot)
+#' @return A vector of paths to files selected by the user
+#' @author Jan Philipp Dietrich
+#' @importFrom yaml read_yaml yaml.load
+
+selectScript <- function(folder=".", ending="R") {
+  
+  read_yaml_header <- function(file, n=20) {
+    tmp <- readLines(file, n = 20)
+    range <- grep("# ?-{3}",tmp)
+    if(length(range)>2) warning("More than two YAML separators detected, only the first two will be used!")
+    if(length(range)<2 || range[1]+1==range[2]) return(NULL)
+    out <- yaml.load(sub("^# *","",tmp[(range[1]+1):(range[2]-1)]))
+    return(out)
+  }
   
   get_line <- function(){
     # gets characters (line) from the terminal or from a connection
@@ -12,39 +33,59 @@ selectScript <- function(folder=".", title="Please choose an outputmodule", endi
     }
     return(s);
   }
-  
-  order <- function() {
-    forder <- file.path(folder,"order.cfg")
-    if(file.exists(forder)) {
-      order <- grep("(#|^$)",readLines(forder),invert=TRUE,value=TRUE)
-      if(length(order)==0) order <- NULL
-    } else {
-      order <- NULL
-    }
-    return(order)  
-  }
+
+  subfolders <- list.dirs(folder,full.names = FALSE)
+  subfolders <- subfolders[subfolders!=""]
   
   fp <- paste0("\\.",ending,"$")
-  
   script <- gsub(fp,"",grep(fp,list.files(folder), value=TRUE))
   
-  #read descriptions in scripts
-  info <- data.frame(script=NULL,desc=NULL, stringsAsFactors = FALSE)
-  #sort modules based on order.cfg
-  script <- intersect(union(order(),script),script)
+
+  subinfo <- data.frame(folder=NULL,description=NULL, position=NULL, stringsAsFactors = FALSE)
+  for(s in subfolders) {
+    if(file.exists(file.path(folder,s,"INFO.yml"))) {
+      tmp <- read_yaml(file.path(folder,s,"INFO.yml"))
+    } else {
+      tmp <- list()
+    }
+    subinfo <- rbind(subinfo,data.frame(folder      = s,
+                                        description = ifelse(is.null(tmp$description),"",tmp$description),
+                                        position    = ifelse(is.null(tmp$position),NA,tmp$position), 
+                                        stringsAsFactors = FALSE))
+    
+  }
+  subinfo <- subinfo[order(subinfo$position),]
   
+  #read descriptions in scripts
+  info <- data.frame(script=NULL,description=NULL, position=NULL, stringsAsFactors = FALSE)
   for(s in script) {
-    tmp <- readLines(file.path(folder,paste0(s,".",ending)))
-    desc <- paste(sub("^#: ","",(grep("^#: ",tmp,value=TRUE))), collapse="\n")
-    info <- rbind(info,data.frame(script=s,desc=ifelse(length(desc)==0,"",paste(" |",desc)), stringsAsFactors = FALSE))
+    tmp <- read_yaml_header(file.path(folder,paste0(s,".",ending)))
+    info <- rbind(info,data.frame(script      = s,
+                                  description = ifelse(is.null(tmp$description),"",tmp$description),
+                                  position    = ifelse(is.null(tmp$position),NA,tmp$position), 
+                                  stringsAsFactors = FALSE))
   }
   maxchar <- max(nchar(info$script))
+  info <- info[order(info$position),]
   
-  message(title,":")
-  message(paste0(1:nrow(info), ": ", format(gsub("_"," ",info$script,fixed=TRUE), width=maxchar, justify="right"), info$desc, collapse="\n"))
+  if(file.exists(file.path(folder,"INFO.yml"))) {
+    yaml <- read_yaml(file.path(folder,"INFO.yml"))
+  } else {
+    yaml <- list()
+  }
+
+  if(is.null(yaml$type)) yaml$type  <- "script"
+    
+  message("Choose a ",yaml$type,":")
+  message(paste0(1:nrow(info), ": ", format(gsub("_"," ",info$script,fixed=TRUE), width=maxchar, justify="right")," | ", info$description, collapse="\n"))
+  if(!is.null(yaml$note)) message(".:: NOTE: ", yaml$note,"::.")
+  if(nrow(subinfo)>0) {
+    message("\nAlternatively, choose a ",yaml$type," from another selection:")
+    message(paste0(nrow(info)+(1:nrow(subinfo)),": ", format(subinfo$folder, width=maxchar, justify="right"), " | ", subinfo$description, collapse="\n"))
+  }
   message("Number: ",appendLF = FALSE)
   identifier <- get_line()
   identifier <- as.numeric(strsplit(identifier,",")[[1]])
-  if (any(!(identifier %in% 1:length(script)))) stop("This choice (",identifier,") is not possible. Please type in a number between 1 and ",length(module))
+  if (any(!(identifier %in% 1:length(script)))) stop("This choice (",identifier,") is not possible. Please type in a number between 1 and ",nrow(info))
   return(paste0(script[identifier],".",ending))
 }
