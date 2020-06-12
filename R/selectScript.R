@@ -9,6 +9,7 @@
 #' @return A vector of paths to files selected by the user
 #' @author Jan Philipp Dietrich
 #' @importFrom yaml read_yaml yaml.load
+#' @export
 
 selectScript <- function(folder=".", ending="R") {
   
@@ -39,7 +40,7 @@ selectScript <- function(folder=".", ending="R") {
   
   fp <- paste0("\\.",ending,"$")
   script <- gsub(fp,"",grep(fp,list.files(folder), value=TRUE))
-  
+  if(length(script)==0 && length(subfolders)==0) return(NULL)
 
   subinfo <- data.frame(folder=NULL,description=NULL, position=NULL, stringsAsFactors = FALSE)
   for(s in subfolders) {
@@ -54,7 +55,7 @@ selectScript <- function(folder=".", ending="R") {
                                         stringsAsFactors = FALSE))
     
   }
-  subinfo <- subinfo[order(subinfo$position),]
+  if(nrow(subinfo)>0) subinfo <- subinfo[order(subinfo$position),]
   
   #read descriptions in scripts
   info <- data.frame(script=NULL,description=NULL, position=NULL, stringsAsFactors = FALSE)
@@ -65,8 +66,8 @@ selectScript <- function(folder=".", ending="R") {
                                   position    = ifelse(is.null(tmp$position),NA,tmp$position), 
                                   stringsAsFactors = FALSE))
   }
-  maxchar <- max(nchar(info$script))
-  info <- info[order(info$position),]
+  if(nrow(info)>0) info <- info[order(info$position),]
+  maxchar <- max(nchar(c(info$script,subinfo$folder)))
   
   if(file.exists(file.path(folder,"INFO.yml"))) {
     yaml <- read_yaml(file.path(folder,"INFO.yml"))
@@ -77,15 +78,31 @@ selectScript <- function(folder=".", ending="R") {
   if(is.null(yaml$type)) yaml$type  <- "script"
     
   message("Choose a ",yaml$type,":")
-  message(paste0(1:nrow(info), ": ", format(gsub("_"," ",info$script,fixed=TRUE), width=maxchar, justify="right")," | ", info$description, collapse="\n"))
+  message(paste0(format(1:nrow(info),width=3, justify="right"), ": ", format(gsub("_"," ",info$script,fixed=TRUE), width=maxchar, justify="right")," | ", info$description, collapse="\n"))
   if(!is.null(yaml$note)) message(".:: NOTE: ", yaml$note,"::.")
   if(nrow(subinfo)>0) {
     message("\nAlternatively, choose a ",yaml$type," from another selection:")
-    message(paste0(nrow(info)+(1:nrow(subinfo)),": ", format(subinfo$folder, width=maxchar, justify="right"), " | ", subinfo$description, collapse="\n"))
+    message(paste0(format(nrow(info)+(1:nrow(subinfo)),width=3, justify="right"),": ", format(subinfo$folder, width=maxchar, justify="right"), " | ", subinfo$description, collapse="\n"))
   }
   message("Number: ",appendLF = FALSE)
   identifier <- get_line()
   identifier <- as.numeric(strsplit(identifier,",")[[1]])
-  if (any(!(identifier %in% 1:length(script)))) stop("This choice (",identifier,") is not possible. Please type in a number between 1 and ",nrow(info))
-  return(paste0(script[identifier],".",ending))
+  if(all(identifier==0)) return(NULL)
+  if (any(!(identifier %in% 1:(nrow(info)+nrow(subinfo))))) stop("This choice (",identifier,") is not possible. Please type in a number between 1 and ",(nrow(info)+nrow(subinfo)))
+  if(any(identifier>nrow(info))) {
+    folder_identifier <- identifier[identifier>nrow(info)]
+    identifier <- identifier[identifier<=nrow(info)]
+  }
+  if(length(identifier)>0) {
+    out <- paste0(script[identifier],".",ending)
+  } else {
+    out <- NULL
+  }
+  if(exists("folder_identifier")) {
+    for(fi in folder_identifier) {
+      subfolder <- subinfo$folder[fi-nrow(info)]
+      out <- c(out, file.path(subfolder,selectScript(file.path(folder,subfolder), ending=ending)))
+    }
+  }
+  return(out)
 }
