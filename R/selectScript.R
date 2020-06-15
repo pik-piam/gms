@@ -9,6 +9,7 @@
 #' @return A vector of paths to files selected by the user
 #' @author Jan Philipp Dietrich
 #' @importFrom yaml read_yaml yaml.load
+#' @importFrom utils capture.output
 #' @export
 
 selectScript <- function(folder=".", ending="R") {
@@ -33,6 +34,15 @@ selectScript <- function(folder=".", ending="R") {
       on.exit(close(con))
     }
     return(s);
+  }
+  
+  max_nchar <- function(x,width,prefix="-> ", suffix=" <-", sep="-") {
+    x <- capture.output(cat(strsplit(x," ")[[1]], fill=width))
+    x <- format(x,width=width , justify = "centre")
+    if(!is.null(sep)) {
+      sep <- paste0(" ",paste(rep(sep,nchar(prefix)+nchar(suffix)+nchar(x)[1]),collapse=""))
+    }
+    return(paste(sep,paste0(" ",prefix,x,suffix, collapse="\n"),sep,sep="\n"))
   }
 
   subfolders <- list.dirs(folder,full.names = FALSE)
@@ -76,15 +86,15 @@ selectScript <- function(folder=".", ending="R") {
   }
 
   if(is.null(yaml$type)) yaml$type  <- "script"
-    
-  message("Choose a ",yaml$type,":")
-  message(paste0(format(1:nrow(info),width=3, justify="right"), ": ", format(gsub("_"," ",info$script,fixed=TRUE), width=maxchar, justify="right")," | ", info$description, collapse="\n"))
-  if(!is.null(yaml$note)) message(".:: NOTE: ", yaml$note,"::.")
+  message("")
+  if(!is.null(yaml$description)) message(yaml$description)
+  if(!is.null(yaml$note)) message(max_nchar(yaml$note,width=40))
+  message(paste0(format(1:nrow(info),width=2, justify="right"), ": ", format(gsub("_"," ",info$script,fixed=TRUE), width=maxchar, justify="right")," | ", info$description, collapse="\n"))
   if(nrow(subinfo)>0) {
     message("\nAlternatively, choose a ",yaml$type," from another selection:")
-    message(paste0(format(nrow(info)+(1:nrow(subinfo)),width=3, justify="right"),": ", format(subinfo$folder, width=maxchar, justify="right"), " | ", subinfo$description, collapse="\n"))
+    message(paste0(format(nrow(info)+(1:nrow(subinfo)),width=2, justify="right"),": ", format(subinfo$folder, width=maxchar, justify="right"), " | ", subinfo$description, collapse="\n"))
   }
-  message("Number: ",appendLF = FALSE)
+  message("Choose a ",yaml$type,": ",appendLF = FALSE)
   identifier <- get_line()
   identifier <- as.numeric(strsplit(identifier,",")[[1]])
   if(all(identifier==0)) return(NULL)
