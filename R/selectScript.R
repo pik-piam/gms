@@ -104,7 +104,7 @@ selectScript <- function(folder=".", ending="R") {
     identifier <- identifier[identifier<=nrow(info)]
   }
   if(length(identifier)>0) {
-    out <- paste0(script[identifier],".",ending)
+    out <- paste0(info$script[identifier],".",ending)
   } else {
     out <- NULL
   }
