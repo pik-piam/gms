@@ -1,4 +1,4 @@
-context("interfaceplot test")
+context("codeCheck test")
 
 test_that("interfaceplot creation works", {
   expected_result <- structure(list(from = c("core", "fancymodule"), 
