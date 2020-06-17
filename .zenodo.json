@@ -1,6 +1,6 @@
 {
   "title": "gms: GAMS modularization support package",
-  "version": "0.3.3",
+  "version": "0.4.0",
   "description": "<p>A collection of tools to create, use and maintain modularized model code written in the modeling language GAMS (https://www.gams.com/).<\/p>",
   "creators": [
     {

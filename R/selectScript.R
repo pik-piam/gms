@@ -14,15 +14,6 @@
 
 selectScript <- function(folder=".", ending="R") {
   
-  read_yaml_header <- function(file, n=20) {
-    tmp <- readLines(file, n = 20)
-    range <- grep("# ?-{3}",tmp)
-    if(length(range)>2) warning("More than two YAML separators detected, only the first two will be used!")
-    if(length(range)<2 || range[1]+1==range[2]) return(NULL)
-    out <- yaml.load(sub("^# *","",tmp[(range[1]+1):(range[2]-1)]))
-    return(out)
-  }
-  
   get_line <- function(){
     # gets characters (line) from the terminal or from a connection
     # and returns it
