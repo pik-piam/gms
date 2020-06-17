@@ -50,7 +50,10 @@ selectScript <- function(folder=".", ending="R") {
   
   fp <- paste0("\\.",ending,"$")
   script <- gsub(fp,"",grep(fp,list.files(folder), value=TRUE))
-  if(length(script)==0 && length(subfolders)==0) return(NULL)
+  if(length(script)==0 && length(subfolders)==0) {
+    message("Empty folder selected. NULL returned.")
+    return(NULL)
+  }
 
   subinfo <- data.frame(folder=NULL,description=NULL, position=NULL, stringsAsFactors = FALSE)
   for(s in subfolders) {
@@ -114,5 +117,6 @@ selectScript <- function(folder=".", ending="R") {
       out <- c(out, file.path(subfolder,selectScript(file.path(folder,subfolder), ending=ending)))
     }
   }
+  if(length(out)==0) return(NULL)
   return(out)
 }
