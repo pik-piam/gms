@@ -26,9 +26,9 @@
 #' @author Jan Philipp Dietrich
 #' @export
 #' @examples
-#' 
+#' \dontrun{
 #' replace_in_file("example.txt",c("bla","blub"),"EXAMPLE",add="top",addfile=TRUE)
-#' 
+#' }
 
 replace_in_file <- function(file, content, subject='CODE',add=FALSE,addfile=FALSE,comment='*') {
   start <- paste('#+ R SECTION START \\(',subject,'\\) #+',sep='')

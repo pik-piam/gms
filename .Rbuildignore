@@ -3,3 +3,5 @@
 .travis.yml
 ^\.git$
 ^.*\.zenodo.json$
+^CRAN-RELEASE$
+^cran-comments\.md$
