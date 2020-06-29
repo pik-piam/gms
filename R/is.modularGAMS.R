@@ -11,7 +11,7 @@
 #' @seealso \code{\link{codeCheck}}
 #' @export
 #' @examples
-#' is.modularGAMS()
+#' is.modularGAMS(system.file("dummymodel",package="gms"))
 #' 
 is.modularGAMS <- function(path=".",version=FALSE, modulepath="modules/") {
   cwd <- getwd()

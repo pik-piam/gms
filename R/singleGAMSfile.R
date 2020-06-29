@@ -13,7 +13,8 @@
 #' @examples
 #' 
 #' \dontrun{
-#' singleGAMSfile()
+#' model <- system.file("dummymodel",package="gms")
+#' singleGAMSfile(model)
 #' }
 #' 
 

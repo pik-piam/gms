@@ -6,8 +6,6 @@
 #' @param mainfolder main folder of the model to be analyzed
 #' @return A list of dependencies sorted by appearances
 #' @author Jan Philipp Dietrich
-#' @examples 
-#' model_dependencies()
 #' @export
 
 model_dependencies <- function(mainfolder=".") {

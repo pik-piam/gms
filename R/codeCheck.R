@@ -66,9 +66,9 @@ codeCheck <- function(path=".",modulepath="modules", core_files = c("core/*.gms"
   
   .choose_option <- function(options,...) {
     title <- paste0(...)
-    cat("\n\n",title,"\n",sep="")
-    cat(paste(1: length(options), options, sep=": " ),sep="\n")
-    cat("\nNumber: ")
+    message("\n\n",title)
+    message(paste(1: length(options), options, sep=": ", collapse="\n"))
+    message("\nNumber: ")
     identifier <- .get_line()
     identifier <- as.numeric(strsplit(identifier,",")[[1]])
     if (any(!(identifier %in% 1:length(options)))) stop("This choice (",identifier,") is not possible. Please type in a number between 1 and ",length(options))

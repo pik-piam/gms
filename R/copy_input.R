@@ -21,9 +21,9 @@ copy_input <- function(x, sourcepath, suffix=NULL, move=FALSE) {
   x <- map$file
   names(x) <- map$destination
   if(move) {
-    cat("\nStart moving input files:\n")
+    message("\nStart moving input files:\n")
   } else {
-    cat("\nStart copying input files:\n")
+    message("\nStart copying input files:\n")
   }
   
   nmax <- max(nchar(x))
@@ -37,7 +37,7 @@ copy_input <- function(x, sourcepath, suffix=NULL, move=FALSE) {
         stop("Problem determining the proper input path for file", x[i], "(more than one possible path found)")
       } else if(length(inputpath)==0) {
         warning("File ", x[i]," seems to be missing!")
-        cat("   ",format(x[i],width=nmax)," ->  FAILED!\n")
+        message("   ",format(x[i],width=nmax)," ->  FAILED!")
         next
       }
     }
@@ -45,7 +45,7 @@ copy_input <- function(x, sourcepath, suffix=NULL, move=FALSE) {
     if(move & !(i != length(x) &  (x[i] %in% x[i+1:length(x)]))) {
       file.remove(inputpath)
     }
-    cat("   ",format(inputpath,width=nmax)," -> ",outputpath, "\n")
+    message("   ",format(inputpath,width=nmax)," -> ",outputpath)
   }
-  cat("\n")
+  message()
 }

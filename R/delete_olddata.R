@@ -5,9 +5,6 @@
 #' @param x Filepath or data frame containing the mapping of files to be deleted
 #' @export
 #' @author Jan Philipp Dietrich, David Klein
-#' @examples 
-#' \dontrun{file2destination <- getfiledestinations()
-#' delete_olddata(file2destination)}
 
 delete_olddata <- function(x) {
   if(is.character(x)) {

@@ -9,12 +9,7 @@
 #' @param replacement Optional replacement (default replacement = "")
 #' @export
 #' @author Jan Philipp Dietrich, David Klein
-#' @examples
-#' \dontrun{get_info(file = "input/info.txt", 
-#' grep_expression = "^Used data set:", sep = ": ")}
 
-
- 
 get_info <- function(file, grep_expression, sep, pattern="", replacement=""){
   if(!file.exists(file)) return(NULL)
   file <- readLines(file, warn=FALSE)

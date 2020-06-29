@@ -35,9 +35,9 @@ publish_data <- function(input, name=NULL, target=Sys.getenv("PUBLISH_DATA_TARGE
         }
         return(s);
       }
-      cat("\n\n",title,":\n\n")
-      cat(paste(1:length(target), target, sep=": " ),sep="\n")
-      cat("\nNumber: ")
+      message("\n\n",title,":\n")
+      message(paste(1:length(target), target, sep=": ", collapse="\n"))
+      message("\nNumber: ")
       identifier <- get_line()
       identifier <- as.numeric(strsplit(identifier,",")[[1]])
       if (any(!(identifier %in% 1:length(target)))) stop("This choice (",identifier,") is not possible. Please type in a number between 1 and ",length(target))

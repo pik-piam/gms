@@ -24,7 +24,7 @@
 #' @importFrom utils data
 #' @examples
 #' 
-#' \dontrun{update.modules_embedding()}
+#' \dontrun{update_modules_embedding(system.file("dummymodel",package="gms"))}
 #' 
 update_modules_embedding <- function(modelpath=".",modulepath="modules/",includefile="modules/include.gms",verbose=FALSE) {
 
@@ -108,9 +108,9 @@ update_modules_embedding <- function(modelpath=".",modulepath="modules/",include
       code <- NULL 
       for(phase in phases) {
         if(file.exists(paste(fullmodulepath,"/",module,"/",t,"/",phase,".gms",sep=""))) {
-          if(verbose) cat(module," ",t,": ",phase," is used\n")
+          if(verbose) message(module," ",t,": ",phase," is used")
           code <- c(code,paste("$Ifi \"%phase%\" == \"",phase,"\" $include \"",path(".",modulepath,module,t,phase,ftype="gms"),"\"",sep="")) 
-        } else if(verbose) cat(module," ",t,": ",phase, "is not used\n")
+        } else if(verbose) message(module," ",t,": ",phase, "is not used")
       }    
       realizationGMSpath <- switch(version,
                                    "1" = path(fullmodulepath,module,t,ftype="gms"),

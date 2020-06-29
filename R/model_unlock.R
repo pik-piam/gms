@@ -13,11 +13,11 @@ model_unlock <- function(id,folder=".",file=".lock",oncluster=TRUE) {
       } else {
         unlink(lfile)  
       }
-      cat("...entry removed from queue!\n")
+      message("...entry removed from queue!")
   }
   else {
     if(!system(paste0("rm -r ",lfile),intern=F,ignore.stdout=T,ignore.stderr=T)) {
-      cat("The model was unlocked\n")
+      message("The model was unlocked")
     } else {
       stop("Lockfile does not exist")
     }

@@ -89,7 +89,7 @@ download_unpack <- function(input, targetdir="input", repositories=NULL, debug=F
     message(tmp)
   }
   if(is.null(found)) {
-    cat("\n")
+    message()
     stop("No file could be found!")
   } 
   #sort files in intial order and unpack

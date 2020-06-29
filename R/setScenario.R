@@ -52,7 +52,7 @@ setScenario <- function(cfg,scenario,scenario_config="config/scenario_config.csv
     
   for (x in scenario) {
     if(!(x %in% colnames(scenario_config))) stop("No settings for scenario ",x," found in scenario config!")
-    cat("\nApply",x,"settings on config:\n")
+    message("\nApply",x,"settings on config:")
     
     # if there are no switches containing "$" all switches are interpreted as gams switches
     if (!any(grepl("\\$",rownames(scenario_config)))) {
@@ -65,14 +65,14 @@ setScenario <- function(cfg,scenario,scenario_config="config/scenario_config.csv
       to   <- scenario_config[i,x]
       if (is.null(from)) stop("Scenario setting ",i," could not be found in the cfg provided.")
       if(from!=to & to!=""){
-        cat("  Update setting | ",i,":",from, " -> ",to,"\n")
+        message("  Update setting | ",i,":",from, " -> ",to)
         if(suppressWarnings(!is.na(as.numeric(to)))) to <- as.numeric(to)
         if(grepl(",",to,fixed=TRUE)) to <- strsplit(to,",")[[1]]
         # finally set the switch
         eval(parse(text=paste0("cfg$",i, "<- to")))
       }   
     }
-    cat("Config successfully updated!\n\n")
+    message("Config successfully updated!\n")
   }
     
   return(cfg)  

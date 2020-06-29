@@ -50,7 +50,7 @@ model_lock <- function(folder=".",file=".lock",timeout1=NULL,timeout2=NULL,check
         save(lock_queue,file=lfile)
         
         #wait for being the first in the queue
-        cat("Start waiting in the queue...\n")
+        message("Start waiting in the queue...")
         while(!.queue_ready(id,lock_queue)){
           load(lfile)
           #check whether the running process is already running longer than the timeout time
@@ -64,7 +64,7 @@ model_lock <- function(folder=".",file=".lock",timeout1=NULL,timeout2=NULL,check
           }
           Sys.sleep(check_interval)
         }
-        cat("...Waiting finished. Ready to start!\n")
+        message("...Waiting finished. Ready to start!")
         #refresh date
         lock_queue[1,2] <- date()
         
@@ -76,13 +76,13 @@ model_lock <- function(folder=".",file=".lock",timeout1=NULL,timeout2=NULL,check
   }
   else { # If running on cluster
     if(system(paste("mkdir",lfile),intern=F,ignore.stdout=T,ignore.stderr=T)) {
-      cat("The model folder is already locked by another process. Waiting for unlock... \n")
+      message("The model folder is already locked by another process. Waiting for unlock...")
       while(system(paste("mkdir",lfile),intern=F,ignore.stdout=T,ignore.stderr=T)) {
         Sys.sleep(check_interval)
       }
-      cat("The model folder was unlocked by another process.\n")
+      message("The model folder was unlocked by another process.")
     }
-    cat("The model folder was locked by this process.\n")
+    message("The model folder was locked by this process.")
     id<-NULL
   }
   return(id)  
