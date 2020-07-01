@@ -27,8 +27,10 @@
 #' @author Jan Philipp Dietrich
 #' @export
 #' @examples
-#' 
-#' \dontrun{module.skeleton("bla",c("on","off"))}
+#' # copy dummymodel to temporary directory and add new module "bla"
+#' file.copy(system.file("dummymodel",package="gms"),tempdir(), recursive = TRUE)
+#' model   <- paste0(tempdir(),"/dummymodel")
+#' module.skeleton(number="03", name="bla", types=c("on","off"), modelpath=model)
 #' 
 module.skeleton <- function(number, name, types,modelpath=".", modulepath="modules/",includefile="modules/include.gms", version=is.modularGAMS(modelpath,version=TRUE)) {
   if(any(getOption("gms_reserved_types") %in% types)) stop("You tried to use reserved type name(s) (",paste(intersect(getOption("gms_reserved_types"),types),collapse=", "),") Please use different name(s)!")

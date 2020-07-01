@@ -7,9 +7,11 @@
 #' @author Jan Philipp Dietrich
 #' @export
 #' @examples
-#' 
-#' \dontrun{
-#' tardir(".","test.tgz")}
+#' # copy dummymodel to temporary directory and compress it
+#' file.copy(system.file("dummymodel",package="gms"),tempdir(), recursive = TRUE)
+#' model   <- paste0(tempdir(),"/dummymodel")
+#' archive <- paste0(tempdir(),"/dummymodel.tgz")
+#' tardir(model,archive)
 #' 
 tardir <- function(dir=".",tarfile="data.tgz") {
   targetdir <- normalizePath(dirname(tarfile))

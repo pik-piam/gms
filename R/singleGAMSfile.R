@@ -11,11 +11,11 @@
 #' @export
 #' @importFrom utils tail
 #' @examples
-#' 
-#' \dontrun{
-#' model <- system.file("dummymodel",package="gms")
-#' singleGAMSfile(model)
-#' }
+#' # copy dummymodel create single gms file out of it
+#' file.copy(system.file("dummymodel",package="gms"),tempdir(), recursive = TRUE)
+#' model      <- paste0(tempdir(),"/dummymodel")
+#' singlefile <- paste0(tempdir(),"/full.gms")
+#' singleGAMSfile(modelpath=model, output=singlefile)
 #' 
 
 singleGAMSfile <- function(modelpath=".",mainfile="main.gms",output="full.gms") {

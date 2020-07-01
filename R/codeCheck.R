@@ -28,8 +28,10 @@
 #' @export
 #' @seealso \code{\link{codeExtract}},\code{\link{readDeclarations}}
 #' @importFrom utils write.table read.csv
-#' 
-#' 
+#' @examples
+#' # check code consistency of dummy model
+#' codeCheck(system.file("dummymodel",package="gms"))
+#'
 
 codeCheck <- function(path=".",modulepath="modules", core_files = c("core/*.gms","main.gms"), debug=FALSE, interactive=FALSE, test_switches=TRUE, strict=FALSE, details=FALSE) {
 

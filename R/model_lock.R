@@ -28,6 +28,12 @@
 #' @author Jan Philipp Dietrich, David Klein
 #' @export
 #' @seealso \code{\link{check_config}}
+#' @examples 
+#' #lock folder
+#' id <- model_lock(tempdir())
+#' 
+#' #unlock folder
+#' model_unlock(id,tempdir())
 model_lock <- function(folder=".",file=".lock",timeout1=NULL,timeout2=NULL,check_interval=1,oncluster=TRUE) {
   .queue_ready <- function(id,lock_queue) {
     return(as.integer(lock_queue[1,1])==id)

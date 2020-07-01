@@ -23,8 +23,10 @@
 #' @export
 #' @importFrom utils data
 #' @examples
-#' 
-#' \dontrun{update_modules_embedding(system.file("dummymodel",package="gms"))}
+#' # copy dummymodel to temporary directory and update module embedding
+#' file.copy(system.file("dummymodel",package="gms"),tempdir(), recursive = TRUE)
+#' model   <- paste0(tempdir(),"/dummymodel")
+#' update_modules_embedding(model)
 #' 
 update_modules_embedding <- function(modelpath=".",modulepath="modules/",includefile="modules/include.gms",verbose=FALSE) {
 
