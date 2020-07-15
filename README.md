@@ -1,12 +1,17 @@
-# GAMS modularization support package
+# 'GAMS' Modularization Support Package
 
-R package **gms**, version **0.4.0**
+R package **gms**, version **0.4.1**
 
 [![Travis build status](https://travis-ci.com/pik-piam/gms.svg?branch=master)](https://travis-ci.com/pik-piam/gms)  [![codecov](https://codecov.io/gh/pik-piam/gms/branch/master/graph/badge.svg)](https://codecov.io/gh/pik-piam/gms)
 
 ## Purpose and Functionality
 
-A collection of tools to create, use and maintain modularized model code written in the modeling language GAMS (https://www.gams.com/).
+A collection of tools to create, use and maintain modularized model code written in the modeling 
+    language 'GAMS' (<https://www.gams.com/>). Out-of-the-box 'GAMS' does not come with support for modularized
+    model code. This package provides the tools necessary to convert a standard 'GAMS' model to a modularized one
+    by introducing a modularized code structure together with a naming convention which emulates local
+    environments. In addition, this package provides tools to monitor the compliance of the model code with
+    modular coding guidelines.
 
 
 ## Installation
@@ -38,17 +43,18 @@ In case of questions / problems please contact Jan Philipp Dietrich <dietrich@pi
 
 To cite package **gms** in publications use:
 
-Dietrich J, Klein D, Giannousakis A, Beier F, Koch J, Baumstark L (2020). _gms: GAMS modularization support package_. R package
-version 0.4.0.
+Dietrich J, Klein D, Giannousakis A, Beier F, Koch J, Baumstark L
+(2020). _gms: 'GAMS' Modularization Support Package_. R package version
+0.4.1.
 
 A BibTeX entry for LaTeX users is
 
  ```latex
 @Manual{,
-  title = {gms: GAMS modularization support package},
+  title = {gms: 'GAMS' Modularization Support Package},
   author = {Jan Philipp Dietrich and David Klein and Anastasis Giannousakis and Felicitas Beier and Johannes Koch and Lavinia Baumstark},
   year = {2020},
-  note = {R package version 0.4.0},
+  note = {R package version 0.4.1},
 }
 ```
 

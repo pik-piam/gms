@@ -111,7 +111,8 @@ codeCheck <- function(path=".",modulepath="modules", core_files = c("core/*.gms"
   
   w <- NULL
   
-  # Do all declarations follow the naming conventions (see http://redmine.pik-potsdam.de/projects/mo/wiki/Coding_Etiquette for further informations)
+  # Do all declarations follow the naming conventions?
+  # (see the naming etiquette at https://github.com/remindmodel/remind/blob/develop/main.gms for further information)
   # Remove objects which not follow the naming conventions from declarations set as
   # they would cause otherwise problems in the following
   tmp <- grep("^[qvsfipoxcm]{1}[cqv]?(m|[0-9]{2}|)_",gams$declarations[,"names"],invert=TRUE)
