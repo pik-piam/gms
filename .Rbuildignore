@@ -5,3 +5,4 @@
 ^.*\.zenodo.json$
 ^CRAN-RELEASE$
 ^cran-comments\.md$
+^\.buildlibrary$

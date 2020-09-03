@@ -50,6 +50,32 @@ download_distribute <- function(files,
   # the resolution information in the file name (if existing) is removed to
   # allow a resolution-indepedent gams-sourcecode.
   low_res  <- get_info("input/info.txt","^\\* Output ?resolution:",": ")
+  
+  # make an educated guess about what the current low res is
+  if(is.null(low_res)) {
+    guessLowRes <- function(folder) {
+      suf <- sub("^.*_(.*)\\..*$","\\1",dir(folder))
+      # remove high res suffix
+      suf <- suf[!(suf=="0.5")]
+      if(length(suf)==0) {
+        warning("Low Res suffix not properly detected, set low res suffix to NULL")
+        return(NULL)
+      } else if(length(suf)>1) {
+         #remove suffixes which only happen to appear once
+         suf <- suf[duplicated(suf)]
+         if(length(suf)==0) {
+           warning("Low Res suffix not properly detected, set low res suffix to NULL")
+           return(NULL)
+         } else if(length(suf)>1) {
+           tmp <- table(suf)
+           suf <- names(tmp)[order(tmp, decreasing=TRUE)][1]
+         }
+      }
+      message("Low resolution suffix automatic determined as \"",suf,"\"")
+      return(suf)
+    }
+    low_res <- guessLowRes("input/")
+  }
   copy_input(x=file2destination, sourcepath="input", suffix=low_res, move=!debug)
   return(filemap)
 }
