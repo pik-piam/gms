@@ -6,9 +6,9 @@
 #' 
 #' 
 #' @aliases model_lock model_unlock
-#' @usage model_lock(folder=".", file=".lock", timeout1=NULL, timeout2=NULL,
-#' check_interval=1, oncluster=TRUE)
-#' model_unlock(id,folder=".",file=".lock",oncluster=TRUE)
+#' @usage model_lock(folder=".", file=".lock", timeout1=12, timeout2=24,
+#' check_interval=1, oncluster=NULL)
+#' model_unlock(id,folder=".",file=".lock",oncluster=NULL)
 #' @param folder model folder
 #' @param file file name of the lock file containing the process queue
 #' @param timeout1 Time in hours the top process in the queue is allowed to run
@@ -18,12 +18,8 @@
 #' @param check_interval Time in seconds between checking the current position
 #' in the queue.
 #' @param id process id as returned by model_lock.
-#' @param oncluster a logical indicating whether the script is run on cluster
-#' or not. On windows a lock file is created, which does not prevent
-#' simulatneous access to the model. On the cluster the system command 'mkdir'
-#' is used to prevent simultaneous access. This atomicity of check-and-create
-#' is ensured at the operating system kernel level.
-#' @return model_lock returns the process id which is needed (only on Windows)
+#' @param oncluster deprecated setting which will be ignored.
+#' @return model_lock returns the process id which is needed
 #' to identify the process in model_unlock.
 #' @author Jan Philipp Dietrich, David Klein
 #' @export
@@ -34,62 +30,72 @@
 #' 
 #' #unlock folder
 #' model_unlock(id,tempdir())
-model_lock <- function(folder=".",file=".lock",timeout1=NULL,timeout2=NULL,check_interval=1,oncluster=TRUE) {
-  .queue_ready <- function(id,lock_queue) {
-    return(as.integer(lock_queue[1,1])==id)
-  }
-  
-  .gdate <- function(x) {
-    return(as.POSIXct(substring(x,5),format="%b %d %H:%M:%S %Y")) 
+model_lock <- function(folder=".",file=".lock",timeout1=12,timeout2=24,check_interval=1,oncluster=NULL) {
+
+  if(!is.null(oncluster)) warning("oncluster setting is deprecated and ignored.")
+
+  .cleanQueue <- function(lfile) {
+    lock_queue <- .readLock(lfile)
+    outdated <- (lock_queue$auto_unlock < Sys.time())
+    if(any(outdated)) {
+      # removed outdated entries
+      lock_queue <- lock_queue[!outdated,]
+      # recalculate auto unlock time for first in Queue, if it is a new entry
+      # (as auto unlock time of running process depends on timeout1 setting,
+      # while unlock time for queued processes depends on timeout2)
+      if(outdated[1] & !all(outdated)) {
+        lock_queue$auto_unlock[1] <- Sys.time() + lock_queue$timeout1[1]*3600
+      }
+    }
+    .writeLock(lock_queue,lfile)
   }
   
   lfile <- path(folder,file)
-
-  if(!oncluster) {
-      start_date <- date()
-      if(file.exists(lfile)) {
-        load(lfile)
-        #create id
-        id <- max(as.integer(lock_queue[,1])) + 1
-        #add entry to queue
-        lock_queue <- rbind(lock_queue,c(id=id,date=date()))
-        save(lock_queue,file=lfile)
-        
-        #wait for being the first in the queue
-        message("Start waiting in the queue...")
-        while(!.queue_ready(id,lock_queue)){
-          load(lfile)
-          #check whether the running process is already running longer than the timeout time
-          if(!is.null(timeout1)) if(as.numeric(.gdate(date()) - .gdate(lock_queue[1,2]),units="hours") > timeout1) {
-            model_unlock(id,folder,file)
-            stop("Timeout! The lock date of the running process (",lock_queue[1,2],") is older than the timeout1 time (",timeout1," hours). This could indicate that there was an error in a previous run. Please check your model folder!")
-          }
-          if(!is.null(timeout2)) if(as.numeric(.gdate(date()) - .gdate(start_date),units="hours") > timeout2) {
-            model_unlock(id,folder,file)
-            stop("Timeout! The process was waiting longer than timeout2 (",timeout2," hours) in the queue and has therefore be stopped!")
-          }
-          Sys.sleep(check_interval)
-        }
-        message("...Waiting finished. Ready to start!")
-        #refresh date
-        lock_queue[1,2] <- date()
-        
-      } else {
-        id <- 1
-        lock_queue <- matrix(c(id=id,date=date()),1,2)
-      } 
-      save(lock_queue,file=lfile)
-  }
-  else { # If running on cluster
-    if(system(paste("mkdir",lfile),intern=F,ignore.stdout=T,ignore.stderr=T)) {
-      message("The model folder is already locked by another process. Waiting for unlock...")
-      while(system(paste("mkdir",lfile),intern=F,ignore.stdout=T,ignore.stderr=T)) {
-        Sys.sleep(check_interval)
-      }
-      message("The model folder was unlocked by another process.")
+  if(file.exists(lfile)) {
+    lock_queue <- .readLock(lfile)
+    
+    if(nrow(lock_queue)==0) {
+      id <- 1
+      lock_queue <-data.frame(id=id,auto_unlock=Sys.time()+timeout1*3600,timeout1=timeout1)  
+    } else { 
+      #create id
+      id <- max(lock_queue$id) + 1
+      # set unlock time based on timeout2
+      auto_unlock <- Sys.time() + timeout2*3600 + 1
+      #add entry to queue
+      lock_queue <- rbind(lock_queue,
+                          data.frame(id=id,
+                                     auto_unlock=auto_unlock,
+                                     timeout1=timeout1))
     }
-    message("The model folder was locked by this process.")
-    id<-NULL
-  }
+    .writeLock(lock_queue,lfile)
+    .cleanQueue(lfile)
+    #wait for being the first in the queue
+    message("Model locked and run queued...")
+    repeat {
+      if(lock_queue$id[1]==id) {
+        message("...waiting finished. Starting model.")
+        break
+      }
+      if(!(id %in% lock_queue$id)) stop("Process removed from queue (probable reason: timeout2 limit exceeded)!")
+      Sys.sleep(check_interval)
+      .cleanQueue(lfile)
+      lock_queue <- .readLock(lfile)
+    }
+  } else {
+    id <- 1
+    lock_queue <-data.frame(id=id,auto_unlock=Sys.time()+timeout1*3600,timeout1=timeout1)
+    .writeLock(lock_queue,lfile)
+    message("Model locked...")
+  } 
   return(id)  
+}
+
+.readLock <- function(lfile) {
+  lock_queue <- read.csv(lfile, stringsAsFactors = FALSE)
+  lock_queue$auto_unlock <- as.POSIXct(lock_queue$auto_unlock)
+  return(lock_queue)
+}
+.writeLock <- function(lock_queue,lfile) {
+  write.csv(lock_queue,file=lfile, row.names = FALSE, quote = FALSE)
 }

@@ -1,6 +1,6 @@
 # 'GAMS' Modularization Support Package
 
-R package **gms**, version **0.5.0**
+R package **gms**, version **0.6.0**
 
 [![Travis build status](https://travis-ci.com/pik-piam/gms.svg?branch=master)](https://travis-ci.com/pik-piam/gms)  [![codecov](https://codecov.io/gh/pik-piam/gms/branch/master/graph/badge.svg)](https://codecov.io/gh/pik-piam/gms)
 
@@ -43,8 +43,8 @@ In case of questions / problems please contact Jan Philipp Dietrich <dietrich@pi
 
 To cite package **gms** in publications use:
 
-Dietrich J, Klein D, Giannousakis A, Beier F, Koch J, Baumstark L (2020). _gms: 'GAMS' Modularization
-Support Package_. R package version 0.5.0.
+Dietrich J, Klein D, Giannousakis A, Beier F, Koch J, Baumstark L (2020). _gms: 'GAMS' Modularization Support Package_. R package
+version 0.6.0.
 
 A BibTeX entry for LaTeX users is
 
@@ -53,7 +53,7 @@ A BibTeX entry for LaTeX users is
   title = {gms: 'GAMS' Modularization Support Package},
   author = {Jan Philipp Dietrich and David Klein and Anastasis Giannousakis and Felicitas Beier and Johannes Koch and Lavinia Baumstark},
   year = {2020},
-  note = {R package version 0.5.0},
+  note = {R package version 0.6.0},
 }
 ```
 

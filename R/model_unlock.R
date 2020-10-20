@@ -1,25 +1,17 @@
 #' @export
-model_unlock <- function(id,folder=".",file=".lock",oncluster=TRUE) {
+model_unlock <- function(id,folder=".",file=".lock",oncluster=NULL) {
+  
+  if(!is.null(oncluster)) warning("oncluster setting is deprecated and ignored.")
+  
   lfile <- path(folder,file)
-  if(!oncluster) {
-      if(!file.exists(lfile)) stop("Lock file does not exist!")
-      load(lfile)
-      row <- which(as.integer(lock_queue[,1])==id)
-      if(length(row)==0) stop("Could not find a process with the given id!")
-      if(length(row)>1) stop("More than one lock entry for the given id!")
-      if(dim(lock_queue)[1]>1) {
-        lock_queue <- lock_queue[-row,,drop=FALSE]
-        save(lock_queue,file=lfile)
-      } else {
-        unlink(lfile)  
-      }
-      message("...entry removed from queue!")
-  }
-  else {
-    if(!system(paste0("rm -r ",lfile),intern=F,ignore.stdout=T,ignore.stderr=T)) {
-      message("The model was unlocked")
-    } else {
-      stop("Lockfile does not exist")
-    }
+  if(!file.exists(lfile)) stop("Lock file does not exist!")
+  lock_queue <- .readLock(lfile)
+  lock_queue <- lock_queue[lock_queue$id!=id,]
+  if(nrow(lock_queue)>0) {
+    .writeLock(lock_queue,lfile)
+    message("...model run with id ",id," removed from queue!")
+  } else {
+    unlink(lfile)
+    message("...model unlocked!")
   }
 }
