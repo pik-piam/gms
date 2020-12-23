@@ -1,8 +1,9 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
-.travis.yml
 ^\.git$
 ^.*\.zenodo.json$
 ^CRAN-RELEASE$
 ^cran-comments\.md$
 ^\.buildlibrary$
+^\.github$
+^codecov\.yml$

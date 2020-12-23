@@ -1,8 +1,8 @@
 Package: gms
 Type: Package
 Title: 'GAMS' Modularization Support Package
-Version: 0.6.0
-Date: 2020-10-20
+Version: 0.6.1
+Date: 2020-12-23
 Authors@R: c(person("Jan Philipp", "Dietrich", email = "dietrich@pik-potsdam.de", role = c("aut","cre")),
              person("David", "Klein", role = "aut"),
              person("Anastasis", "Giannousakis", role = "aut"),
@@ -16,7 +16,12 @@ Description: A collection of tools to create, use and maintain modularized model
     environments. In addition, this package provides tools to monitor the compliance of the model code with
     modular coding guidelines.
 Imports: dplyr, rlang, stringr, yaml
-Suggests: curl, magclass, qgraph, testthat
+Suggests: 
+    curl,
+    magclass,
+    qgraph,
+    testthat,
+    covr
 URL: https://github.com/pik-piam/gms
 BugReports: https://github.com/pik-piam/gms/issues
 License: BSD_2_clause + file LICENSE
