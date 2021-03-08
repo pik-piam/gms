@@ -47,7 +47,7 @@ checkAppearance <- function(x) {
   # all module realizations. This process primarily seems to scale with the number of variables and not with the number 
   # of module realizations.It is hard to optimize since the number of variables that the code has to look for can 
   # hardly be reduced
-  a <- t(sapply(paste("(^|[^[:alnum:]_])",escapeRegex(rownames),"($|[^[:alnum:]_])",sep=""),grepl,tmp))
+  a <- t(sapply(paste("(^|[^[:alnum:]_])",escapeRegex(rownames),"($|[^[:alnum:]_])",sep=""),grepl,tmp, perl = TRUE))
   
   message("  Finished variable matching...         (time elapsed: ",format(proc.time()["elapsed"]-ptm,width=6,nsmall=2,digits=2),")")
    
