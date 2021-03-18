@@ -59,12 +59,13 @@ replace_in_file <- function(file, content, subject='CODE',add=FALSE,addfile=FALS
     } else if(add=="bottom" | add==TRUE) {
       f <- c(f,"",start_raw,end_raw,"")  
     } else {
-      stop(paste("end pattern was found",length(end_row),"times!"))    
+      stop("end pattern was found ", length(end_row), " times in ", file, "!")    
     }
   }
   start_row <- grep(start,f)
   end_row <- grep(end,f)
-  if(start_row >= end_row) stop("end pattern found before start pattern")
+  if (start_row >= end_row)
+    stop("end pattern found before start pattern in ", file)
   
   f <- c(f[1:start_row],content,f[end_row:length(f)])
   writeLines(f,file)
