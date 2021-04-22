@@ -2,7 +2,7 @@
 #' 
 #' Downloads a list of tgz files from a list of repos and unpacks them
 #' 
-#' @param files a vector of files containing input data
+#' @param files a vector of files containing input data, if a file is no .tgz it will be downloaded and not unpacked
 #' @param repositories a list of repositories (please pay attention to the list format!) in which the files 
 #' should be searched for. Files will be searched in all repositories until found, always starting with the 
 #' first repository in the list. The argument must have the format of a named list with the url of the repository

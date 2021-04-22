@@ -1,6 +1,6 @@
 #' Download and unpack compressed data from repositories
 #' 
-#' Downloads a list of tgz files from a list of repos and unpacks them
+#' Downloads a list of tgz files from a list of repos and unpacks them. If a file is no .tgz-file it will be only downloaded.
 #' 
 #' @param input a vector of files to be downloaded or a cfg list with settings to be used (e.g. containing
 #' cfg$input, cfg$repositories). Settings in the config list will be overwritten by other arguments of
@@ -62,7 +62,7 @@ download_unpack <- function(input, targetdir="input", repositories=NULL, debug=F
     for(file in files) {
       path <- paste0(sub("/$","",repo),"/",file)
       if(grepl("://",repo)) {
-        tmpdir <- ifelse((debug | !unpack),targetdir,tempdir())
+        tmpdir <- ifelse((debug | !unpack | !grepl(".tgz",file)),targetdir,tempdir())
         tmp <- try(curl::curl_download(path,paste0(tmpdir,"/tmpdownloadfile"),handle=h),silent = !debug)
         if(!("try-error" %in% class(tmp))) {
           files <- files[-match(file,files)]
@@ -97,8 +97,10 @@ download_unpack <- function(input, targetdir="input", repositories=NULL, debug=F
   if(unpack) {
     message("..unpack files..")
     for(f in rownames(found)) {
-      message(" -> ",f)
-      untar(found[f,"path"],exdir=targetdir)
+      if(grepl(".tgz",f)){
+         message(" -> ",f)
+         untar(found[f,"path"],exdir=targetdir)
+      }   
     }
     message("..done")
   
