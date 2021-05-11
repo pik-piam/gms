@@ -49,15 +49,15 @@ writeSets <- function(sets, file = NULL) {
 
 .setFormatting <- function(x, maxchar = 80, raw = FALSE) {
   
-  if(is.data.frame(x)) {
-    if(dim(x)[2] == 1) {
+  if (is.data.frame(x)) {
+    if (dim(x)[2] == 1) {
       x <- x[[1]]
-    } else if(dim(x)[2] == 2) {
-      for(i in 1:2) x[[i]] <- as.character(x[[i]])
+    } else if (dim(x)[2] == 2) {
+      for (i in 1:2) x[[i]] <- as.character(x[[i]])
       out <- NULL
-      for(i in unique(x[[1]])) {
+      for (i in unique(x[[1]])) {
         j <- x[[2]][x[[1]] == i]
-        out <- c(out, paste0(i," . (",.setFormatting(j, maxchar = 80 - nchar(i), raw = TRUE), ")"))
+        out <- c(out, paste0(i," . (",.setFormatting(j, maxchar = maxchar - nchar(i) - 5, raw = TRUE), ")"))
       }
       x <- out
     } else { 
@@ -85,7 +85,7 @@ writeSets <- function(sets, file = NULL) {
   for (i in 1:length(tmp)) {
     if (i == length(tmp) && !raw) end <- " /"
     content <- c(content,paste0(start,tmp[[i]],end))
-    if(!raw) start <- "      "
+    if (!raw) start <- "      "
   }
   return(content)
 }
