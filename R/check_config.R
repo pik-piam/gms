@@ -24,17 +24,19 @@
 #' @seealso \code{\link{getModules}}
 #' @export
 #' @importFrom utils read.csv2
-check_config <- function(icfg, reference_file = "config/default.cfg", modulepath = "modules/", #nolint
-                         settings_config = NULL, extras = NULL) {                              #nolint
+check_config <- function(icfg, reference_file = "config/default.cfg", modulepath = "modules/", # nolint
+                         settings_config = NULL, extras = NULL) {                              # nolint
 
   .sourceConfig <- function(icfg) {
     cfg <- NULL
     # set the cfg object
     if (!is.list(icfg)) {
       if (is.character(icfg)) {
-        if (file.exists(path("config", icfg))) icfg <- path("config", icfg)
-        source(icfg, local = TRUE)
+        if (file.exists(file.path("config", icfg))) icfg <- file.path("config", icfg)
+        source(icfg, local = TRUE) # nolint
         if (!is.list(cfg)) stop("Wrong input file format: config file does not contain a cfg list!")
+        raw <- paste(readLines(icfg), collapse = " ")
+        attr(cfg, "items") <- substring(unique(str_extract_all(raw, "cfg\\$[a-zA-Z0-9_]*")[[1]]), 5)
         icfg <- cfg
         rm(cfg)
       } else {
@@ -44,12 +46,15 @@ check_config <- function(icfg, reference_file = "config/default.cfg", modulepath
     return(icfg)
   }
 
+  .extendedNames <- function(cfg) {
+    return(union(names(cfg), attr(cfg, "items")))
+  }
 
   icfg <- .sourceConfig(icfg)
   cfg  <- .sourceConfig(reference_file)
 
-  missingSettings <- names(cfg)[!(names(cfg) %in% names(icfg))]
-  extraSettings   <- names(icfg)[!(names(icfg) %in% names(cfg))]
+  missingSettings <- setdiff(names(cfg), names(icfg))
+  extraSettings   <- setdiff(names(icfg), .extendedNames(cfg))
 
   listElems <- names(cfg)[unlist(lapply(cfg, is.list))]
   for (l in listElems) {
