@@ -1,8 +1,8 @@
 Package: gms
 Type: Package
 Title: 'GAMS' Modularization Support Package
-Version: 0.10.2
-Date: 2021-09-09
+Version: 0.10.3
+Date: 2021-09-21
 Authors@R: c(person("Jan Philipp", "Dietrich", email = "dietrich@pik-potsdam.de", role = c("aut","cre")),
              person("David", "Klein", role = "aut"),
              person("Anastasis", "Giannousakis", role = "aut"),
@@ -21,10 +21,11 @@ Suggests:
     magclass,
     qgraph,
     testthat,
-    covr
+    covr,
+    withr
 URL: https://github.com/pik-piam/gms, https://doi.org/10.5281/zenodo.4390032
 BugReports: https://github.com/pik-piam/gms/issues
 License: BSD_2_clause + file LICENSE
 LazyData: no
 Encoding: UTF-8
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
