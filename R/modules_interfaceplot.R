@@ -36,13 +36,15 @@ modules_interfaceplot <- function(x=".",
     tmp <- interfaceplot(x = x,
                          filename = path(targetfolder,"interfaces"), 
                          filetype = filetype,
-                         legend = FALSE) 
+                         legend = FALSE,
+                         ...) 
   } else {
     tmp <- interfaceplot(x = x,
                          modules_to_exclude = "core",
                          filename = path(targetfolder,"interfaces"), 
                          filetype = filetype,
-                         legend = FALSE)
+                         legend = FALSE,
+                         ...)
   }
   
   
