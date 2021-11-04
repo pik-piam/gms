@@ -60,6 +60,13 @@ singleGAMSfile <- function(modelpath=".",mainfile="main.gms",output="full.gms") 
     } else if(length(grep("^\\$include",code[i],ignore.case=TRUE))==1) {
       p <- gsub("\\\"","",strsplit(code[i]," +")[[1]][2])
       code <- .insertIncludeFile(code,i,p)      
+    } else if(length(grep("^\\$if exist.*\\$include",code[i],ignore.case=TRUE))==1) {
+      p <- gsub("\\\"","",strsplit(code[i]," +")[[1]][5])
+      if(file.exists(p)) {
+        code <- .insertIncludeFile(code,i,p)
+      } else {
+        code[i] <- paste("*",code[i]," CONDITION WAS NEGATIVE!",sep="")
+      }
     } else if(length(grep("^\\$batinclude",code[i],ignore.case=TRUE))==1) {
       tmp <- strsplit(code[i]," +")[[1]]
       p <- gsub("\\\"","",tmp[2])
