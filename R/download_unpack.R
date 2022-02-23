@@ -28,7 +28,11 @@ download_unpack <- function(input, targetdir = "input", repositories = NULL, deb
     if (is.null(repositories)) repositories <- input$repositories
     if (is.null(debug)) debug <- input$debug
   } else {
-    files <- input
+    files <- basename(input)
+    if (is.null(repositories)) {
+      repositories <- vector("list", length(input))
+      names(repositories) <- dirname(input)
+    }
   }
 
   ifiles <- files
