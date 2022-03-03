@@ -117,7 +117,11 @@ update_modules_embedding <- function(modelpath=".",modulepath="modules/",include
       realizationGMSpath <- switch(version,
                                    "1" = path(fullmodulepath,module,t,ftype="gms"),
                                    "2" = path(fullmodulepath,module,t,"realization",ftype="gms"))
-      replace_in_file(realizationGMSpath,code,subject="PHASES")     
+      if(file.exists(realizationGMSpath)) {
+        replace_in_file(realizationGMSpath, code, subject = "PHASES")
+      } else {
+        warning(realizationGMSpath, " not found, this realization cannot be used!")
+      }
     }
   }
 
