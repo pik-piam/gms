@@ -1,6 +1,6 @@
 {
   "title": "gms: 'GAMS' Modularization Support Package",
-  "version": "0.12.2",
+  "version": "0.12.3",
   "description": "<p>A collection of tools to create, use and maintain modularized model code written in the modeling \n    language 'GAMS' (<https://www.gams.com/>). Out-of-the-box 'GAMS' does not come with support for modularized\n    model code. This package provides the tools necessary to convert a standard 'GAMS' model to a modularized one\n    by introducing a modularized code structure together with a naming convention which emulates local\n    environments. In addition, this package provides tools to monitor the compliance of the model code with\n    modular coding guidelines.<\/p>",
   "creators": [
     {
