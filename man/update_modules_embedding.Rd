@@ -40,7 +40,7 @@ additional phase. The syntax is "* !add_phase!: <phase>", e.g. "*
 }
 \examples{
 # copy dummymodel to temporary directory and update module embedding
-file.copy(system.file("dummymodel",package="gms"),tempdir(), recursive = TRUE)
+file.copy(system.file("dummymodel", package="gms"), tempdir(), recursive = TRUE)
 model   <- paste0(tempdir(),"/dummymodel")
 update_modules_embedding(model)
 
