@@ -1,4 +1,4 @@
-#' Creative tgz archive from directory
+#' Create tgz archive from directory
 #' 
 #' Creates a tgz from all files in a directory
 #' 
