@@ -60,4 +60,3 @@ updateInterfaceMapping <- function(path=".",modulepath="modules") {
   }
   write.csv(out,path(path,modulepath,"module_interface_mapping.csv"),row.names=FALSE,eol="\r\n")
 }
-
