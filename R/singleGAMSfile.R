@@ -27,8 +27,18 @@ singleGAMSfile <- function(modelpath=".",mainfile="main.gms",output="full.gms") 
   .insertIncludeFile <- function(code,i,path) {
     path <- gsub(";","",path)
     if(file.exists(path)) {
-      tmp <- suppressWarnings(readLines(path))
-      code <- c(code[1:(i-1)],paste("*",code[i]," DONE!",sep=""),tmp,code[(i+1):length(code)])
+      includeFileContent <- suppressWarnings(readLines(path))
+      if (i < length(code)) {
+        remainder <- code[(i+1):length(code)]
+      }
+      else {
+        remainder <- NULL
+      }
+      code <- c(code[1:(i-1)], paste0("*", code[i], " DONE!"),
+                includeFileContent)
+      if (! is.null(remainder)) {
+        code <- c(code, remainder)
+      }
     } else {
       stop("Include file ", path, " could not be found!")
     }
