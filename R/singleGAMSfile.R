@@ -109,6 +109,6 @@ singleGAMSfile <- function(modelpath=".",mainfile="main.gms",output="full.gms") 
       warning("Catched a command which could not be translated (",code[i],")")
     }
   }
- setwd(cwd)
- writeLines(code,output)  
+  setwd(cwd)
+  writeLines(code,output)
 }
