@@ -19,10 +19,10 @@ a single GAMS file.
 }
 \examples{
 # copy dummymodel create single gms file out of it
-file.copy(system.file("dummymodel",package="gms"),tempdir(), recursive = TRUE)
-model      <- paste0(tempdir(),"/dummymodel")
-singlefile <- paste0(tempdir(),"/full.gms")
-singleGAMSfile(modelpath=model, output=singlefile)
+file.copy(system.file("dummymodel", package = "gms"), tempdir(), recursive = TRUE)
+model      <- paste0(tempdir(), "/dummymodel")
+singlefile <- paste0(tempdir(), "/full.gms")
+singleGAMSfile(modelpath = model, output = singlefile)
 
 }
 \author{
