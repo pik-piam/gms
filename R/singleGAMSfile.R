@@ -28,11 +28,7 @@ singleGAMSfile <- function(modelpath = ".", mainfile = "main.gms", output = "ful
       } else {
         remainder <- NULL
       }
-      code <- c(code[1:(i - 1)], paste0("*", code[i], " DONE!"),
-                includeFileContent)
-      if (!is.null(remainder)) {
-        code <- c(code, remainder)
-      }
+      code <- c(code[1:(i - 1)], paste0("*", code[i], " DONE!"), includeFileContent, remainder)
     } else {
       stop("Include file ", path, " could not be found!")
     }
