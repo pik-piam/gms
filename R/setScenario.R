@@ -51,8 +51,8 @@ setScenario <- function(cfg,scenario,scenario_config="config/scenario_config.csv
     
     
   for (x in scenario) {
-    if(!(x %in% colnames(scenario_config))) stop("No settings for scenario ",x," found in scenario config!")
-    message("\nApply",x,"settings on config:")
+    if(!(x %in% colnames(scenario_config))) stop("No settings for scenario ", x, " found in scenario config!")
+    message("\nApply ", x, " settings on config:")
     
     # if there are no switches containing "$" all switches are interpreted as gams switches
     if (!any(grepl("\\$",rownames(scenario_config)))) {
