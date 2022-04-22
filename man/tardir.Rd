@@ -2,7 +2,7 @@
 % Please edit documentation in R/tardir.R
 \name{tardir}
 \alias{tardir}
-\title{Creative tgz archive from directory}
+\title{Create tgz archive from directory}
 \usage{
 tardir(dir = ".", tarfile = "data.tgz")
 }

@@ -20,7 +20,6 @@ $setglobal crazymodule  simple
 sets
    i dummy set /x1,x2,x3/
 ;
-
 *$include "./core/core.gms" DONE!
 
 #' @code Here we are doing some core calculation stuff
@@ -31,8 +30,7 @@ parameter
 
 pm_global = 1;
 
-#' yihaaa!  
-
+#' yihaaa!
 *$batinclude "./modules/include.gms" calculations DONE!
 $setglobal phase %1
 $onrecurse
@@ -129,4 +127,3 @@ display vm_exchange.l;
 *###################### R SECTION END (MODULETYPES) ############################
 *######################## R SECTION END (MODULES) ##############################
 $offrecurse
-

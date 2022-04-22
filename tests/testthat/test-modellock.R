@@ -9,4 +9,3 @@ test_that("standard lock/unlock works", {
   model_unlock(id=id,folder=lfolder)
   expect_true(!file.exists(lfile))
 })
-

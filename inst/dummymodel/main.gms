@@ -17,4 +17,3 @@ $setglobal crazymodule  simple
 $include "./core/sets.gms"
 $include "./core/core.gms"
 $batinclude "./modules/include.gms" calculations
-

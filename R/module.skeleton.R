@@ -100,4 +100,3 @@ module.skeleton <- function(number, name, types,modelpath=".", modulepath="modul
   }
   update_modules_embedding(modelpath=modelpath,modulepath=modulepath,includefile=includefile)
 }
-
