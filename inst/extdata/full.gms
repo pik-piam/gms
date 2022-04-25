@@ -11,10 +11,12 @@ $title dummymodel
 *' by goxygen, but has not content and cannot be solved with GAMS. It can serve as 
 *' a template to build a modular GAMS model from scratch.
 *'
-*' The dummy model consists of two modules [01_fancymodule] and [02_crazymodule].
+*' The dummy model consists of three modules [01_fancymodule], [02_crazymodule],
+*' and [03_Rmodule].
 
 $setglobal fancymodule  default
 $setglobal crazymodule  simple
+$setglobal Rmodule  withr
 
 *$include "./core/sets.gms" DONE!
 sets
@@ -123,6 +125,27 @@ equations
 *' @code Let's add some standard code
 
 display vm_exchange.l;
+*######################## R SECTION END (PHASES) ###############################
+*###################### R SECTION END (MODULETYPES) ############################
+*$include "./modules/03_Rmodule/module.gms" DONE!
+*' @title Module which uses R
+
+*' @description This module uses an R script!
+
+*' @authors Bruce Wayne, Max Mustermann
+
+*###################### R SECTION START (MODULETYPES) ##########################
+*$Ifi "%Rmodule%" == "withr" $include "./modules/03_Rmodule/withr/realization.gms" DONE!
+
+*' @description This realization uses R!
+
+*' @limitations It is not really working as it is just an example.
+
+*####################### R SECTION START (PHASES) ##############################
+*$Ifi "%phase%" == "calculations" $include "./modules/03_Rmodule/withr/calculations.gms" DONE!
+*' @code Let's add running an R script
+
+Execute "Rscript run_calculations.R";
 *######################## R SECTION END (PHASES) ###############################
 *###################### R SECTION END (MODULETYPES) ############################
 *######################## R SECTION END (MODULES) ##############################
