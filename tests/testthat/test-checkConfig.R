@@ -24,9 +24,9 @@ test_that("config check fails if module realization does not exist", {
 
 test_that("config check accepts extras as argument", {
   cfg <- list(title = "default", gms = list(switch1 = TRUE, switch2 = 1,
-              fancymodule = "default", crazymodule = "simple"))
+              fancymodule = "default", crazymodule = "simple", Rmodule="withr"))
   cfgextra <- list(title = "default", gms = list(switch1 = TRUE, switch2 = 1, fancymodule = "default",
-                   crazymodule = "simple", extra1 = TRUE), extra2 = TRUE)
+                   crazymodule = "simple", Rmodule="withr", extra1 = TRUE), extra2 = TRUE)
   expect_warning(check_config(cfgextra, reference_file = cfg,
                  modulepath = system.file("dummymodel/modules/", package = "gms")),
                  "Settings are unknown in provided cfg")
