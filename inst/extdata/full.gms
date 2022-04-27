@@ -145,6 +145,10 @@ display vm_exchange.l;
 *$Ifi "%phase%" == "calculations" $include "./modules/03_Rmodule/withr/calculations.gms" DONE!
 *' @code Let's add running an R script
 
+$onecho > run_calculations.R;
+# a very important calculation, which can not possibly be done in GAMS
+1 + 2
+$offecho
 Execute "Rscript run_calculations.R";
 *######################## R SECTION END (PHASES) ###############################
 *###################### R SECTION END (MODULETYPES) ############################
