@@ -80,7 +80,7 @@ check_config <- function(icfg, reference_file = "config/default.cfg", modulepath
     }
   }
   if (!is.null(extras)) {
-    extraSettings <- extraSettings[!(sub("\\$.*$", "", extraSettings) %in% extras)]
+    extraSettings <- extraSettings[!(sub("\\$.*$", "", extraSettings) %in% extras) & ! extraSettings %in% extras]
   }
   if (length(extraSettings) > 0) {
     warning("Settings are unknown in provided cfg (", paste("cfg", extraSettings, sep = "$", collapse = ", "),

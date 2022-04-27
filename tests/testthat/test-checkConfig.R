@@ -21,3 +21,16 @@ test_that("config check fails if module realization does not exist", {
                             modulepath = system.file("dummymodel/modules/", package = "gms")),
                "Chosen realization \"hallo\" does not exist for module \"fancymodule\"")
 })
+
+test_that("config check accepts extras as argument", {
+  cfg <- list(title = "default", gms = list(switch1 = TRUE, switch2 = 1,
+              fancymodule = "default", crazymodule = "simple"))
+  cfgextra <- list(title = "default", gms = list(switch1 = TRUE, switch2 = 1, fancymodule = "default",
+                   crazymodule = "simple", extra1 = TRUE), extra2 = TRUE)
+  expect_warning(check_config(cfgextra, reference_file = cfg,
+                 modulepath = system.file("dummymodel/modules/", package = "gms")),
+                 "Settings are unknown in provided cfg")
+  expect_silent(x <- check_config(cfgextra, reference_file = cfg,
+                    modulepath = system.file("dummymodel/modules/", package="gms"),
+                    extras = c("gms$extra1", "extra2")))
+})
