@@ -110,25 +110,25 @@ singleGAMSfile <- function(modelpath = ".", mainfile = "main.gms", output = "ful
       if (is.na(i)) break
 
       # extract R script file name
-      RFileName <- sub("^Execute\\s+\"Rscript (.*)\";", "\\1", code[i], ignore.case = TRUE)
+      rFileName <- sub("^Execute\\s+\"Rscript (.*)\";", "\\1", code[i], ignore.case = TRUE)
       # check if R script is included in core or a module
-      if ((substr(RFileName, 0, 4) == "core" | substr(RFileName, 0, 7) == "modules") & file.exists(RFileName)) {
+      if ((substr(rFileName, 0, 4) == "core" | substr(rFileName, 0, 7) == "modules") & file.exists(rFileName)) {
         # embed the R script using $onecho and $offecho
         # we also replace the "Execute" call so that it finds the script at the position it is written by $onecho
-        BaseRFileName <- basename(RFileName)
-        RFileContent <- suppressWarnings(readLines(RFileName))
+        baseRFileName <- basename(rFileName)
+        rFileContent <- suppressWarnings(readLines(rFileName))
         if (i < length(code)) {
           remainder <- code[(i + 1):length(code)]
         } else {
           remainder <- NULL
         }
         code <- c(code[1:(i - 1)],
-                  paste0("$onecho > ", BaseRFileName),
-                  RFileContent,
+                  paste0("$onecho > ", baseRFileName),
+                  rFileContent,
                   "$offecho",
-                  paste0("Execute \"Rscript ", BaseRFileName, "\";"),
+                  paste0("Execute \"Rscript ", baseRFileName, "\";"),
                   remainder)
-        i <- i + length(RFileContent) + 2
+        i <- i + length(rFileContent) + 2
       }
       else {
         # R script wasn't found at the expected location, can't be embedded
