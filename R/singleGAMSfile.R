@@ -1,12 +1,14 @@
 #' Merge GAMS code into single file
 #'
 #' This function merges GAMS code which is distributed over severals files into
-#' a single GAMS file.
+#' a single GAMS file. Optionally, it also embeds R scripts into the single GAMS
+#' file
 #'
 #'
 #' @param modelpath The path where the model is stored
 #' @param mainfile The path to the main gams file (relative to the model path)
 #' @param output Name of the single output GAMS file.
+#' @param embedRScripts If TRUE, R scripts called by GAMS via Execute are also embedded. Default FALSE
 #' @author Jan Philipp Dietrich, Anastasis Giannousakis
 #' @export
 #' @importFrom utils tail
@@ -17,7 +19,7 @@
 #' singlefile <- paste0(tempdir(), "/full.gms")
 #' singleGAMSfile(modelpath = model, output = singlefile)
 #'
-singleGAMSfile <- function(modelpath = ".", mainfile = "main.gms", output = "full.gms") {
+singleGAMSfile <- function(modelpath = ".", mainfile = "main.gms", output = "full.gms", embedRScripts = FALSE) {
 
   .insertIncludeFile <- function(code, i, path) {
     path <- gsub(";", "", path)
@@ -35,10 +37,7 @@ singleGAMSfile <- function(modelpath = ".", mainfile = "main.gms", output = "ful
     return(code)
   }
 
-  withr::with_dir(modelpath, {
-    # set LC_ALL to C to avoid locale warnings
-    Sys.setlocale("LC_ALL", "C")
-
+  .mergeGamsFiles <- function(mainfile) {
     code <- readLines(mainfile, warn = FALSE)
     code <- c("* #### CODE MERGED WITH FUNCTION gms::singleGAMSfile ####", "", code)
 
@@ -100,7 +99,53 @@ singleGAMSfile <- function(modelpath = ".", mainfile = "main.gms", output = "ful
         warning("Catched a command which could not be translated (", code[i], ")")
       }
     }
-  })  # end withr::with_dir(modelpath)
+    return(code)
+  }
+
+  .embedRScripts <- function(code) {
+    i <- 1
+    repeat {
+      # find first 'Execute "Rscript' which was not handled yet
+      i <- grep("^Execute\\s+\"Rscript", tail(code, -i), ignore.case = TRUE)[1] + i
+      if (is.na(i)) break
+
+      # extract R script file name
+      rFileName <- sub("^Execute\\s+\"Rscript (.*)\";", "\\1", code[i], ignore.case = TRUE)
+      # check if R script is included in core or a module
+      if ((substr(rFileName, 0, 4) == "core" | substr(rFileName, 0, 7) == "modules") & file.exists(rFileName)) {
+        # embed the R script using $onecho and $offecho
+        # we also replace the "Execute" call so that it finds the script at the position it is written by $onecho
+        newRFileName <- gsub("[\\/]", "_", rFileName)
+        rFileContent <- suppressWarnings(readLines(rFileName))
+        if (i < length(code)) {
+          remainder <- code[(i + 1):length(code)]
+        } else {
+          remainder <- NULL
+        }
+        code <- c(code[1:(i - 1)],
+                  paste0("$onecho > ", newRFileName),
+                  rFileContent,
+                  "$offecho",
+                  paste0("Execute \"Rscript ", newRFileName, "\";"),
+                  remainder)
+        i <- i + length(rFileContent) + 2
+      }
+      else {
+        # R script wasn't found at the expected location, can't be embedded
+        i <- i + 1
+      }
+    }
+    return(code)
+  }
+
+  withr::with_dir(modelpath, {
+    # set LC_ALL to C to avoid locale warnings
+    Sys.setlocale("LC_ALL", "C")
+    code <- .mergeGamsFiles(mainfile)
+    if (embedRScripts) {
+      code <- .embedRScripts(code)
+    }
+  })
 
   writeLines(code, output)
 }
