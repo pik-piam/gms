@@ -115,7 +115,7 @@ singleGAMSfile <- function(modelpath = ".", mainfile = "main.gms", output = "ful
       if ((substr(rFileName, 0, 4) == "core" | substr(rFileName, 0, 7) == "modules") & file.exists(rFileName)) {
         # embed the R script using $onecho and $offecho
         # we also replace the "Execute" call so that it finds the script at the position it is written by $onecho
-        newRFileName <- gsub("\\", "_", gsub("/", "_", rFileName, fixed = TRUE), fixed = TRUE)
+        newRFileName <- gsub("[\\/]", "_", rFileName)
         rFileContent <- suppressWarnings(readLines(rFileName))
         if (i < length(code)) {
           remainder <- code[(i + 1):length(code)]
