@@ -105,12 +105,14 @@ singleGAMSfile <- function(modelpath = ".", mainfile = "main.gms", output = "ful
   .embedRScripts <- function(code) {
     i <- 1
     repeat {
-      # find first 'Execute "Rscript' which was not handled yet
-      i <- grep("^Execute\\s+\"Rscript", tail(code, -i), ignore.case = TRUE)[1] + i
+      pattern <- "^(execute(.async)?(.checkErrorLevel)?)\\s+\"Rscript (.*)\";"
+      # find first execute command for an Rscript which was not handled yet
+      i <- grep(pattern, tail(code, -i), ignore.case = TRUE)[1] + i
       if (is.na(i)) break
 
-      # extract R script file name
-      rFileName <- sub("^Execute\\s+\"Rscript (.*)\";", "\\1", code[i], ignore.case = TRUE)
+      # extract R script file name and execute command
+      executeCommand <- sub(pattern, "\\1", code[i], ignore.case = TRUE)
+      rFileName <- sub(pattern, "\\4", code[i], ignore.case = TRUE)
       # check if R script is included in core or a module
       if ((substr(rFileName, 0, 4) == "core" | substr(rFileName, 0, 7) == "modules") & file.exists(rFileName)) {
         # embed the R script using $onecho and $offecho
@@ -126,7 +128,7 @@ singleGAMSfile <- function(modelpath = ".", mainfile = "main.gms", output = "ful
                   paste0("$onecho > ", newRFileName),
                   rFileContent,
                   "$offecho",
-                  paste0("Execute \"Rscript ", newRFileName, "\";"),
+                  paste0(executeCommand, " \"Rscript ", newRFileName, "\";"),
                   remainder)
         i <- i + length(rFileContent) + 2
       }
