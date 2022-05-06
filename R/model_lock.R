@@ -71,13 +71,14 @@ model_lock <- function(folder=".", file=".lock", timeout1=12, timeout2=24, check
     .writeLock(lock_queue, lfile)
     .cleanQueue(lfile)
     #wait for being the first in the queue
-    message("The model is already locked. Run queued with id = ", id, "...")
+    message("The model is already locked. Run queued in file ", file, " with id = ", id, " at ", Sys.time(), "...")
     repeat {
       if (lock_queue$id[1] == id) {
-        message("...waiting finished. Starting model.")
+        message("...waiting finished. Starting model at ", Sys.time(), ".")
         break
       }
-      if (!(id %in% lock_queue$id)) stop("Process removed from queue (probable reason: timeout2 limit exceeded)!")
+      if (!(id %in% lock_queue$id)) stop("Process removed from queue at ", Sys.time(),
+                                         " (probable reason: timeout2 limit exceeded)!")
       Sys.sleep(check_interval)
       .cleanQueue(lfile)
       lock_queue <- .readLock(lfile)
@@ -86,7 +87,8 @@ model_lock <- function(folder=".", file=".lock", timeout1=12, timeout2=24, check
     id <- 1
     lock_queue <- data.frame(id=id, auto_unlock = Sys.time() + timeout1 * 3600, timeout1 = timeout1)
     .writeLock(lock_queue, lfile)
-    message("Model has now been locked, computation can continue (no queue).")
+    message("No queue, computation can continue. ",
+            "Using file ", file, ", model has been locked with id = ", id, " at ", Sys.time(), ".")
   }
   return(id)
 }
