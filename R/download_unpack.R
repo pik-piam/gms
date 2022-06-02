@@ -77,7 +77,6 @@ download_unpack <- function(input, targetdir = "input", repositories = NULL, deb
         }
       } else if (file.exists(path)) {
         files <- files[-match(file, files)]
-        found <- .unpack(file, path, repo, found)
         if (!unpack) {
           file.copy(path, paste0(tmpdir, "/", file))
           found <- .unpack(file, paste0(tmpdir, "/", file), repo, found)
