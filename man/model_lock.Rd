@@ -5,47 +5,54 @@
 \alias{model_unlock}
 \title{Model lock/unlock}
 \usage{
-model_lock(folder=".", file=".lock", timeout1=12, timeout2=24,
-check_interval=1, oncluster=NULL)
-model_unlock(id,folder=".",file=".lock",oncluster=NULL)
+model_lock(folder=".", file=".lock", timeout1=12, timeout2=NULL,
+check_interval=NULL, oncluster=NULL)
+model_unlock(id,folder=NULL,file=NULL,oncluster=NULL)
 }
 \arguments{
-\item{folder}{model folder}
+\item{folder}{path to the model folder}
 
-\item{file}{file name of the lock file containing the process queue}
+\item{file}{file name of the lock file. Don't use the lock file for anything
+else (i.e. don't read or write or open the lock file).}
 
-\item{timeout1}{Time in hours the top process in the queue is allowed to run
-before the current process is stopped.}
+\item{timeout1}{Time in hours to wait for other processes to free the lock
+before giving up and exiting with an error.}
 
-\item{timeout2}{Time in hours the processed is allowed to wait in the queue
-before it is stopped}
+\item{timeout2}{deprecated setting which will be ignored.}
 
-\item{check_interval}{Time in seconds between checking the current position
-in the queue.}
+\item{check_interval}{deprecated setting which will be ignored.}
 
 \item{oncluster}{deprecated setting which will be ignored.}
 
-\item{id}{process id as returned by model_lock.}
+\item{id}{lock id as returned by model_lock.}
 }
 \value{
-model_lock returns the process id which is needed
-to identify the process in model_unlock.
+model_lock returns the lock id which is needed
+to identify the lock in model_unlock.
 }
 \description{
-Functions that indicate whether a model folder is currently locked by
-another process or not. This helps to prevent unintended interactions
-between processes.
+Lock the model to coordinate multiple processes accessing the model.
+This is necessary if you change files within the model and have to
+avoid that another process reads from your half-written changes in
+the mean time.
+model_lock creates an exclusive lock on the given file and returns
+a lock id. When the lock id is handed to model_unlock the lock is
+dropped again, and another process can take the lock. The lock
+is also dropped when the lock id goes out of scope and is garbage
+collected in R or when the R process terminates or crashes. However,
+it is good practice to explicitly call model_unlock when you don't
+need the lock anymore.
 }
 \examples{
 #lock folder
 id <- model_lock(tempdir())
 
 #unlock folder
-model_unlock(id,tempdir())
+model_unlock(id)
 }
 \seealso{
 \code{\link{check_config}}
 }
 \author{
-Jan Philipp Dietrich, David Klein
+Jan Philipp Dietrich, David Klein, Mika Pflüger
 }

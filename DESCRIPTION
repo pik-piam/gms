@@ -1,7 +1,7 @@
 Package: gms
 Type: Package
 Title: 'GAMS' Modularization Support Package
-Version: 0.14.0
+Version: 0.15.0
 Date: 2022-06-08
 Authors@R: c(person("Jan Philipp", "Dietrich", email = "dietrich@pik-potsdam.de", role = c("aut","cre")),
              person("David", "Klein", role = "aut"),
@@ -20,13 +20,15 @@ Imports:
     rlang,
     stringr,
     withr,
-    yaml
+    yaml,
+    filelock
 Suggests: 
     covr,
     curl,
     magclass,
     qgraph,
-    testthat
+    testthat,
+    callr
 URL: https://github.com/pik-piam/gms, https://doi.org/10.5281/zenodo.4390032
 BugReports: https://github.com/pik-piam/gms/issues
 License: BSD_2_clause + file LICENSE
