@@ -7,4 +7,5 @@ model_unlock <- function(id, folder=NULL, file=NULL, oncluster=NULL) {
   if (!is.null(oncluster)) warning("oncluster setting is deprecated and ignored.")
 
   unlock(id)
+  unlink(id[2])
 }

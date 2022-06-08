@@ -49,7 +49,7 @@ model_lock <- function(folder=".", file=".lock", timeout1=12, timeout2=NULL, che
   if (is.null(id)) {
     # timeout
     stop(sprintf(
-      'model_lock: could not acquire lock within timeout1 = %s h. Check what holds the lock or increase timeout1.',
+      "model_lock: could not acquire lock within timeout1 = %s h. Check what holds the lock or increase timeout1.",
       timeout1)
     )
   }
