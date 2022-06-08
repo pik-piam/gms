@@ -1,6 +1,7 @@
 context("model lock/unlock test")
 
 test_that("standard lock/unlock works", {
+  skip_on_ci() # launching new R sessions with callr and using renvs during tests is unstable, so disable on ci
   lfolder <- tempdir()
   .lockInOtherSession <- function(lfolder) {
     callr::r(function(lfolder) gms::model_lock(folder = lfolder, timeout1 = 1e-6), list("lfolder" = lfolder))
