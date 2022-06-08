@@ -19,8 +19,8 @@ this function if they are not set to NULL}
 \item{name}{name of the data to be published (will be used in as file name). If no name is given (default) source
 files will be published as is (separate tgz files with original name).}
 
-\item{target}{target the data should be published in (format user@server:/folder/path) If a target vector, or targets 
-separated by "|" are provided the user will be asked interactively where the file should be written to. 
+\item{target}{target the data should be published in (format user@server:/folder/path) If a target vector, or targets
+separated by "|" are provided the user will be asked interactively where the file should be written to.
 By default it will look for target information in the environment variable PUBLISH_DATA_TARGET}
 
 \item{...}{further options provided to \code{\link{download_unpack}}}

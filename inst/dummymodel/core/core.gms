@@ -7,5 +7,4 @@ parameter
 
 pm_global = 1;
 
-#' yihaaa!  
-
+#' yihaaa!

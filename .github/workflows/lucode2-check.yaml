@@ -22,6 +22,9 @@ jobs:
 
       - name: Bootstrap
         run: |
+          sudo chown runner -R .
+          sudo locale-gen en_US.UTF-8
+          sudo add-apt-repository -y ppa:ubuntugis/ppa
           curl -OLs https://eddelbuettel.github.io/r-ci/run.sh
           chmod 0755 run.sh
           ./run.sh bootstrap
@@ -57,9 +60,7 @@ jobs:
         run: |
           ./run.sh install_aptget libhdf5-dev
           ./run.sh install_all
-          # ./run.sh install_r lucode2 covr # remove 2 lines below when commenting this in
-          ./run.sh install_github pfuehrlich-pik/lucode2
-          ./run.sh install_r covr
+          ./run.sh install_r lucode2 covr
 
       - name: Remove bspm integration # to get rid of error when running install.packages
         run: |
@@ -79,3 +80,5 @@ jobs:
       - name: Test coverage
         shell: Rscript {0}
         run: covr::codecov(quiet = FALSE)
+        env:
+          NOT_CRAN: "true"

@@ -19,13 +19,15 @@
 #' @param extras vector of setting names that are allowed to appear in the input config
 #' even if they are missing in the reference config. That can be useful to allow for
 #' additional settings/information which does not necessarily have to exist
+#' @param saveCheck additional check which makes sure that saving and loading it to/from
+#' YAML format does not change its contents
 #' @return The checked config as a config list ready for further usage.
 #' @author Jan Philipp Dietrich, Lavinia Baumstark
 #' @seealso \code{\link{getModules}}
 #' @export
 #' @importFrom utils read.csv2
 check_config <- function(icfg, reference_file = "config/default.cfg", modulepath = "modules/", # nolint
-                         settings_config = NULL, extras = NULL) {                              # nolint
+                         settings_config = NULL, extras = NULL, saveCheck = FALSE) {           # nolint
 
   .sourceConfig <- function(icfg) {
     cfg <- NULL
@@ -53,6 +55,16 @@ check_config <- function(icfg, reference_file = "config/default.cfg", modulepath
   icfg <- .sourceConfig(icfg)
   cfg  <- .sourceConfig(reference_file)
 
+  if (saveCheck) {
+    rmItems <- function(x) {
+      attr(x, "items") <- NULL
+      return(x)
+    }
+    if (!identical(rmItems(icfg), loadConfig(saveConfig(icfg)))) {
+      warning("Config looks different when stored via saveConfig and loaded via loadConfig!")
+    }
+  }
+
   missingSettings <- setdiff(names(cfg), names(icfg))
   extraSettings   <- setdiff(names(icfg), .extendedNames(cfg))
 
@@ -68,7 +80,7 @@ check_config <- function(icfg, reference_file = "config/default.cfg", modulepath
     }
   }
   if (!is.null(extras)) {
-    extraSettings <- extraSettings[!(sub("\\$.*$", "", extraSettings) %in% extras)]
+    extraSettings <- extraSettings[!(sub("\\$.*$", "", extraSettings) %in% extras) & ! extraSettings %in% extras]
   }
   if (length(extraSettings) > 0) {
     warning("Settings are unknown in provided cfg (", paste("cfg", extraSettings, sep = "$", collapse = ", "),

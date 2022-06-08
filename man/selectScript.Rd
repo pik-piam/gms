@@ -7,7 +7,7 @@
 selectScript(folder = ".", ending = "R")
 }
 \arguments{
-\item{folder}{Folder in which the files/scripts are located which should 
+\item{folder}{Folder in which the files/scripts are located which should
 be selected from.}
 
 \item{ending}{File ending of the files to be selected (without dot)}
