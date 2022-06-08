@@ -29,8 +29,8 @@
 #' @return model_lock returns the lock id which is needed
 #' to identify the lock in model_unlock.
 #' @author Jan Philipp Dietrich, David Klein, Mika Pflüger
-#' @importFrom filelock lock
 #' @export
+#' @importFrom filelock lock
 #' @seealso \code{\link{check_config}}
 #' @examples
 #' #lock folder
@@ -45,7 +45,7 @@ model_lock <- function(folder=".", file=".lock", timeout1=12, timeout2=NULL, che
   if (!is.null(oncluster)) warning("oncluster setting is deprecated and ignored.")
 
   # lock takes the timeout in milliseconds, timeout1 is in hours.
-  id <- lock(filename = file.path(folder, file), timeout = timeout1 * 3600000)
+  id <- lock(file.path(folder, file), timeout = timeout1 * 3600000)
   if (is.null(lck)) {
     # timeout
     stop(sprintf(
