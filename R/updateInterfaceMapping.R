@@ -11,24 +11,11 @@
 #' @seealso \code{\link{codeCheck}}
 
 updateInterfaceMapping <- function(path=".",modulepath="modules") {
-  .get_line <- function(){
-    # gets characters (line) from the terminal of from a connection
-    # and stores it in the return object
-    if(interactive()){
-      s <- readline()
-    } else {
-      con <- file("stdin")
-      s <- readLines(con, 1, warn=FALSE)
-      on.exit(close(con))
-    }
-    return(s);
-  }
-  
   choose_module <- function(modules,title) {
     message("\n\n",title,":\n\n")
     message(paste(1:length(modules), modules, sep=": ", collapse="\n"))
     message("\nNumber: ")
-    identifier <- .get_line()
+    identifier <- getLine()
     identifier <- as.numeric(strsplit(identifier,",")[[1]])
     if (any(!(identifier %in% 1:length(modules)))) stop("This choice (",identifier,") is not possible. Please type in a number between 1 and ",length(modules))
     return(modules[identifier])

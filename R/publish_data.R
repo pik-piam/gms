@@ -24,19 +24,6 @@ publish_data <- function(input, name = NULL, target = Sys.getenv("PUBLISH_DATA_T
 
   if (length(target) > 1) {
     chooseTarget <- function(target, title = "Please choose target") {
-      getLine <- function() {
-        # gets characters (line) from the terminal or from a connection
-        # and returns it
-        if (interactive()) {
-          s <- readline()
-        } else {
-          con <- NULL
-          with_connection(list(con = file("stdin")), {
-            s <- readLines(con, 1, warn = FALSE)
-          })
-        }
-        return(s)
-      }
       message("\n\n", title, ":\n")
       message(paste(seq_along(target), target, sep = ": ", collapse = "\n"))
       message("\nNumber: ")
