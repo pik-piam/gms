@@ -35,43 +35,30 @@
 
 codeCheck <- function(path=".",modulepath="modules", core_files = c("core/*.gms","main.gms"), debug=FALSE, interactive=FALSE, test_switches=TRUE, strict=FALSE, details=FALSE) {
 
-.check_input_files <- function(w,path=".", modulepath="modules") {
-  inputgms <- Sys.glob(paste0(path,"/",modulepath,"/*/*/input.gms"))
-  for(gms in inputgms) {
-    #read $include lines
-    includes <- grep("\\$include",readLines(gms,warn = FALSE),value = TRUE)
-    realization <- gsub("^.*/[0-9]{2}_[^/]*/(.*)/[^\\.]*\\..*$", "\\1",gms)
-    inputfolders <- gsub("^.*/[0-9]{2}_[^/]*/(.*)/[^\\.]*\\..*$", "\\1",includes)
-    inputfolders <- gsub("^.*\\./(.*)/[^\\.]*\\..*$", "\\1",inputfolders)
-    tmp <- gsub(paste0("^",realization,"/"),"",inputfolders)
-    folderok <- grepl("^input",tmp)
-    #folderok <- (inputfolders %in% c("input",paste0(realization,"/input")))
-    if(any(!folderok)) {
-      for(f in which(!folderok)) w <- .warning("Input file in ",sub(paste0(path,"/",modulepath),"",gms)," read from illegal location (",includes[f],"). Allowed folders are <module>/input or <module>/<realization>/input.",w=w)
+  .check_input_files <- function(w,path=".", modulepath="modules") {
+    inputgms <- Sys.glob(paste0(path,"/",modulepath,"/*/*/input.gms"))
+    for(gms in inputgms) {
+      #read $include lines
+      includes <- grep("\\$include",readLines(gms,warn = FALSE),value = TRUE)
+      realization <- gsub("^.*/[0-9]{2}_[^/]*/(.*)/[^\\.]*\\..*$", "\\1",gms)
+      inputfolders <- gsub("^.*/[0-9]{2}_[^/]*/(.*)/[^\\.]*\\..*$", "\\1",includes)
+      inputfolders <- gsub("^.*\\./(.*)/[^\\.]*\\..*$", "\\1",inputfolders)
+      tmp <- gsub(paste0("^",realization,"/"),"",inputfolders)
+      folderok <- grepl("^input",tmp)
+      #folderok <- (inputfolders %in% c("input",paste0(realization,"/input")))
+      if(any(!folderok)) {
+        for(f in which(!folderok)) w <- .warning("Input file in ",sub(paste0(path,"/",modulepath),"",gms)," read from illegal location (",includes[f],"). Allowed folders are <module>/input or <module>/<realization>/input.",w=w)
+      }
     }
+    return(w)
   }
-  return(w)
-}
-  
-  .get_line <- function(){
-    # gets characters (line) from the terminal of from a connection
-    # and stores it in the return object
-    if(interactive()){
-      s <- readline()
-    } else {
-      con <- file("stdin")
-      s <- readLines(con, 1, warn=FALSE)
-      on.exit(close(con))
-    }
-    return(s);
-  }
-  
+
   .choose_option <- function(options,...) {
     title <- paste0(...)
     message("\n\n",title)
     message(paste(1: length(options), options, sep=": ", collapse="\n"))
     message("\nNumber: ")
-    identifier <- .get_line()
+    identifier <- getLine()
     identifier <- as.numeric(strsplit(identifier,",")[[1]])
     if (any(!(identifier %in% 1:length(options)))) stop("This choice (",identifier,") is not possible. Please type in a number between 1 and ",length(options))
     return(options[identifier])
