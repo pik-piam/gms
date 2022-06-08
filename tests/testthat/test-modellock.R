@@ -11,6 +11,5 @@ test_that("standard lock/unlock works", {
   expect_true(file.exists(lfile))
   expect_error(.lockInOtherSession(lfolder), "could not acquire lock")
   model_unlock(id = id)
-  expect_false(file.exists(lfile))
   expect_silent(.lockInOtherSession(lfolder))
 })
