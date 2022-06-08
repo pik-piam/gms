@@ -46,7 +46,7 @@ model_lock <- function(folder=".", file=".lock", timeout1=12, timeout2=NULL, che
 
   # lock takes the timeout in milliseconds, timeout1 is in hours.
   id <- lock(file.path(folder, file), timeout = timeout1 * 3600000)
-  if (is.null(lck)) {
+  if (is.null(id)) {
     # timeout
     stop(sprintf(
       'model_lock: could not acquire lock within timeout1 = %s h. Check what holds the lock or increase timeout1.',
