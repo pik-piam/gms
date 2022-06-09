@@ -64,6 +64,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-usr-local-lib-R-
 
+      - name: Restore R library permissions
+        run: |
+          sudo chmod 2777 /usr/local/lib/R /usr/local/lib/R/site-library
+
+      - name: Update cached packages
+        run: |
+          sudo Rscript -e 'update.packages()'
+
       - name: Install dependencies
         run: |
           ./run.sh install_aptget libhdf5-dev
