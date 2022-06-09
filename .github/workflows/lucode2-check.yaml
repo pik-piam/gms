@@ -70,7 +70,7 @@ jobs:
 
       - name: Update cached packages
         run: |
-          sudo Rscript -e 'update.packages()'
+          sudo Rscript -e 'bspm::disable(); update.packages(repos = list(universe = "https://pik-piam.r-universe.dev"))'
 
       - name: Install dependencies
         run: |
