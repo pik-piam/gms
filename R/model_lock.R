@@ -44,8 +44,16 @@ model_lock <- function(folder=".", file=".lock", timeout1=12, timeout2=NULL, che
   if (!is.null(check_interval)) warning("check_interval setting is deprecated and ignored.")
   if (!is.null(oncluster)) warning("oncluster setting is deprecated and ignored.")
 
+  lfile <- file.path(folder, file)
+  size <- file.size(lfile)
+  if (!is.na(size) & size != 0) {
+    # locking file exists and has content - only possible when the old locking code was / is in use
+    stop(sprintf("model_lock: found old locking file with content. Likely, old (pre 2022-06) locking was or is in use.
+Check if all runs using old locking are finished, and if they are, remove the lock file %s.", lfile))
+  }
+
   # lock takes the timeout in milliseconds, timeout1 is in hours.
-  id <- lock(file.path(folder, file), timeout = timeout1 * 3600000)
+  id <- lock(lfile, timeout = timeout1 * 3600000)
   if (is.null(id)) {
     # timeout
     stop(sprintf(
