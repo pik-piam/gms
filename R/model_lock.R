@@ -53,6 +53,8 @@ Check if all runs using old locking are finished, and if they are, remove the lo
   }
 
   # lock takes the timeout in milliseconds, timeout1 is in hours.
+  timeStartLock <- Sys.time()
+  message(timeStartLock, ": acquiring model lock...")
   id <- lock(lfile, timeout = timeout1 * 3600000)
   if (is.null(id)) {
     # timeout
@@ -61,6 +63,9 @@ Check if all runs using old locking are finished, and if they are, remove the lo
       timeout1)
     )
   }
+
+  timediff <- Sys.time() - timeStartLock
+  message("acquired model lock in ", round(timediff, 1), " ", units(timediff), ".")
 
   return(id)
 }
