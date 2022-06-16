@@ -7,12 +7,13 @@
 #' 
 #' @param path path of the main folder of the model
 #' @param modulepath path to the module folder relative to "path"
+#' @param fileName name of the file containing setglobals, relative to "path"
 #' @return Nothing is returned.
 #' @author Jan Philipp Dietrich
 #' @export
 #' @seealso \code{\link{codeCheck}}
-settingsCheck <- function(path=".",modulepath="modules") {
-  s <- readSetglobals(path(path,"main.gms"))
+settingsCheck <- function(path=".", modulepath="modules", fileName="main.gms") {
+  s <- readSetglobals(path(path, fileName))
   m <- getModules(modulepath)
   dimnames(m)[[1]] <- m[,"name"]
   not_set <- m[!(m[,"name"] %in% names(s)),"name"]
