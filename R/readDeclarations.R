@@ -1,8 +1,8 @@
 #' readDeclarations
-#' 
+#'
 #' Reads all declarations given in a GAMS code and returns them.
-#' 
-#' 
+#'
+#'
 #' @param file A gams file or a vector containing GAMS code.
 #' @param unlist A logical indicating whether the output should be returned as
 #' a list separated by object type or a matrix.
@@ -37,7 +37,7 @@ readDeclarations <- function(file, unlist=TRUE, types=c("scalar","(positive |)va
      tmp <- str_replace(tmp,"\"[^\"]*\"", names(quoted_description)) # insert placeholders
      tmp <- sub(";","",tmp) # remove ;
      tmp <- sub("^\\$.*","",tmp) # remove $-expressions
-     tmp <- sub(paste("^ ?",t,"[^ ]*",sep=""),"",tmp, ignore.case = TRUE) # remove type name
+     tmp <- sub(paste("^\\s*",t,"[^ ]*",sep=""),"",tmp, ignore.case = TRUE) # remove type name
      tmp <- sub("/.*/","",tmp) # remove / xyz / entries
      .rmFilling <- function(x){
        n <- grep("/",x)

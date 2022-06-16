@@ -37,7 +37,7 @@ at the end of the analysis. Useful to enforce clean code.}
 
 \item{details}{(boolean) If activated the function will return more detailed output. Besides interface information
 it will provide a table containing all declarations in the code, an appearance table listing the appearance of all
-objects in the code and information about the existing modules. The format is 
+objects in the code and information about the existing modules. The format is
 list(interfaceInfo,declarations,appearance,modulesInfo). This setting will be ignored
 when debug is set to TRUE.}
 }
