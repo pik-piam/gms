@@ -4,12 +4,14 @@
 \alias{settingsCheck}
 \title{settingsCheck}
 \usage{
-settingsCheck(path = ".", modulepath = "modules")
+settingsCheck(path = ".", modulepath = "modules", fileName = "main.gms")
 }
 \arguments{
 \item{path}{path of the main folder of the model}
 
 \item{modulepath}{path to the module folder relative to "path"}
+
+\item{fileName}{name of the file containing setglobals, relative to "path"}
 }
 \value{
 Nothing is returned.
