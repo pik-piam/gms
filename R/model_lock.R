@@ -52,6 +52,14 @@ model_lock <- function(folder=".", file=".lock", timeout1=12, timeout2=NULL, che
 Check if all runs using old locking are finished, and if they are, remove the lock file %s.", lfile))
   }
 
+  # filelock::lock does not respect umask settings for access rights when creating files on unix.
+  # Therefore, if no lock file exists, create it first.
+  # This is racy because the lock is not taken yet and checking the existence and creating the file is not done in one
+  # step; however, that is not problem since touching a file multiple times works.
+  if (is.na(size) & .Platform$OS.type == "unix") {
+    system2(c("touch", lfile))
+  }
+
   # lock takes the timeout in milliseconds, timeout1 is in hours.
   timeStartLock <- Sys.time()
   message(timeStartLock, ": acquiring model lock...")
