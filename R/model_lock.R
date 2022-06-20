@@ -11,12 +11,22 @@
 #' collected in R or when the R process terminates or crashes. However,
 #' it is good practice to explicitly call model_unlock when you don't
 #' need the lock anymore.
+#' If you want to check for informational purposes if the model is
+#' currently locked by another process, you can use the is_model_locked()
+#' function.
+#' Note however that you should never use is_model_locked() to coordinate
+#' access to the model folder. The return value of is_model_locked() is
+#' only a snapshot at the time when the function is run.
+#' Note additionally that is_model_locked() checks if the model is
+#' locked by another process. If you currently hold the lock of the model
+#' yourself, it will return FALSE.
 #'
 #'
-#' @aliases model_lock model_unlock
-#' @usage model_lock(folder=".", file=".lock", timeout1=12, timeout2=NULL,
-#' check_interval=NULL, oncluster=NULL)
-#' model_unlock(id,folder=NULL,file=NULL,oncluster=NULL)
+#' @aliases model_lock model_unlock is_model_locked
+#' @usage model_lock(folder = ".", file = ".lock", timeout1 = 12, timeout2 = NULL,
+#' check_interval = NULL, oncluster = NULL)
+#' model_unlock(id, folder = NULL, file = NULL, oncluster = NULL)
+#' is_model_locked(folder = ".", file = ".lock")
 #' @param folder path to the model folder
 #' @param file file name of the lock file. Don't use the lock file for anything
 #' else (i.e. don't read or write or open the lock file).
