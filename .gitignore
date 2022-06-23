@@ -25,5 +25,5 @@ vignettes/*.pdf
 *.knit.md
 .Rproj.user
 inst/doc
-# pycharm IDE project files
+# pycharm IDE files
 .idea/
