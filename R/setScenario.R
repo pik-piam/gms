@@ -42,7 +42,7 @@ setScenario <- function(cfg,scenario,scenario_config="config/scenario_config.csv
     }
     tmp <- try(read.csv(scenario_config, as.is = TRUE, check.names = FALSE, colClasses = "character"), silent = TRUE)
     #check whether reading the table was succesfull, if not try to read it differently
-    if(class(tmp)=="try-error" || all(dimnames(tmp)[[1]]==as.character(1:dim(tmp)[1]))) {
+    if(inherits(tmp, "try-error") || all(dimnames(tmp)[[1]]==as.character(1:dim(tmp)[1]))) {
       tmp <- read.csv(scenario_config, as.is=TRUE, sep=";", check.names=FALSE, colClasses = "character")
       dimnames(tmp)[[1]] <- tmp[,1]
       tmp <- tmp[,-1]

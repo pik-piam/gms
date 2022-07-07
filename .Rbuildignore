@@ -10,3 +10,5 @@
 ^\.pre-commit-config\.yaml$
 ^workflow$
 ^\.idea$
+^.lintr$
+^tests/.lintr$
