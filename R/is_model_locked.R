@@ -1,8 +1,11 @@
 #' @importFrom filelock lock unlock
 #' @export
-is_model_locked <- function(folder=".", file=".lock") {
+is_model_locked <- function(folder = ".", file = ".lock") {
   # Check if old locking file (with content) is in use
   lfile <- file.path(folder, file)
+  if (! file.exists(lfile)) {
+    return(FALSE)
+  }
   size <- file.size(lfile)
   if (!is.na(size) & size != 0) {
     # old locking file in use, locked
@@ -18,8 +21,7 @@ is_model_locked <- function(folder=".", file=".lock") {
   if (is.null(id)) {
     # lock could not be acquired
     return(TRUE)
-  }
-  else {
+  } else {
     # lock was acquired, release it and report unlocked
     unlock(id)
     return(FALSE)
