@@ -8,5 +8,8 @@
 #' @importFrom withr local_connection
 #' @export
 getLine <- function() {
+  if (interactive()) {
+    return(readline())
+  }
   return(readLines(withr::local_connection(file("stdin")), n = 1))
 }
