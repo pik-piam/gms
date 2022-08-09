@@ -6,36 +6,48 @@
 \usage{
 chooseFromList(
   theList,
-  type = "runs",
+  type = "items",
+  userinfo = NULL,
+  addAllPattern = TRUE,
   returnBoolean = FALSE,
   multiple = TRUE,
-  allowEmpty = FALSE,
-  group = FALSE,
   userinput = FALSE
 )
 }
 \arguments{
-\item{theList}{list to be selected from}
+\item{theList}{list or character vector to be selected from, names can specify groups}
 
-\item{type}{string to be shown to user to understand what they choose}
+\item{type}{string in plural shown to user to understand what they have to choose}
 
-\item{returnBoolean}{TRUE: returns list with dimension of theList with FALSE or TRUE
+\item{userinfo}{string printed to the user before choosing}
+
+\item{addAllPattern}{boolean whether 'all' and 'Search by pattern' options are added}
+
+\item{returnBoolean}{TRUE: returns array with dimension of theList with FALSE and TRUE
 FALSE: returns selected entries of theList}
 
 \item{multiple}{TRUE: allows to select multiple entries. FALSE: no}
 
-\item{allowEmpty}{TRUE: allows you not to select anything (returns NA). FALSE: must select something}
-
-\item{group}{list with same dimension as theList with group names to allow to select whole groups, optional}
-
-\item{userinput}{string provided by the user. If not supplied, user is asked}
+\item{userinput}{string provided by the user. If not supplied, user is asked (mainly for testing)}
 }
 \value{
-either a boolean list with same length as input or only the selected list items.
+list or character vector, either a boolean with same length as theList or only the selected items.
 }
 \description{
-Allows the user to select single or multiple elements from a list.
+Allows the user to select single or multiple items from a list.
 Entries can be selected based on individual choice, groups, regex or all.
+}
+\examples{
+
+ \dontrun{
+    chooseFromList(
+      theList = c(Letter = "A", Letter = "B", Number = "1", Number = "2"),
+      type = "characters",
+      userinfo = "Please don't select B, it hurts.",
+      returnBoolean = FALSE,
+      multiple = TRUE)
+  }
+
 }
 \author{
 Oliver Richters

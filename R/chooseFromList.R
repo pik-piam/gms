@@ -1,109 +1,117 @@
 #' chooseFromList
 #'
-#' Allows the user to select single or multiple elements from a list.
+#' Allows the user to select single or multiple items from a list.
 #' Entries can be selected based on individual choice, groups, regex or all.
 #'
-#' @param theList list to be selected from
-#' @param group list with same dimension as theList with group names to allow to select whole groups, optional
-#' @param returnBoolean TRUE: returns list with dimension of theList with FALSE or TRUE
+#' @param theList list or character vector to be selected from, names can specify groups
+#' @param type string in plural shown to user to understand what they have to choose
+#' @param userinfo string printed to the user before choosing
+#' @param addAllPattern boolean whether 'all' and 'Search by pattern' options are added
+#' @param returnBoolean TRUE: returns array with dimension of theList with FALSE and TRUE
 #'                      FALSE: returns selected entries of theList
 #' @param multiple TRUE: allows to select multiple entries. FALSE: no
-#' @param allowEmpty TRUE: allows you not to select anything (returns NA). FALSE: must select something
-#' @param type string to be shown to user to understand what they choose
-#' @param userinput string provided by the user. If not supplied, user is asked
+#' @param userinput string provided by the user. If not supplied, user is asked (mainly for testing)
 #'
-#' @return either a boolean list with same length as input or only the selected list items.
+#' @return list or character vector, either a boolean with same length as theList or only the selected items.
+#'
+#' @examples
+#'
+#'  \dontrun{
+#'     chooseFromList(
+#'       theList = c(Letter = "A", Letter = "B", Number = "1", Number = "2"),
+#'       type = "characters",
+#'       userinfo = "Please don't select B, it hurts.",
+#'       returnBoolean = FALSE,
+#'       multiple = TRUE)
+#'   }
 #'
 #' @author Oliver Richters
 #'
 #' @importFrom stringr str_pad
 #'
 #' @export
-chooseFromList <- function(theList, type = "runs", returnBoolean = FALSE, multiple = TRUE,
-                           allowEmpty = FALSE, group = FALSE, userinput = FALSE) {
+chooseFromList <- function(theList, type = "items", userinfo = NULL, addAllPattern = TRUE,
+                           returnBoolean = FALSE, multiple = TRUE, userinput = FALSE) {
   originalList <- theList
   booleanList <- rep(FALSE, length(originalList)) # set to FALSE
-  if (! isFALSE(group) && isFALSE(multiple)) {
-    message("As multiple is FALSE, the group you specified is ignored.")
-    group <- FALSE
-  }
-  if (! isFALSE(group) && length(group) != length(originalList)) {
-    stop("group must have same dimension as theList, or multiple not allowed.")
-  }
+  if (is.list(theList)) booleanList <- as.list(booleanList)
   m <- paste0("\n\nPlease choose ", type, ":\n\n")
-  # in group mode, paste group after each entry and add them to theList as options
-  if (! isFALSE(group)) {
-    groups <- sort(unique(group))
-    groupsids <- seq(length(originalList) + 2, length(originalList) + length(groups) + 1)
-    theList <- c(paste0(str_pad(theList, max(nchar(originalList), 6), side = "right"), " ", group),
-                 paste("Group:", groups))
-    m <- c(m, paste0(str_pad("", max(nchar(originalList), 6) + nchar(length(theList) + 2) + 2, side = "right"),
-              " Group"))
+  # paste group after each entry and add them to theList as options
+  groups <- sort(unique(names(theList)[nchar(names(theList)) > 0]))
+  if (multiple) {
+    groupsids <- NULL
+    if (length(groups) > 0) {
+      groupsids <- seq(length(originalList) + 1 + 1 * addAllPattern,
+                       length(originalList) + length(groups) + 1 * addAllPattern)
+      theList <- c(paste0(str_pad(theList, max(nchar(originalList), 10), side = "right"), " ", names(theList)),
+                   paste("Group:", groups))
+      m <- c(m, paste0(str_pad("", max(nchar(originalList), 10) + nchar(length(theList) + 2) + 2, side = "right"),
+                       " Group\n"))
+    }
+    # add all and regex pattern as options
+    if (addAllPattern) theList <- c("all", theList, "Search by pattern...")
   }
-  # add all and regex pattern as options
-  if (multiple) theList <- c("all", theList, "Search by pattern...")
-  m <- c(m, paste(paste(str_pad(seq_along(theList), nchar(length(theList)), side = "left"), theList, sep = ": "),
-            collapse = "\n"))
-  m <- c(m, paste0("\nNumber", if (multiple) "s entered as 2,4:6,9",
-            if (allowEmpty) " or leave empty", " (", type, "): "))
+  m <- c(m, paste(paste(str_pad(seq_along(theList), nchar(length(theList)), side = "left"),
+                        theList, sep = ": "),
+                  collapse = "\n"))
+  m <- c(m, "\n", userinfo,
+            paste0("\nNumber", if (multiple) "s entered as 2,4:6,9", " or leave empty:"))
   if (isFALSE(userinput)) { # print options and ask for userinput
     message(m)
     userinput <- getLine()
   }
-  # split userinput and perform basic checks
-  identifier <- strsplit(userinput, ",")[[1]]
-  if (allowEmpty && length(identifier) == 0) return(if (returnBoolean) booleanList else NA)
-  if (length(identifier) == 0 || ! all(grepl("^[0-9,:]*$", identifier))) {
+  # interpret userinput and perform basic checks
+  identifier <- try(eval(parse(text = paste("c(", userinput, ")"))))
+  if (! all(grepl("^[0-9,:]*$", userinput)) || inherits(identifier, "try-error")) {
     message("Try again, you have to choose some numbers.")
-    return(chooseFromList(originalList, type, returnBoolean, multiple, allowEmpty, group))
+    return(chooseFromList(originalList, type, userinfo, addAllPattern, returnBoolean, multiple))
   }
-  # go through list of userinput, and turn 2:5 into 2,3,4,5 etc.
-  tmp <- NULL
-  for (i in seq_along(identifier)) {
-    if (isTRUE(length(strsplit(identifier, ":")[[i]]) > 1)) {
-      tmp <- c(tmp, as.numeric(strsplit(identifier, ":")[[i]])[1]:as.numeric(strsplit(identifier, ":")[[i]])[2])
-    } else {
-      tmp <- c(tmp, as.numeric(identifier[i]))
-    }
-  }
-  identifier <- tmp
   # check whether all input is usable
-  if (! multiple && isTRUE(length(identifier) > 1)) {
-    message("Try again, not in list or multiple chosen: ", paste(identifier, collapse = ", "))
-    return(chooseFromList(originalList, type, returnBoolean, multiple, allowEmpty, group))
+  if (! multiple && length(identifier) > 1) {
+    message("Try again, multiple chosen: ", paste(identifier, collapse = ", "))
+    return(chooseFromList(originalList, type, userinfo, addAllPattern, returnBoolean, multiple))
   }
   if (any(! identifier %in% seq_along(theList))) {
     message("Try again, not all in list: ", paste(identifier, collapse = ", "))
-    return(chooseFromList(originalList, type, returnBoolean, multiple, allowEmpty, group))
+    return(chooseFromList(originalList, type, userinfo, addAllPattern, returnBoolean, multiple))
   }
-  # interpret group inputs
-  if (! isFALSE(group)) {
-    selectedGroups <- sub("^Group: ", "", theList[intersect(identifier, groupsids)])
-    identifier <- unique(c(identifier[! identifier %in% groupsids], which(group %in% selectedGroups) + 1))
-  }
-  # if search by pattern is selected, ask for pattern and interpret it
-  if (multiple && length(identifier) == 1 && identifier == length(theList)) {
-    message("\nInsert the search pattern or the regular expression: ")
-    pattern <- gms::getLine()
-    id <- grep(pattern = pattern, originalList)
-    # lists all chosen and ask for the confirmation of the made choice
-    message("\n\nYou have chosen the following ", type, ":")
-    if (length(id) > 0) message(paste(paste(seq_along(id), originalList[id], sep = ": "), collapse = "\n"))
-    message("\nAre you sure these are the right ", type, "? (y/n): ")
-    if (gms::getLine() == "y") {
-      identifier <- id
-      booleanList[id] <- TRUE
+  if (multiple) {
+    if (addAllPattern && any(identifier == "1")) { # all
+      identifier <- seq_along(originalList)
     } else {
-      return(chooseFromList(originalList, type, returnBoolean, multiple, allowEmpty, group))
+      # interpret group inputs and select all group mem
+      selectedGroups <- sub("^Group: ", "", theList[intersect(identifier, groupsids)])
+      identifier <- unique(c(identifier[! identifier %in% groupsids],
+                             which(names(originalList) %in% selectedGroups) + addAllPattern))
+      # if search by pattern is selected, ask for pattern and interpret it
+      if (addAllPattern && any(identifier == length(theList))) {
+        patternid <- choosePatternFromList(originalList, type)
+        identifier <- unique(c(patternid + 1, identifier[identifier < length(theList)]))
+      }
+      identifier <- identifier - 1 * addAllPattern # if addAllPattern = TRUE, '1' is 'all' option
     }
-  # if all was selected, choose all
-  } else if (any(theList[identifier] == "all")) {
-    booleanList[] <- TRUE
-    identifier <- seq_along(originalList)
-  } else {
-    if (multiple) identifier <- identifier - 1 # correct for all option
-    booleanList[identifier] <- TRUE
   }
+  booleanList[identifier] <- TRUE
   message("Selected: ", paste(originalList[identifier], collapse = ", "))
   if (returnBoolean) return(booleanList) else return(originalList[identifier])
+}
+
+choosePatternFromList <- function(theList, type = "items", pattern = FALSE) {
+  confirmchoice <- FALSE
+  if (isFALSE(pattern)) {
+    confirmchoice <- TRUE
+    message("\nInsert the search pattern or the regular expression: ")
+    pattern <- getLine()
+  }
+  id <- grep(pattern = pattern, theList)
+  # lists all chosen and ask for the confirmation of the made choice
+  message("\n\nThe search pattern matches the following ", type, ":")
+  if (length(id) > 0) message(paste(paste(seq_along(id), theList[id], sep = ": "), collapse = "\n"))
+  if (confirmchoice) {
+    message("\nAre you sure these are the right ", type, "? (y/n): ")
+    if (! getLine() %in% c("y", "Y")) {
+      return(choosePatternFromList(theList, type))
+    }
+  }
+  return(id)
 }
