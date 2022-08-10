@@ -8,5 +8,9 @@
 #' @importFrom withr local_connection
 #' @export
 getLine <- function() {
+  if (interactive()) {
+    # needed for e.g. RStudio and R in jupyter
+    return(readline())
+  }
   return(readLines(withr::local_connection(file("stdin")), n = 1))
 }
