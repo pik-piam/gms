@@ -41,6 +41,5 @@ expectedResult <- c("1", "-1", "1.05", "SSP2EU-Base",
 names(expectedResult) <- settings
 
 test_that("all settings in example are properly detected", {
-  print(readSettings(example))
   expect_identical(readSettings(example), expectedResult)
 })
