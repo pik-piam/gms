@@ -29,15 +29,16 @@ example <- c(
 "option nlp = %cm_conoptv%;",
 "option cns = %cm_conoptv%;",
 "$setglobal cm_secondary_steel_bound  scenario   !! def = \"scenario\"",
-"$setglobal c_GDPpcScen  SSP2EU     !! def = gdp_SSP2   (automatically adjusted by start_run() based on GDPscen)"
+"$setglobal c_GDPpcScen  SSP2EU     !! def = gdp_SSP2   (automatically adjusted by start_run() based on GDPscen)",
+"$setGlobal cm_regiCO2target 2050.EUR_regi.budget 72, 2050.DEU.year 0.1"
 )
 
 settings <- c("cm_iteration_max", "cm_co2_tax_2020", "cm_co2_tax_growth", "c_expname", "c_description",
-              "cm_secondary_steel_bound", "c_GDPpcScen")
+              "cm_secondary_steel_bound", "c_GDPpcScen", "cm_regiCO2target")
 
 expectedResult <- c("1", "-1", "1.05", "SSP2EU-Base",
                     "SSP2EU-Base: This baseline calibration scenario follows the Shared Socioeconomic",
-                    "scenario", "SSP2EU")
+                    "scenario", "SSP2EU", "2050.EUR_regi.budget 72, 2050.DEU.year 0.1")
 names(expectedResult) <- settings
 
 test_that("all settings in example are properly detected", {
