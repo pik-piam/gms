@@ -132,9 +132,9 @@ codeCheck <- function(path=".",modulepath="modules", core_files = c("core/*.gms"
 
   #are any non-interface core variables used in other places than the core?
   wrong <- names(ap$type)[ap$type == "" & (rowSums(ap$appearance) > 1 | !ap$appearance[, "core"])]
-  for (w in wrong) {
+  for (wrong_item in wrong) {
     mod <- unique(sub("\\.[^\\.]*$", "", dimnames(ap$appearance)[[2]][ap$appearance[w,]>0]))
-    w <- .warning(w, " appears in \"", paste(mod, collapse = "\", \""),"\" but its name suggests that it is core only!",w=w)
+    w <- .warning(wrong_item, " appears in \"", paste(mod, collapse = "\", \""),"\" but its name suggests that it is core only!",w=w)
   }
 
   #are any module variables used somewhere else?
