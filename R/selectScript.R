@@ -35,19 +35,6 @@ selectScript <- function(folder = ".", ending = "R") { # nolint
     return(out)
   }
 
-  getLine <- function() {
-    # gets characters (line) from the terminal or from a connection
-    # and returns it
-    if (interactive()) {
-      s <- readline()
-    } else {
-      con <- file("stdin")
-      s <- readLines(con, 1, warn = FALSE)
-      on.exit(close(con)) # nolint
-    }
-    return(s)
-  }
-
   maxNchar <- function(x, width, prefix = "-> ", suffix = " <-", sep = "-") {
     width <- width - 7
     x <- capture.output(cat(strsplit(x, " ")[[1]], fill = width))
