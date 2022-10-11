@@ -52,7 +52,7 @@ the code.
 }
 \examples{
 # check code consistency of dummy model
-codeCheck(system.file("dummymodel",package="gms"))
+codeCheck(system.file("dummymodel", package = "gms"))
 
 }
 \seealso{
