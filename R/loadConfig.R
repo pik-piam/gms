@@ -3,6 +3,10 @@
 #' Load config in YAML format as written via
 #' \code{\link{saveConfig}}.
 #'
+#' To read in the default configuration (stored as R list in default.cfg or in a gams file), use
+#' \code{\link{readDefaultConfig}} instead.
+#'
+#'
 #' @param cfg Either a character string naming a file which containes the config
 #'            or a character string containing the config as YAML code.
 #' @author Jan Philipp Dietrich

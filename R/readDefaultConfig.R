@@ -1,11 +1,13 @@
 #' readDefaultConfig
 #'
 #' Reads the default configuration of the model. Uses default.cfg or main.cfg as the source as appropriate.
+#' To read a configuration from YAML format, use \code{\link{loadConfig}} instead.
 #'
 #'
 #' @param path path of the main folder of the model
 #' @return A vector of parameter values and their names.
 #' @author Mika Pflüger
+#' @seealso \code{\link{loadConfig}}
 #' @importFrom withr with_environment
 #' @importFrom utils modifyList
 #' @export
