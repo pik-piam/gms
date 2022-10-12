@@ -14,6 +14,10 @@ or a character string containing the config as YAML code.}
 Load config in YAML format as written via
 \code{\link{saveConfig}}.
 }
+\details{
+To read in the default configuration (stored as R list in default.cfg or in a gams file), use
+\code{\link{readDefaultConfig}} instead.
+}
 \examples{
 cfg <- list(input = c(data1 = "blub.tgz", data2 = "bla.tgz"), mode = "default")
 yml <- saveConfig(cfg)
