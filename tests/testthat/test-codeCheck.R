@@ -17,32 +17,32 @@ test_that("return value of codeCheck in debug mode is correct", {
 })
 
 
-test_that(".checkAppearanceUsage produces warnings",{
+test_that(".checkAppearanceUsage produces warnings", {
 
-  ap_type = c(var1 = "", var2 = "")
+  apType <- c(var1 = "", var2 = "")
 
-  ap_appearance = structure(c(TRUE, TRUE,  FALSE, FALSE, TRUE, TRUE), .Dim = c(2L, 3L),
+  apAppearance <- structure(c(TRUE, TRUE,  FALSE, FALSE, TRUE, TRUE), .Dim = c(2L, 3L),
                             .Dimnames = list(c("var1",
                                                "var2"),
                                              c("core",
                                                "mod.one",
                                                "mod.two")))
 
-  ap = list(type = ap_type,
-            appearance = ap_appearance)
+  ap <- list(type = apType,
+            appearance = apAppearance)
 
-  modulesInfo = structure(c("mod", "10",
+  modulesInfo <- structure(c("mod", "10",
                             "10_mod", "one,two"),
                           .Dim = c(1L, 4L),
                           .Dimnames = list(c("mod"),
-                                           c("name", "number","folder", "realizations")))
+                                           c("name", "number", "folder", "realizations")))
 
-  expected_output = list(`var1 appears in "core", "mod" but its name suggests that it is core only!` = NULL,
+  expectedOutput <- list(`var1 appears in "core", "mod" but its name suggests that it is core only!` = NULL,
                          `var2 appears in "core", "mod" but its name suggests that it is core only!` = NULL)
 
   expect_warning(.checkAppearanceUsage(ap, modulesInfo, w = NULL))
   expect_equal(suppressWarnings(.checkAppearanceUsage(ap, modulesInfo, w = NULL)),
-               expected_output)
+               expectedOutput)
 
 
 })
