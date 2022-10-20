@@ -131,45 +131,6 @@ codeCheck <- function(path = ".", modulepath = "modules", core_files = c("core/*
     return(list(gams = gams, w = w))
   }
 
-  .checkAppearanceUsage <- function(ap, modulesInfo, w) {
-    # are any non-interface core variables used in other places than the core?
-    wrong <- names(ap$type)[ap$type == "" & (rowSums(ap$appearance) > 1 | !ap$appearance[, "core"])]
-    for (wrong_item in wrong) {
-      mod <- unique(sub("\\.[^\\.]*$", "", dimnames(ap$appearance)[[2]][ap$appearance[wrong_item, ] > 0]))
-      w <- .warning(wrong_item,
-                    " appears in \"",
-                    paste(mod, collapse = "\", \""),
-                    "\" but its name suggests that it is core only!",
-                    w = w)
-    }
-
-    # are any module variables used somewhere else?
-    for (i in seq_len(dim(modulesInfo)[1])) {
-      mod <- modulesInfo[i, "name"]
-      number <- modulesInfo[i, "number"]
-      var <- names(ap$type)[ap$type == number]
-      for (v in var) {
-        outsideAppearance <- ap$appearance[v, grep(mod, dimnames(ap$appearance)[[2]], invert = TRUE)]
-        if (any(outsideAppearance > 0)) {
-          w <- .warning(v,
-                        " appears outside of module \"",
-                        mod,
-                        "\"! (",
-                        paste(names(outsideAppearance)[outsideAppearance], collapse = ", "),
-                        ")",
-                        w = w)
-        }
-      }
-    }
-
-    # are any module numbers of modules used which do not exist?
-    var <- names(ap$type)[!(sub("o", "", ap$type) %in% c("", "m", modulesInfo[, "number"]))]
-    for (v in var) {
-      w <- .warning(v, " uses the number of a non-existing module!", w = w)
-    }
-
-    return(w)
-  }
 
   .getInterfaceInfo <- function(ap, gams, w) {
     # setting up a list of used interfaces for each module
@@ -475,3 +436,45 @@ codeCheck <- function(path = ".", modulepath = "modules", core_files = c("core/*
   attr(out, "last.warning") <- w
   return(out)
 }
+
+
+.checkAppearanceUsage <- function(ap, modulesInfo, w) {
+  # are any non-interface core variables used in other places than the core?
+  wrong <- names(ap$type)[ap$type == "" & (rowSums(ap$appearance) > 1 | !ap$appearance[, "core"])]
+  for (wrong_item in wrong) {
+    mod <- unique(sub("\\.[^\\.]*$", "", dimnames(ap$appearance)[[2]][ap$appearance[wrong_item, ] > 0]))
+    w <- .warning(wrong_item,
+                  " appears in \"",
+                  paste(mod, collapse = "\", \""),
+                  "\" but its name suggests that it is core only!",
+                  w = w)
+  }
+
+  # are any module variables used somewhere else?
+  for (i in seq_len(dim(modulesInfo)[1])) {
+    mod <- modulesInfo[i, "name"]
+    number <- modulesInfo[i, "number"]
+    var <- names(ap$type)[ap$type == number]
+    for (v in var) {
+      outsideAppearance <- ap$appearance[v, grep(mod, dimnames(ap$appearance)[[2]], invert = TRUE)]
+      if (any(outsideAppearance > 0)) {
+        w <- .warning(v,
+                      " appears outside of module \"",
+                      mod,
+                      "\"! (",
+                      paste(names(outsideAppearance)[outsideAppearance], collapse = ", "),
+                      ")",
+                      w = w)
+      }
+    }
+  }
+
+  # are any module numbers of modules used which do not exist?
+  var <- names(ap$type)[!(sub("o", "", ap$type) %in% c("", "m", modulesInfo[, "number"]))]
+  for (v in var) {
+    w <- .warning(v, " uses the number of a non-existing module!", w = w)
+  }
+
+  return(w)
+}
+
