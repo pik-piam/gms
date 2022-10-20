@@ -1,6 +1,6 @@
 # 'GAMS' Modularization Support Package
 
-R package **gms**, version **0.21.0**
+R package **gms**, version **0.21.1**
 
 [![CRAN status](https://www.r-pkg.org/badges/version/gms)](https://cran.r-project.org/package=gms) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4390032.svg)](https://doi.org/10.5281/zenodo.4390032) [![R build status](https://github.com/pik-piam/gms/workflows/check/badge.svg)](https://github.com/pik-piam/gms/actions) [![codecov](https://codecov.io/gh/pik-piam/gms/branch/master/graph/badge.svg)](https://app.codecov.io/gh/pik-piam/gms) [![r-universe](https://pik-piam.r-universe.dev/badges/gms)](https://pik-piam.r-universe.dev/ui#builds)
 
@@ -43,11 +43,7 @@ In case of questions / problems please contact Jan Philipp Dietrich <dietrich@pi
 
 To cite package **gms** in publications use:
 
-<<<<<<< HEAD
-Dietrich J, Klein D, Giannousakis A, Beier F, Koch J, Baumstark L, Pflüger M (2022). _gms: 'GAMS' Modularization Support Package_. doi: 10.5281/zenodo.4390032 (URL: https://doi.org/10.5281/zenodo.4390032), R package version 0.20.2, <URL: https://github.com/pik-piam/gms>.
-=======
-Dietrich J, Klein D, Giannousakis A, Beier F, Koch J, Baumstark L, Pflüger M (2022). _gms: 'GAMS' Modularization Support Package_. doi:10.5281/zenodo.4390032 <https://doi.org/10.5281/zenodo.4390032>, R package version 0.21.0, <https://github.com/pik-piam/gms>.
->>>>>>> 6aee1cc0b0d1791e13d8e1b3db433ba3520e1dfa
+Dietrich J, Klein D, Giannousakis A, Beier F, Koch J, Baumstark L, Pflüger M (2022). _gms: 'GAMS' Modularization Support Package_. doi: 10.5281/zenodo.4390032 (URL: https://doi.org/10.5281/zenodo.4390032), R package version 0.21.1, <URL: https://github.com/pik-piam/gms>.
 
 A BibTeX entry for LaTeX users is
 
@@ -56,11 +52,7 @@ A BibTeX entry for LaTeX users is
   title = {gms: 'GAMS' Modularization Support Package},
   author = {Jan Philipp Dietrich and David Klein and Anastasis Giannousakis and Felicitas Beier and Johannes Koch and Lavinia Baumstark and Mika Pflüger},
   year = {2022},
-<<<<<<< HEAD
-  note = {R package version 0.20.2},
-=======
-  note = {R package version 0.21.0},
->>>>>>> 6aee1cc0b0d1791e13d8e1b3db433ba3520e1dfa
+  note = {R package version 0.21.1},
   doi = {10.5281/zenodo.4390032},
   url = {https://github.com/pik-piam/gms},
 }

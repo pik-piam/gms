@@ -9,17 +9,18 @@ download_distribute(
   repositories = list(`/p/projects/rd3mod/inputdata/output` = NULL),
   modelfolder = ".",
   additionalDelete = NULL,
-  debug = FALSE
+  debug = FALSE,
+  stopOnMissing = FALSE
 )
 }
 \arguments{
 \item{files}{a vector of files containing input data, if a file is no .tgz it will be downloaded and not unpacked}
 
-\item{repositories}{a list of repositories (please pay attention to the list format!) in which the files 
-should be searched for. Files will be searched in all repositories until found, always starting with the 
+\item{repositories}{a list of repositories (please pay attention to the list format!) in which the files
+should be searched for. Files will be searched in all repositories until found, always starting with the
 first repository in the list. The argument must have the format of a named list with the url of the repository
 as name and a corresponding list of options such as username or password to access the repository as value. If
-no options are required the value has to be NULL. (e.g. 
+no options are required the value has to be NULL. (e.g.
 list("ftp://my_pw_protected_server.de/data"=list(user="me",password=12345), "http://free_server.de/dat"=NULL))}
 
 \item{modelfolder}{main model folder}
@@ -27,6 +28,9 @@ list("ftp://my_pw_protected_server.de/data"=list(user="me",password=12345), "htt
 \item{additionalDelete}{information which additonal data should be deleted before new data are downloaded and distributed}
 
 \item{debug}{switch for debug mode with additional diagnostic information}
+
+\item{stopOnMissing}{Boolean passed along to \code{\link[=download_unpack]{download_unpack()}} to stop if
+any file in \code{files} could not be downloaded.  Off (\code{FALSE}) by default.}
 }
 \value{
 Information about the download process in form of a data.frame with data sets as row names and repositories

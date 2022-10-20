@@ -9,7 +9,8 @@ download_unpack(
   targetdir = "input",
   repositories = NULL,
   debug = FALSE,
-  unpack = TRUE
+  unpack = TRUE,
+  stopOnMissing = FALSE
 )
 }
 \arguments{
@@ -29,6 +30,9 @@ list("ftp://my_pw_protected_server.de/data"=list(user="me",password=12345), "htt
 \item{debug}{switch for debug mode with additional diagnostic information}
 
 \item{unpack}{if switched off the source files are purley downloaded}
+
+\item{stopOnMissing}{Boolean indicating whether to stop if any file in
+\code{files} could not be downloaded.  Off (\code{FALSE}) by default.}
 }
 \value{
 Information about the download process in form of a data.frame with data sets as row names and repositories
