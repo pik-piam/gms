@@ -3,6 +3,7 @@
 #' Downloads a list of tgz files from a list of repos and unpacks them. If a file is no .tgz-file it will
 #' be only downloaded.
 #'
+#' @md
 #' @param input a vector of files to be downloaded or a cfg list with settings to be used (e.g. containing
 #' cfg$input, cfg$repositories). Settings in the config list will be overwritten by other arguments of
 #' this function if they are not set to NULL
@@ -15,13 +16,18 @@
 #' list("ftp://my_pw_protected_server.de/data"=list(user="me",password=12345), "http://free_server.de/dat"=NULL))
 #' @param debug switch for debug mode with additional diagnostic information
 #' @param unpack if switched off the source files are purley downloaded
+#' @param stopOnMissing Boolean indicating whether to stop if any file in
+#'   `files` could not be downloaded.  Off (`FALSE`) by default.
+
 #' @return Information about the download process in form of a data.frame with data sets as row names and repositories
 #' (where it was downloaded from) and corresponding md5sum as columns
 #' @author Jan Philipp Dietrich
 #' @importFrom utils untar
 #' @export
 
-download_unpack <- function(input, targetdir = "input", repositories = NULL, debug = FALSE, unpack = TRUE) { # nolint
+download_unpack <- function(input, targetdir = "input", repositories = NULL,
+                            debug = FALSE, unpack = TRUE,
+                            stopOnMissing = FALSE) { # nolint
 
   if (is.list(input)) {
     files <- input$input
@@ -90,8 +96,12 @@ download_unpack <- function(input, targetdir = "input", repositories = NULL, deb
 
   if (length(files) > 0) {
     tmp <- paste0("Following files not found:\n  ", paste(files, collapse = "\n  "))
-    warning(tmp)
-    message(tmp)
+    if (stopOnMissing) {
+      stop(tmp)
+    } else {
+      warning(tmp)
+      message(tmp)
+    }
   }
   if (is.null(found)) {
     message()
