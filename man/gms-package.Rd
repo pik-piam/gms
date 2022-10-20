@@ -28,6 +28,7 @@ Authors:
   \item Johannes Koch
   \item Lavinia Baumstark
   \item Mika Pflüger
+  \item Oliver Richters
 }
 
 }

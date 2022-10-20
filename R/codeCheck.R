@@ -318,7 +318,7 @@ codeCheck <- function(path = ".", modulepath = "modules", core_files = c("core/*
               answer <- chooseFromList(c("yes", "no"),
                                        "choices",
                                         multiple = FALSE,
-                                        userinput = paste0('"',
+                                        userinfo = paste0('"',
                                                            v,
                                                            '" is not addressed in realization "',
                                                            realization[i],
@@ -332,7 +332,7 @@ codeCheck <- function(path = ".", modulepath = "modules", core_files = c("core/*
                 answer <- chooseFromList(c("yes", "no"),
                                          "choices",
                                           multiple = FALSE,
-                                          userinput = paste0(
+                                          userinfo = paste0(
                                             '"',
                                             v,
                                             '" is a variable.",
@@ -347,7 +347,7 @@ codeCheck <- function(path = ".", modulepath = "modules", core_files = c("core/*
               answer <- chooseFromList(c("yes", "no"),
                                          "choices",
                                           multiple = FALSE,
-                                          userinput = paste0(
+                                          userinfo = paste0(
                                             'Should "',
                                             v,
                                             '" be written to not_used.txt in realization "',
