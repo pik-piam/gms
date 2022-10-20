@@ -15,3 +15,34 @@ test_that("return value of codeCheck in debug mode is correct", {
   cc <- codeCheck(system.file("dummymodel", package = "gms"), debug = TRUE)
   expect_identical(names(cc), expectedResult)
 })
+
+
+test_that(".checkAppearanceUsage produces warnings", {
+
+  apType <- c(var1 = "", var2 = "")
+
+  apAppearance <- structure(c(TRUE, TRUE,  FALSE, FALSE, TRUE, TRUE), .Dim = c(2L, 3L),
+                            .Dimnames = list(c("var1",
+                                               "var2"),
+                                             c("core",
+                                               "mod.one",
+                                               "mod.two")))
+
+  ap <- list(type = apType,
+            appearance = apAppearance)
+
+  modulesInfo <- structure(c("mod", "10",
+                            "10_mod", "one,two"),
+                          .Dim = c(1L, 4L),
+                          .Dimnames = list(c("mod"),
+                                           c("name", "number", "folder", "realizations")))
+
+  expectedOutput <- list(`var1 appears in "core", "mod" but its name suggests that it is core only!` = NULL,
+                         `var2 appears in "core", "mod" but its name suggests that it is core only!` = NULL)
+
+  expect_warning(.checkAppearanceUsage(ap, modulesInfo, w = NULL))
+  expect_equal(suppressWarnings(.checkAppearanceUsage(ap, modulesInfo, w = NULL)),
+               expectedOutput)
+
+
+})
