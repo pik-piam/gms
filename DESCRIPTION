@@ -1,7 +1,7 @@
 Package: gms
 Type: Package
 Title: 'GAMS' Modularization Support Package
-Version: 0.22.0
+Version: 0.22.1
 Date: 2022-10-20
 Authors@R: c(person("Jan Philipp", "Dietrich", email = "dietrich@pik-potsdam.de", role = c("aut","cre")),
              person("David", "Klein", role = "aut"),
@@ -9,7 +9,8 @@ Authors@R: c(person("Jan Philipp", "Dietrich", email = "dietrich@pik-potsdam.de"
              person("Felicitas", "Beier", role = "aut"),
              person("Johannes", "Koch", role = "aut"),
              person("Lavinia", "Baumstark", role = "aut"),
-             person("Mika", "Pflüger", role = "aut"))
+             person("Mika", "Pflüger", role = "aut"),
+             person("Oliver", "Richters", role = "aut"))
 Description: A collection of tools to create, use and maintain modularized model code written in the modeling 
     language 'GAMS' (<https://www.gams.com/>). Out-of-the-box 'GAMS' does not come with support for modularized
     model code. This package provides the tools necessary to convert a standard 'GAMS' model to a modularized one
