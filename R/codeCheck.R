@@ -135,7 +135,7 @@ codeCheck <- function(path = ".", modulepath = "modules", core_files = c("core/*
     # are any non-interface core variables used in other places than the core?
     wrong <- names(ap$type)[ap$type == "" & (rowSums(ap$appearance) > 1 | !ap$appearance[, "core"])]
     for (wrong_item in wrong) {
-      mod <- unique(sub("\\.[^\\.]*$", "", dimnames(ap$appearance)[[2]][ap$appearance[w, ] > 0]))
+      mod <- unique(sub("\\.[^\\.]*$", "", dimnames(ap$appearance)[[2]][ap$appearance[wrong_item, ] > 0]))
       w <- .warning(wrong_item,
                     " appears in \"",
                     paste(mod, collapse = "\", \""),
