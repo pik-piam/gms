@@ -291,6 +291,7 @@ codeCheck <- function(path = ".", modulepath = "modules", core_files = c("core/*
               tmp <- tmp[tmp$name != v, ]
               write.table(tmp, n, sep = ",", quote = FALSE, row.names = FALSE)
             }
+            ap$appearance[v, r] <- 0
             message('"', v, '" has been removed from not_used.txt files!\n')
           }
         } else {
@@ -309,14 +310,14 @@ codeCheck <- function(path = ".", modulepath = "modules", core_files = c("core/*
   for (m in names(interfaceInfo)) {
     r <- grep(paste("^", m, "(\\.|$)", sep = ""), dimnames(ap$appearance)[[2]])
     for (v in interfaceInfo[[m]]) {
-      if (!all(ap$appearance[v, r] > 0)) {
+      if (!all(ap$appearance[v, r] > 0) && !all(ap$appearance[v, r] == 0)) {
         realization <- sub("^[^\\.]*\\.", "", dimnames(ap$appearance)[[2]][r])
         availability <- ap$appearance[v, r]
         if (interactive) {
           for (i in seq_along(availability)) {
             if (availability[i] == 0) {
               answer <- chooseFromList(c("yes", "no"),
-                                       "choices",
+                                       "option",
                                         multiple = FALSE,
                                         userinfo = paste0('"',
                                                            v,
@@ -330,7 +331,7 @@ codeCheck <- function(path = ".", modulepath = "modules", core_files = c("core/*
               }
               if (grepl("^v", v)) {
                 answer <- chooseFromList(c("yes", "no"),
-                                         "choices",
+                                         "option",
                                           multiple = FALSE,
                                           userinfo = paste0(
                                             '"',
@@ -345,7 +346,7 @@ codeCheck <- function(path = ".", modulepath = "modules", core_files = c("core/*
                 }
               }
               answer <- chooseFromList(c("yes", "no"),
-                                         "choices",
+                                         "option",
                                           multiple = FALSE,
                                           userinfo = paste0(
                                             'Should "',
