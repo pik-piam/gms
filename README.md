@@ -43,7 +43,7 @@ In case of questions / problems please contact Jan Philipp Dietrich <dietrich@pi
 
 To cite package **gms** in publications use:
 
-Dietrich J, Klein D, Giannousakis A, Beier F, Koch J, Baumstark L, Pflüger M, Richters O (2022). _gms: 'GAMS' Modularization Support Package_. doi: 10.5281/zenodo.4390032 (URL: https://doi.org/10.5281/zenodo.4390032), R package version 0.22.2, <URL: https://github.com/pik-piam/gms>.
+Dietrich J, Klein D, Giannousakis A, Beier F, Koch J, Baumstark L, Pflüger M, Richters O (2022). _gms: 'GAMS' Modularization Support Package_. doi:10.5281/zenodo.4390032 <https://doi.org/10.5281/zenodo.4390032>, R package version 0.22.2, <https://github.com/pik-piam/gms>.
 
 A BibTeX entry for LaTeX users is
 
