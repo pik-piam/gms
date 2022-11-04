@@ -8,7 +8,7 @@
 #' @param path path of the main folder of the model
 #' @param modulepath path to the module folder relative to "path"
 #' @param core_files list of files that belong to the core (wildcard expansion is supported)
-#' @param debug If TRUE additional information will be returned usefule for
+#' @param returnDebug If TRUE additional information will be returned useful for
 #' debugging the codeCheck function
 #' @param interactive activates an interactive developer mode in which some of
 #' the warnings can be fixed interactively.
@@ -21,9 +21,9 @@
 #' it will provide a table containing all declarations in the code, an appearance table listing the appearance of all
 #' objects in the code and information about the existing modules. The format is
 #' list(interfaceInfo,declarations,appearance,modulesInfo). This setting will be ignored
-#' when debug is set to TRUE.
+#' when returnDebug is set to TRUE.
 #' @return A list of all modules containing the interfaces for each module. Or more detailed output if either
-#' \code{details} or \code{debug} is set to TRUE.
+#' \code{details} or \code{returnDebug} is set to TRUE.
 #' @author Jan Philipp Dietrich
 #' @export
 #' @seealso \code{\link{codeExtract}},\code{\link{readDeclarations}}
@@ -33,8 +33,14 @@
 #' # check code consistency of dummy model
 #' codeCheck(system.file("dummymodel", package = "gms"))
 #'
-codeCheck <- function(path = ".", modulepath = "modules", core_files = c("core/*.gms", "main.gms"),
-                      debug = FALSE, interactive = FALSE, test_switches = TRUE, strict = FALSE, details = FALSE) {
+codeCheck <- function(path = ".",
+                      modulepath = "modules",
+                      core_files = c("core/*.gms", "main.gms"),  # nolint: object_name_linter
+                      returnDebug = FALSE,
+                      interactive = FALSE,
+                      test_switches = TRUE,  # nolint: object_name_linter
+                      strict = FALSE,
+                      details = FALSE) {
 
   .checkInputFiles <- function(w, path = ".", modulepath = "modules") {
     inputgms <- Sys.glob(paste0(path, "/", modulepath, "/*/*/input.gms"))
@@ -93,7 +99,7 @@ codeCheck <- function(path = ".", modulepath = "modules", core_files = c("core/*
 
   .checkNamingConventions <- function(gams, w) {
     # Do all declarations follow the naming conventions? (see the coding etiquette at
-    # https://github.com/magpiemodel/tutorials/blob/master/4_GAMScodeStructure.md#23-coding-etiquette-variable-and-parameter-naming
+    # https://github.com/magpiemodel/tutorials/blob/master/4_GAMScodeStructure.md#23-coding-etiquette-variable-and-parameter-naming # nolint
     # for further information)
     # Remove objects which do not follow the naming conventions from the declarations set as
     # they would otherwise cause problems in what follows
@@ -184,7 +190,7 @@ codeCheck <- function(path = ".", modulepath = "modules", core_files = c("core/*
   modulesInfo <- getModules(paste0(path, "/", modulepath))
   gams <- .collectData(path = path, modulepath = modulepath, coreFiles = core_files, modulesInfo = modulesInfo)
 
-  if (debug) {
+  if (returnDebug) {
     gamsBackup <- gams
   }
 
@@ -405,7 +411,7 @@ codeCheck <- function(path = ".", modulepath = "modules", core_files = c("core/*
 
   .emitTimingMessage(" Description check done...", ptm)
 
-  if (debug) {
+  if (returnDebug) {
     out <- list(interfaceInfo = interfaceInfo,
                 ap = ap,
                 gams = gams,
@@ -434,7 +440,7 @@ codeCheck <- function(path = ".", modulepath = "modules", core_files = c("core/*
     if (strict) stop("codeCheck returned warnings. Fix warnings to proceed!")
     message(" codeCheck reported code inconsistencies. Please fix the given warnings!")
   }
-  attr(out, "last.warning") <- w
+  attr(out, "last.warning") <- w  # nolint: object_name_linter
   return(out)
 }
 
@@ -478,4 +484,3 @@ codeCheck <- function(path = ".", modulepath = "modules", core_files = c("core/*
 
   return(w)
 }
-
