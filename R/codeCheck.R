@@ -368,7 +368,7 @@ codeCheck <- function(path = ".", modulepath = "modules", core_files = c("core/*
                                 '" to the repository!',
                                 w = w)
                 }
-                tmp <- data.frame(name = v, type = "input", reason = "questionnaire")
+                tmp <- data.frame(name = v, type = "input", reason = "added by codeCheck")
                 write.table(tmp,
                             notUsedPath,
                             sep = ",",
