@@ -8,7 +8,7 @@ codeCheck(
   path = ".",
   modulepath = "modules",
   core_files = c("core/*.gms", "main.gms"),
-  debug = FALSE,
+  returnDebug = FALSE,
   interactive = FALSE,
   test_switches = TRUE,
   strict = FALSE,
@@ -22,7 +22,7 @@ codeCheck(
 
 \item{core_files}{list of files that belong to the core (wildcard expansion is supported)}
 
-\item{debug}{If TRUE additional information will be returned usefule for
+\item{returnDebug}{If TRUE additional information will be returned useful for
 debugging the codeCheck function}
 
 \item{interactive}{activates an interactive developer mode in which some of
@@ -39,11 +39,11 @@ at the end of the analysis. Useful to enforce clean code.}
 it will provide a table containing all declarations in the code, an appearance table listing the appearance of all
 objects in the code and information about the existing modules. The format is
 list(interfaceInfo,declarations,appearance,modulesInfo). This setting will be ignored
-when debug is set to TRUE.}
+when returnDebug is set to TRUE.}
 }
 \value{
 A list of all modules containing the interfaces for each module. Or more detailed output if either
-\code{details} or \code{debug} is set to TRUE.
+\code{details} or \code{returnDebug} is set to TRUE.
 }
 \description{
 Checks GAMS code for consistency. Throws out warnings if something is wrong
