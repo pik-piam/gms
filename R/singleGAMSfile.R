@@ -22,7 +22,9 @@
 singleGAMSfile <- function(modelpath = ".", mainfile = "main.gms", output = "full.gms", embedRScripts = FALSE) {
 
   mainFilePath <- file.path(modelpath, mainfile)
-  system2("gams", c(mainFilePath, "action=c", "dumpopt=21"))
+  withr::with_dir(modelpath, {
+    system2("gams", c(mainFilePath, "action=c", "dumpopt=21"))
+  })
 
   dumpFilePath <- file.path(modelpath, paste0(substr(mainfile, 1, nchar(mainfile) - 4), ".dmp"))
   file.copy(dumpFilePath, output)
