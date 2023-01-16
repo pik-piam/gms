@@ -11,7 +11,7 @@
 readSetglobals <- function(file) {
   f <- readFileOrVector(file)
   f <- suppressWarnings(grep("^\\$[sS][eE][tT][gG][lL][oO][bB][aA][lL]", f, value = TRUE))
-  pattern <- "^\\$[sS][eE][tT][gG][lL][oO][bB][aA][lL] *([^ ]*) *(.*?) *(!!.*)?$"
+  pattern <- "^\\$[sS][eE][tT][gG][lL][oO][bB][aA][lL]\\s*([^\\s]*)\\s*(.*?)\\s*(!!.*)?$"
   out <- gsub(pattern, "\\2", f, perl = TRUE)
   names(out) <- gsub(pattern, "\\1", f, perl = TRUE)
   return(out)

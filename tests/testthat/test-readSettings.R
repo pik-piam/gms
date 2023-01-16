@@ -44,3 +44,24 @@ names(expectedResult) <- settings
 test_that("all settings in example are properly detected", {
   expect_identical(readSettings(example), expectedResult)
 })
+
+test_that("readSettings works with tabs", {
+  settings <- c("cm_iteration_max", "next_cm_iteration_max", "c_expname", "c_description")
+  expectedResult <- c("1", "2", "SSP2EU-Base",
+                      "SSP2EU-Base:	This baseline calibration scenario follows the Shared Socioeconomic")
+  names(expectedResult) <- settings
+  expect_identical(readSettings(c(
+"$setGlobal	c_expname	SSP2EU-Base",
+"$setGlobal	c_description	SSP2EU-Base:	This baseline calibration scenario follows the Shared Socioeconomic",
+"",
+"parameters",
+"	cm_iteration_max	  \"number of iterations, if optimization is set to cm_iteration_max = 0\"",
+";",
+"	cm_iteration_max   	 = 1;  	  !! def = 1",
+"parameters",
+"	next_cm_iteration_max	  \"try to trick them\"",
+";",
+"	next_cm_iteration_max   	 = 2;  	  !! def = 1"
+  )),
+  expectedResult)
+})

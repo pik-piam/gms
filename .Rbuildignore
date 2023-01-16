@@ -12,3 +12,4 @@
 ^\.idea$
 ^.lintr$
 ^tests/.lintr$
+^Makefile$
