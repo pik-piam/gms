@@ -30,7 +30,7 @@ readDeclarations <- function(file,
       tname <- "parameter"
     }
     startings <-
-      grep(paste("^ *", t, "[s]?( |$)", sep = ""), d, ignore.case = TRUE)
+      grep(paste0("^[ \\t]*", t, "[s]?([ \\t]|$)"), d, ignore.case = TRUE)
     for (s in startings) {
       if (any(endings >= s)) {
         e <- min(endings[endings >= s])
@@ -49,7 +49,7 @@ readDeclarations <- function(file,
       # remove $-expressions
       tmp <- sub("^\\$.*", "", tmp)
       # remove type name
-      tmp <- sub(paste("^\\s*", t, "[^ ]*", sep = ""), "", tmp, ignore.case = TRUE)
+      tmp <- sub(paste0("^[ \\t]*", t, "[^ \\t]*"), "", tmp, ignore.case = TRUE)
       # remove "/ xyz /" entries
       tmp <- sub("/.*/", "", tmp)
       .rmFilling <- function(x) {
@@ -68,7 +68,7 @@ readDeclarations <- function(file,
       tmp <- gsub("\t", " ", tmp)
       # remove all lines with no objects in them
       tmp <- grep("^ *.{0,1} *$", tmp, invert = TRUE, value = TRUE)
-      structure <- "^[ \t]*([^ ^,^\\(^\t]+)(\\([^\\)]+\\)|)[ \t]*(.*)$"
+      structure <- "^ *([^ ,\\(]+)(\\([^\\)]+\\)|) *(.*)$"
       # store name
       names <- sub(structure, "\\1", tmp)
       # store sets

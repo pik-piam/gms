@@ -16,9 +16,9 @@ readParameterValues <- function(code, parameters) {
   result <- vector(mode = "character")
   resultNames <- vector(mode = "character")
   for (parameter in parameters) {
-    pattern <- paste0(".*", parameter, " *= *([^; ]*);.*")
-    matching <- grep(pattern, code, value = TRUE)
-    values <- sub(pattern, "\\1", matching)
+    pattern <- paste0(".*\\b", parameter, "[ \\t]*=[ \\t]*([^; \\t]+);.*")
+    matching <- grep(pattern, code, value = TRUE, perl = TRUE)
+    values <- sub(pattern, "\\1", matching, perl = TRUE)
     if (length(values) == 0) {
       warning(paste0("Could not find value for ", parameter, ", skipping it."))
       next
