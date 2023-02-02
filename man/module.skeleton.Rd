@@ -46,7 +46,7 @@ Module phases are automatically detected checking the main code of the
 model, but not checking code in modules. If you want to use additional
 phases which are only included within a module, you need to specify them
 manually by adding a comment into your gams code indicating that there is an
-additional phase. The syntax is "* !add_phase!: <phase>", e.g. "*
+additional phase. The syntax is "* !add_phase!: \if{html}{\out{<phase>}}", e.g. "*
 !add_phase!: new_phase"
 }
 \examples{

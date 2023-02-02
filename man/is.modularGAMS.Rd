@@ -9,7 +9,7 @@ is.modularGAMS(path = ".", version = FALSE, modulepath = "modules/")
 \arguments{
 \item{path}{path to the main folder of the model}
 
-\item{version}{if TRUE returns the version of the modular structure or FALSE, 
+\item{version}{if TRUE returns the version of the modular structure or FALSE,
 otherwise returns a boolean indicating whether it is modular or not.}
 
 \item{modulepath}{Module path within the model (relative to the model main
