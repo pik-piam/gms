@@ -3,6 +3,7 @@
 export(GAMScodeFilter)
 export(checkAppearance)
 export(checkDescription)
+export(checkNoTabs)
 export(checkSwitchAppearance)
 export(check_config)
 export(chooseFromList)

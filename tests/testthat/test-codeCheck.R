@@ -43,6 +43,4 @@ test_that(".checkAppearanceUsage produces warnings", {
   expect_warning(.checkAppearanceUsage(ap, modulesInfo, w = NULL))
   expect_equal(suppressWarnings(.checkAppearanceUsage(ap, modulesInfo, w = NULL)),
                expectedOutput)
-
-
 })
