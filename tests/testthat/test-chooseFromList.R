@@ -11,9 +11,13 @@ test_that("check various chooseFromList settings", {
                    c("B", "1"))
   expect_identical(unname(chooseFromList(theList, returnBoolean = TRUE, userinput = "3,5")),
                    c(FALSE, TRUE, FALSE, TRUE, FALSE, FALSE))
+  expect_identical(unname(chooseFromList(theList, returnBoolean = TRUE, userinput = " 3, 5   ")),
+                   c(FALSE, TRUE, FALSE, TRUE, FALSE, FALSE))
   expect_identical(chooseFromList(theList, userinput = "1"),
                    theList)
   expect_identical(chooseFromList(theList, addAllPattern = FALSE, userinput = "1"),
+                   theList[1])
+  expect_identical(chooseFromList(theList, addAllPattern = FALSE, userinput = "  1 :  1  "),
                    theList[1])
   expect_identical(unname(chooseFromList(theList, userinput = "1", returnBoolean = TRUE)),
                    rep(TRUE, length(theList)))
