@@ -11,7 +11,8 @@
 #' @author Pascal Führlich
 #' @examples
 #' \dontrun{
-#' gms::checkNoTabs(pattern = "\\.(R|gms|cfg|bib)$", exclude = "output/|renv/")
+#' gms::checkNoTabs(pattern = "\\.(R|Rprofile|gms|cfg|bib)$",
+#'                  excludeFolders = c("output", "renv", ".git"))
 #' gms::checkNoTabs(utils::glob2rx("*.R"))
 #' }
 #' @export

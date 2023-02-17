@@ -83,8 +83,8 @@ that do not arrive at one of the group's nodes are ignored \item
 "outgoing_to_no_return" edges that departing from nodes outside of the
 group and not ending at nodes within the group are ignored }} An example:
 \code{list(list(name = "highlight", nodes = "welfare", color = "#ff8f00",
-  shape = "ellipse", edges_to_highlight = "outgoing", edges_to_ignore =
-  "outside"))}.}
+shape = "ellipse", edges_to_highlight = "outgoing", edges_to_ignore =
+"outside"))}.}
 
 \item{max_length_node_names}{NULL (default value) or an integer n giving the
 maximum number of characters allowed in the node names. If not NULL, node
