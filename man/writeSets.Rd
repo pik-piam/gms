@@ -7,8 +7,8 @@
 writeSets(sets, file = NULL)
 }
 \arguments{
-\item{sets}{a list of sets where every set is another list consisting of
-three entries: name (set name as character), desc (set description as
+\item{sets}{a list of sets where every set is another list consisting of 
+three entries: name (set name as character), desc (set description as 
 character) and items (set elements, either as character vector or data.frame)}
 
 \item{file}{Name of the file the set declarations should be written to. If
