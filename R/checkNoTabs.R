@@ -5,6 +5,7 @@
 #'
 #' @param pattern A regular expression. Only files matching this pattern will be checked for tabs.
 #' @param exclude A regular expression. Files matching this pattern will never be checked.
+#' @param excludeFolders Paths to folders that should not be checked.
 #' @return Invisibly, the list of files that were checked.
 #'
 #' @author Pascal Führlich
@@ -14,10 +15,16 @@
 #' gms::checkNoTabs(utils::glob2rx("*.R"))
 #' }
 #' @export
-checkNoTabs <- function(pattern, exclude = NULL) {
-  filesToCheck <- list.files(".", pattern = pattern,
-                             all.files = TRUE, full.names = TRUE, recursive = TRUE)
-  if (!is.null(exclude)){
+checkNoTabs <- function(pattern, exclude = NULL, excludeFolders = NULL) {
+  folders <- normalizePath(list.dirs(".", recursive = FALSE))
+  if (!is.null(excludeFolders)) {
+    folders <- setdiff(folders, normalizePath(excludeFolders))
+  }
+  filesToCheck <- c(list.files(folders, pattern = pattern,
+                               all.files = TRUE, full.names = TRUE, recursive = TRUE),
+                    list.files(".", pattern = pattern,
+                               all.files = TRUE, full.names = TRUE, recursive = FALSE))
+  if (!is.null(exclude)) {
     filesToCheck <- grep(exclude, filesToCheck, invert = TRUE, value = TRUE)
   }
 
