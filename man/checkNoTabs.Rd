@@ -4,12 +4,14 @@
 \alias{checkNoTabs}
 \title{checkNoTabs}
 \usage{
-checkNoTabs(pattern, exclude = NULL)
+checkNoTabs(pattern, exclude = NULL, excludeFolders = NULL)
 }
 \arguments{
 \item{pattern}{A regular expression. Only files matching this pattern will be checked for tabs.}
 
 \item{exclude}{A regular expression. Files matching this pattern will never be checked.}
+
+\item{excludeFolders}{Paths to folders that should not be checked.}
 }
 \value{
 Invisibly, the list of files that were checked.
@@ -20,7 +22,8 @@ Will throw an error with a list of files where tabs were found if any.
 }
 \examples{
 \dontrun{
-gms::checkNoTabs(pattern = "\\\\.(R|gms|cfg|bib)$", exclude = "output/|renv/")
+gms::checkNoTabs(pattern = "\\\\.(R|Rprofile|gms|cfg|bib)$",
+                 excludeFolders = c("output", "renv", ".git"))
 gms::checkNoTabs(utils::glob2rx("*.R"))
 }
 }
