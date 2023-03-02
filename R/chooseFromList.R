@@ -7,8 +7,10 @@
 #' @param type string in plural shown to user to understand what they have to choose
 #' @param userinfo string printed to the user before choosing
 #' @param addAllPattern boolean whether 'all' and 'Search by pattern' options are added
-#' @param returnBoolean TRUE: returns array with dimension of theList with FALSE and TRUE
-#'                      FALSE: returns selected entries of theList
+#' @param returnBoolean TRUE: returns array with dimension of theList with FALSE and TRUE,
+#'                      which erases the order in which entries were selected
+#'                      FALSE: returns selected entries of theList, conserving the order
+#'                      in which entries were selected
 #' @param multiple TRUE: allows to select multiple entries. FALSE: no
 #' @param userinput string provided by the user. If not supplied, user is asked (mainly for testing)
 #'
