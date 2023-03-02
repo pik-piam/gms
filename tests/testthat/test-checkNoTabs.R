@@ -25,6 +25,6 @@ test_that("checkNoTabs works", {
 
   expect_error(checkNoTabs("\\.(R|gms|cfg|bib)$", exclude = "output/|renv/"),
                paste0("Please replace tabs with spaces in the following files:\n",
-                      "- .+/foo/bar/zab.R\n",
-                      "- .+/foo/oof.bib"))
+                      "- .+foo/bar/zab.R\n",
+                      "- .+foo/oof.bib"))
 })
