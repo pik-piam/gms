@@ -15,6 +15,7 @@ read_yaml_header <- function(file, n = 20) { # nolint: object_name_linter
   range <- grep("# ?-{3}", tmp)
   if (length(range) > 2) warning("More than two YAML separators detected, only the first two will be used!")
   if (length(range) < 2 || range[1] + 1 == range[2]) return(NULL)
-  out <- yaml.load(sub("^#", "", tmp[(range[1] + 1):(range[2] - 1)]))
+  out <- tryCatch(yaml.load(sub("^#", "", tmp[(range[1] + 1):(range[2] - 1)])),
+                  error = function(e) return(list(error = "corrupt YAML header")))
   return(out)
 }
