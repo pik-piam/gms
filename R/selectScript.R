@@ -62,9 +62,6 @@ selectScript <- function(folder = ".", ending = "R") { # nolint
     } else {
       tmp <- list()
     }
-    if (!is.null(tmp$error)) {
-      tmp$description <- paste(tmp$description, "ERROR:", tmp$error)
-    }
     subinfo <- rbind(subinfo, data.frame(folder      = s,
                                         description = ifelse(is.null(tmp$description), "", tmp$description),
                                         position    = ifelse(is.null(tmp$position), NA, tmp$position),
@@ -96,9 +93,6 @@ selectScript <- function(folder = ".", ending = "R") { # nolint
     yaml <- read_yaml(file.path(folder, "INFO.yml"))
   } else {
     yaml <- list()
-  }
-  if (!is.null(tmp$error)) {
-    yaml$description <- paste(yaml$description, "ERROR:", tmp$error)
   }
 
   if (is.null(yaml$type)) yaml$type  <- "script"
