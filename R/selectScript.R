@@ -76,6 +76,9 @@ selectScript <- function(folder = ".", ending = "R") { # nolint
   info <- data.frame(script = NULL, description = NULL, position = NULL, stringsAsFactors = FALSE)
   for (s in script) {
     tmp <- read_yaml_header(file.path(folder, paste0(s, ".", ending)))
+    if (!is.null(tmp$error)) {
+      tmp$description <- paste(tmp$description, "ERROR:", tmp$error)
+    }
     info <- rbind(info, data.frame(script      = s,
                                   description = ifelse(is.null(tmp$description), "", tmp$description),
                                   position    = ifelse(is.null(tmp$position), NA, tmp$position),
