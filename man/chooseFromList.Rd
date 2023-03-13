@@ -23,8 +23,10 @@ chooseFromList(
 
 \item{addAllPattern}{boolean whether 'all' and 'Search by pattern' options are added}
 
-\item{returnBoolean}{TRUE: returns array with dimension of theList with FALSE and TRUE
-FALSE: returns selected entries of theList}
+\item{returnBoolean}{TRUE: returns array with dimension of theList with FALSE and TRUE,
+which erases the order in which entries were selected
+FALSE: returns selected entries of theList, conserving the order
+in which entries were selected}
 
 \item{multiple}{TRUE: allows to select multiple entries. FALSE: no}
 

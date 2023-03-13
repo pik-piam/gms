@@ -7,8 +7,10 @@
 #' @param type string in plural shown to user to understand what they have to choose
 #' @param userinfo string printed to the user before choosing
 #' @param addAllPattern boolean whether 'all' and 'Search by pattern' options are added
-#' @param returnBoolean TRUE: returns array with dimension of theList with FALSE and TRUE
-#'                      FALSE: returns selected entries of theList
+#' @param returnBoolean TRUE: returns array with dimension of theList with FALSE and TRUE,
+#'                      which erases the order in which entries were selected
+#'                      FALSE: returns selected entries of theList, conserving the order
+#'                      in which entries were selected
 #' @param multiple TRUE: allows to select multiple entries. FALSE: no
 #' @param userinput string provided by the user. If not supplied, user is asked (mainly for testing)
 #'
@@ -62,7 +64,7 @@ chooseFromList <- function(theList, type = "items", userinfo = NULL, addAllPatte
   }
   # interpret userinput and perform basic checks
   identifier <- try(eval(parse(text = paste("c(", userinput, ")"))))
-  if (! all(grepl("^[0-9,:]*$", userinput)) || inherits(identifier, "try-error")) {
+  if (! all(grepl("^[0-9,: ]*$", userinput)) || inherits(identifier, "try-error")) {
     message("Try again, you have to choose some numbers.")
     return(chooseFromList(originalList, type, userinfo, addAllPattern, returnBoolean, multiple))
   }
@@ -105,8 +107,12 @@ choosePatternFromList <- function(theList, type = "items", pattern = FALSE) {
   }
   id <- grep(pattern = pattern, theList)
   # lists all chosen and ask for the confirmation of the made choice
-  message("\n\nThe search pattern matches the following ", type, ":")
-  if (length(id) > 0) message(paste(paste(seq_along(id), theList[id], sep = ": "), collapse = "\n"))
+  if (length(id) > 0) {
+    message("\n\nThe search pattern matches the following ", type, ":")
+    message(paste(paste(seq_along(id), theList[id], sep = ": "), collapse = "\n"))
+  } else {
+    message("Oops. You didn't select anything.")
+  }
   if (confirmchoice) {
     message("\nAre you sure these are the right ", type, "? (y/n): ")
     if (! getLine() %in% c("y", "Y")) {
