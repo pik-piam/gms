@@ -38,8 +38,9 @@ chooseFromList <- function(theList, type = "items", userinfo = NULL, addAllPatte
   booleanList <- rep(FALSE, length(originalList)) # set to FALSE
   if (is.list(theList)) booleanList <- as.list(booleanList)
   m <- paste0("\n\nPlease choose ", type, ":\n\n")
-  # paste group after each entry and add them to theList as options
-  groups <- sort(unique(names(theList)[nchar(names(theList)) > 0]))
+  # paste groups after each entry and add them to theList as options
+  rawNames <- names(theList)
+  groups <- sort(unique(unlist(strsplit(rawNames[nchar(rawNames) > 0], ',', fixed = TRUE))))
   if (multiple) {
     groupsids <- NULL
     if (length(groups) > 0) {
@@ -81,10 +82,14 @@ chooseFromList <- function(theList, type = "items", userinfo = NULL, addAllPatte
     if (addAllPattern && any(identifier == "1")) { # all
       identifier <- seq_along(originalList)
     } else {
-      # interpret group inputs and select all group mem
+      # interpret group inputs and select all group members
       selectedGroups <- sub("^Group: ", "", theList[intersect(identifier, groupsids)])
-      identifier <- unique(c(identifier[! identifier %in% groupsids],
-                             which(names(originalList) %in% selectedGroups) + addAllPattern))
+      for (group in selectedGroups) {
+         identifier <- c(identifier,
+                         which(grepl(paste0("(^|,)", group, "($|,)"), names(originalList), perl = TRUE))
+                         + addAllPattern)  # shift all identifiers by one if the "all" pattern is the first option
+      }
+      identifier <- unique(c(identifier[! identifier %in% groupsids]))
       # if search by pattern is selected, ask for pattern and interpret it
       if (addAllPattern && any(identifier == length(theList))) {
         patternid <- choosePatternFromList(originalList, type)
