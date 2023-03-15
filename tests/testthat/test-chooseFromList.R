@@ -36,3 +36,12 @@ test_that("check various chooseFromList settings", {
   expect_identical(theList[choosePatternFromList(theList, pattern = "^[0-9]+$")],
                    theList[names(theList) == "Number"])
 })
+
+test_that("chooseFromList works with multiple groups", {
+  theList <- c("Letter,Number" = "A1", Letter = "B", Letter = "C",
+               Number = 1, Number = 2, "Number,Letter" = "3C")
+  expect_identical(unname(chooseFromList(theList, userinput = "3")),
+                   "B")
+  expect_identical(chooseFromList(theList, userinput = toString(length(theList) + 2)),
+                   theList[names(theList) %in% c("Letter", "Letter,Number", "Number,Letter")])
+})
