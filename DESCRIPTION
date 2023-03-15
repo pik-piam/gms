@@ -1,8 +1,8 @@
 Package: gms
 Type: Package
 Title: 'GAMS' Modularization Support Package
-Version: 0.24.4
-Date: 2023-03-13
+Version: 0.25.0
+Date: 2023-03-15
 Authors@R: c(person("Jan Philipp", "Dietrich", email = "dietrich@pik-potsdam.de", role = c("aut","cre")),
              person("David", "Klein", role = "aut"),
              person("Anastasis", "Giannousakis", role = "aut"),
