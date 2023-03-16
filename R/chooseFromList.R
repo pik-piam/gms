@@ -40,10 +40,13 @@ chooseFromList <- function(theList, type = "items", userinfo = NULL, addAllPatte
   m <- paste0("\n\nPlease choose ", type, ":\n\n")
   # paste groups after each entry and add them to theList as options
   rawNames <- names(theList)
-  groups <- sort(unique(unlist(strsplit(rawNames[nchar(rawNames) > 0], ',', fixed = TRUE))))
+  rawNames <- rawNames[nchar(rawNames) > 0]
+  if (length(rawNames) > 0) {
+    groups <- sort(unique(unlist(strsplit(rawNames, ',', fixed = TRUE))))
+  }
   if (multiple) {
     groupsids <- NULL
-    if (length(groups) > 0) {
+    if (exists("groups")) {
       groupsids <- seq(length(originalList) + 1 + 1 * addAllPattern,
                        length(originalList) + length(groups) + 1 * addAllPattern)
       theList <- c(paste0(str_pad(theList, max(nchar(originalList), 10), side = "right"), " ", names(theList)),
