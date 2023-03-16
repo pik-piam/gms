@@ -45,3 +45,8 @@ test_that("chooseFromList works with multiple groups", {
   expect_identical(chooseFromList(theList, userinput = toString(length(theList) + 2)),
                    theList[names(theList) %in% c("Letter", "Letter,Number", "Number,Letter")])
 })
+
+test_that("chooseFromList works with no groups", {
+  theList <- c("A1", "B", "C", 1, 2, "3C")
+  expect_identical(unname(chooseFromList(theList, userinput = "3")), "B")
+})
