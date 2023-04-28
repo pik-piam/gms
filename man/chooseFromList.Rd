@@ -11,7 +11,8 @@ chooseFromList(
   addAllPattern = TRUE,
   returnBoolean = FALSE,
   multiple = TRUE,
-  userinput = FALSE
+  userinput = FALSE,
+  errormessage = NULL
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ in which entries were selected}
 \item{multiple}{TRUE: allows to select multiple entries. FALSE: no}
 
 \item{userinput}{string provided by the user. If not supplied, user is asked (mainly for testing)}
+
+\item{errormessage}{string used internally to tell the user before retrying that a selection does not make sense}
 }
 \value{
 list or character vector, either a boolean with same length as theList or only the selected items.

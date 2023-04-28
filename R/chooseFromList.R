@@ -13,6 +13,7 @@
 #'                      in which entries were selected
 #' @param multiple TRUE: allows to select multiple entries. FALSE: no
 #' @param userinput string provided by the user. If not supplied, user is asked (mainly for testing)
+#' @param errormessage string used internally to tell the user before retrying that a selection does not make sense
 #'
 #' @return list or character vector, either a boolean with same length as theList or only the selected items.
 #'
@@ -33,7 +34,7 @@
 #'
 #' @export
 chooseFromList <- function(theList, type = "items", userinfo = NULL, addAllPattern = TRUE,
-                           returnBoolean = FALSE, multiple = TRUE, userinput = FALSE) {
+                           returnBoolean = FALSE, multiple = TRUE, userinput = FALSE, errormessage = NULL) {
   originalList <- theList
   booleanList <- rep(FALSE, length(originalList)) # set to FALSE
   if (is.list(theList)) booleanList <- as.list(booleanList)
@@ -61,7 +62,7 @@ chooseFromList <- function(theList, type = "items", userinfo = NULL, addAllPatte
   m <- c(m, paste(paste(str_pad(seq_along(theList), nchar(length(theList)), side = "left"),
                         theList, sep = ": "),
                   collapse = "\n"))
-  m <- c(m, "\n", userinfo,
+  m <- c(m, "\n", errormessage, userinfo,
             paste0("\nNumber", if (multiple) "s entered as 2,4:6,9", " or leave empty:"))
   if (isFALSE(userinput)) { # print options and ask for userinput
     message(m)
@@ -70,17 +71,17 @@ chooseFromList <- function(theList, type = "items", userinfo = NULL, addAllPatte
   # interpret userinput and perform basic checks
   identifier <- try(eval(parse(text = paste("c(", userinput, ")"))))
   if (! all(grepl("^[0-9,: ]*$", userinput)) || inherits(identifier, "try-error")) {
-    message("Try again, you have to choose some numbers.")
-    return(chooseFromList(originalList, type, userinfo, addAllPattern, returnBoolean, multiple))
+    err <- "Try again, you have to choose some numbers."
+    return(chooseFromList(originalList, type, userinfo, addAllPattern, returnBoolean, multiple, errormessage = err))
   }
   # check whether all input is usable
   if (! multiple && length(identifier) > 1) {
-    message("Try again, multiple chosen: ", paste(identifier, collapse = ", "))
-    return(chooseFromList(originalList, type, userinfo, addAllPattern, returnBoolean, multiple))
+    err <- paste0("Try again, multiple chosen: ", paste(identifier, collapse = ", "))
+    return(chooseFromList(originalList, type, userinfo, addAllPattern, returnBoolean, multiple, errormessage = err))
   }
   if (any(! identifier %in% seq_along(theList))) {
-    message("Try again, not all in list: ", paste(identifier, collapse = ", "))
-    return(chooseFromList(originalList, type, userinfo, addAllPattern, returnBoolean, multiple))
+    err <- paste0("Try again, not all in list: ", paste(identifier, collapse = ", "))
+    return(chooseFromList(originalList, type, userinfo, addAllPattern, returnBoolean, multiple, errormessage = err))
   }
   if (multiple) {
     if (addAllPattern && any(identifier == "1")) { # all
