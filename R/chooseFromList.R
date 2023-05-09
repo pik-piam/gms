@@ -71,16 +71,16 @@ chooseFromList <- function(theList, type = "items", userinfo = NULL, addAllPatte
   # interpret userinput and perform basic checks
   identifier <- try(eval(parse(text = paste("c(", userinput, ")"))))
   if (! all(grepl("^[0-9,: ]*$", userinput)) || inherits(identifier, "try-error")) {
-    err <- "Try again, you have to choose some numbers."
+    err <- "Try again, you have to choose some numbers.\n"
     return(chooseFromList(originalList, type, userinfo, addAllPattern, returnBoolean, multiple, errormessage = err))
   }
   # check whether all input is usable
   if (! multiple && length(identifier) > 1) {
-    err <- paste0("Try again, multiple chosen: ", paste(identifier, collapse = ", "))
+    err <- paste0("Try again, multiple chosen: ", substr(paste(identifier, collapse = ", "), 1, 240), "...\n")
     return(chooseFromList(originalList, type, userinfo, addAllPattern, returnBoolean, multiple, errormessage = err))
   }
   if (any(! identifier %in% seq_along(theList))) {
-    err <- paste0("Try again, not all in list: ", paste(identifier, collapse = ", "))
+    err <- paste0("Try again, not all in list: ", substr(paste(identifier, collapse = ", "), 1, 240), "...\n")
     return(chooseFromList(originalList, type, userinfo, addAllPattern, returnBoolean, multiple, errormessage = err))
   }
   if (multiple) {
