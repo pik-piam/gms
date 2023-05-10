@@ -37,7 +37,7 @@ addfile are used.}
 \description{
 Function to replace a marked paragaph in a text file. Paragraph has to be
 marked in the text file with an initial "##### R SECTION START (SUBJECT)
-#####" and "##### R SECTION END (SUBJECT) #####" as ending. The number of \#
+#####" and "##### R SECTION END (SUBJECT) #####" as ending. The number of #
 symbols can be chosen by the user, but there has to be at least one at the
 beginning and one at the end. Furthermore it is allowed to add further
 symbols at the beginning or the end of the line. "SUBJECT" is chosen by the
