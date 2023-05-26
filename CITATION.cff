@@ -2,8 +2,8 @@ cff-version: 1.2.0
 message: If you use this software, please cite it using the metadata from this file.
 type: software
 title: 'gms: ''GAMS'' Modularization Support Package'
-version: 0.25.4
-date-released: '2023-05-09'
+version: 0.25.5
+date-released: '2023-05-26'
 abstract: A collection of tools to create, use and maintain modularized model code
   written in the modeling language 'GAMS' (<https://www.gams.com/>). Out-of-the-box
   'GAMS' does not come with support for modularized model code. This package provides

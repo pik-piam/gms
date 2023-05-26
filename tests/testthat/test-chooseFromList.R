@@ -15,6 +15,10 @@ test_that("check various chooseFromList settings", {
                    c(FALSE, TRUE, FALSE, TRUE, FALSE, FALSE))
   expect_identical(chooseFromList(theList, userinput = "1"),
                    theList)
+  expect_identical(chooseFromList(theList, userinput = "a"),
+                   theList)
+  expect_identical(chooseFromList(theList, userinput = "a,1"),
+                   theList)
   expect_identical(chooseFromList(theList, addAllPattern = FALSE, userinput = "1"),
                    theList[1])
   expect_identical(chooseFromList(theList, addAllPattern = FALSE, userinput = "  1 :  1  "),
@@ -35,6 +39,14 @@ test_that("check various chooseFromList settings", {
                    c("A", "B"))
   expect_identical(theList[choosePatternFromList(theList, pattern = "^[0-9]+$")],
                    theList[names(theList) == "Number"])
+  # Test pattern search by overriding getLine, only works with 'y' because this validates the "are you sure"-question
+  with_mocked_bindings({
+    expect_equal(chooseFromList(c("a", "b", "y"), userinput = "p"), "y")
+    expect_equal(chooseFromList(c("a", "b", "y", "yb"), userinput = "p"), c("y", "yb"))
+    expect_equal(length(chooseFromList(c("a", "b"), userinput = "p")), 0)
+    },
+    getLine = function() return("y")
+  )
 })
 
 test_that("chooseFromList works with multiple groups", {
