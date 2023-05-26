@@ -57,10 +57,14 @@ chooseFromList <- function(theList, type = "items", userinfo = NULL, addAllPatte
                        " Group\n"))
     }
     # add all and regex pattern as options
-    if (addAllPattern) theList <- c("all", theList, "Search by pattern...")
+    if (addAllPattern) {
+      theList <- c("all", theList, "Search by pattern...")
+      a <- 1
+      p <- length(theList)
+    }
   }
-  m <- c(m, paste(paste(str_pad(seq_along(theList), nchar(length(theList)), side = "left"),
-                        theList, sep = ": "),
+  m <- c(m, paste(paste0(str_pad(seq_along(theList), nchar(length(theList)), side = "left"),
+                        ifelse(theList == "all", ",a: ", ifelse(theList == "Search by pattern...", ",p: ", ": ")), theList),
                   collapse = "\n"))
   m <- c(m, "\n", errormessage, userinfo,
             paste0("\nNumber", if (multiple) "s entered as 2,4:6,9", " or leave empty:"))
@@ -70,8 +74,8 @@ chooseFromList <- function(theList, type = "items", userinfo = NULL, addAllPatte
   }
   # interpret userinput and perform basic checks
   identifier <- try(eval(parse(text = paste("c(", userinput, ")"))))
-  if (! all(grepl("^[0-9,: ]*$", userinput)) || inherits(identifier, "try-error")) {
-    err <- "Try again, you have to choose some numbers.\n"
+  if (! all(grepl(if (addAllPattern) "^[ap0-9,: ]*$" else "^[0-9,: ]*$", userinput)) || inherits(identifier, "try-error")) {
+    err <- paste0("Try again, you have to choose some numbers. ", attr(identifier, "condition"), "\n")
     return(chooseFromList(originalList, type, userinfo, addAllPattern, returnBoolean, multiple, errormessage = err))
   }
   # check whether all input is usable
