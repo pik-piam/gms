@@ -36,6 +36,7 @@
 chooseFromList <- function(theList, type = "items", userinfo = NULL, addAllPattern = TRUE,
                            returnBoolean = FALSE, multiple = TRUE, userinput = FALSE, errormessage = NULL) {
   originalList <- theList
+  addAllPattern <- addAllPattern && multiple
   booleanList <- rep(FALSE, length(originalList)) # set to FALSE
   if (is.list(theList)) booleanList <- as.list(booleanList)
   m <- paste0("\n\nPlease choose ", type, ":\n\n")
@@ -106,13 +107,13 @@ chooseFromList <- function(theList, type = "items", userinfo = NULL, addAllPatte
       # if search by pattern is selected, ask for pattern and interpret it
       if (pattern) {
         patternid <- choosePatternFromList(originalList, type, fixed = FALSE)
-        identifier <- unique(c(patternid + 1, identifier[identifier < length(originalList) + 2]))
+        identifier <- unique(c(identifier, patternid + 1))
       }
       if (fixed) {
         patternid <- choosePatternFromList(originalList, type, fixed = TRUE)
-        identifier <- unique(c(patternid + 1, identifier[identifier < length(originalList) + 2]))
+        identifier <- unique(c(identifier, patternid + 1))
       }
-      identifier <- identifier - 1 * addAllPattern # if addAllPattern = TRUE, '1' is 'all' option
+      identifier <- identifier[identifier < length(originalList) + 2] - 1 * addAllPattern # if addAllPattern = TRUE, '1' is 'all' option
     }
   }
   booleanList[identifier] <- TRUE
