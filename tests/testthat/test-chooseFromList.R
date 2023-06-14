@@ -40,10 +40,17 @@ test_that("check various chooseFromList settings", {
   expect_identical(theList[choosePatternFromList(theList, pattern = "^[0-9]+$")],
                    theList[names(theList) == "Number"])
   # Test pattern search by overriding getLine, only works with 'y' because this validates the "are you sure"-question
+  # Therefore, p and f cannot be differentiated here
   with_mocked_bindings({
     expect_equal(chooseFromList(c("a", "b", "y"), userinput = "p"), "y")
     expect_equal(chooseFromList(c("a", "b", "y", "yb"), userinput = "p"), c("y", "yb"))
     expect_equal(length(chooseFromList(c("a", "b"), userinput = "p")), 0)
+    expect_equal(chooseFromList(c("a", "b", "y"), userinput = "f"), "y")
+    expect_equal(chooseFromList(c("a", "b", "y", "yb"), userinput = "f"), c("y", "yb"))
+    expect_equal(length(chooseFromList(c("a", "b"), userinput = "f")), 0)
+    expect_equal(chooseFromList(c("a", "b", "y"), userinput = "f,p"), "y")
+    expect_equal(chooseFromList(c("a", "b", "y", "yb"), userinput = "p,f"), c("y", "yb"))
+    expect_equal(length(chooseFromList(c("a", "b"), userinput = "p,f")), 0)
     },
     getLine = function() return("y")
   )
