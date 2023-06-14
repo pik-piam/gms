@@ -51,6 +51,7 @@ test_that("check various chooseFromList settings", {
     expect_equal(chooseFromList(c("a", "b", "y"), userinput = "f,p"), "y")
     expect_equal(chooseFromList(c("a", "b", "y", "yb"), userinput = "p,f"), c("y", "yb"))
     expect_equal(length(chooseFromList(c("a", "b"), userinput = "p,f")), 0)
+    expect_equal(length(chooseFromList(setNames(c("a", "b", "c"), c("L", "L", "y")), userinput = "p,f")), 0)
     },
     getLine = function() return("y")
   )

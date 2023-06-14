@@ -66,7 +66,7 @@ chooseFromList <- function(theList, type = "items", userinfo = NULL, addAllPatte
     }
   }
   m <- c(m, paste(paste0(str_pad(seq_along(theList), nchar(length(theList)), side = "left"),
-                        if (addAllPattern) c(",a", rep("", length(originalList)), ",p", ",f"), ": ", theList),
+                        if (addAllPattern) c(",a", rep("", length(theList) - 3), ",p", ",f"), ": ", theList),
                   collapse = "\n"))
   m <- c(m, "\n", errormessage, userinfo,
             paste0("\nNumber", if (multiple) "s entered as 2,4:6,9", " or leave empty:"))
