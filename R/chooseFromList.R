@@ -58,13 +58,14 @@ chooseFromList <- function(theList, type = "items", userinfo = NULL, addAllPatte
     }
     # add all and regex pattern as options
     if (addAllPattern) {
-      theList <- c("all", theList, "Search by pattern...")
+      theList <- c("all", theList, "Search pattern by regular expression...", "Search by fixed pattern...")
       a <- 1
-      p <- length(theList)
+      p <- length(theList) - 1
+      f <- length(theList)
     }
   }
   m <- c(m, paste(paste0(str_pad(seq_along(theList), nchar(length(theList)), side = "left"),
-                        ifelse(theList == "all", ",a: ", ifelse(theList == "Search by pattern...", ",p: ", ": ")), theList),
+                        if (addAllPattern) c(",a", rep("", length(originalList)), ",p", ",f"), ": ", theList),
                   collapse = "\n"))
   m <- c(m, "\n", errormessage, userinfo,
             paste0("\nNumber", if (multiple) "s entered as 2,4:6,9", " or leave empty:"))
@@ -74,7 +75,7 @@ chooseFromList <- function(theList, type = "items", userinfo = NULL, addAllPatte
   }
   # interpret userinput and perform basic checks
   identifier <- try(eval(parse(text = paste("c(", userinput, ")"))))
-  if (! all(grepl(if (addAllPattern) "^[ap0-9,: ]*$" else "^[0-9,: ]*$", userinput)) || inherits(identifier, "try-error")) {
+  if (! all(grepl(if (addAllPattern) "^[afp0-9,: ]*$" else "^[0-9,: ]*$", userinput)) || inherits(identifier, "try-error")) {
     err <- paste0("Try again, you have to choose some numbers. ", attr(identifier, "condition"), "\n")
     return(chooseFromList(originalList, type, userinfo, addAllPattern, returnBoolean, multiple, errormessage = err))
   }
@@ -88,7 +89,10 @@ chooseFromList <- function(theList, type = "items", userinfo = NULL, addAllPatte
     return(chooseFromList(originalList, type, userinfo, addAllPattern, returnBoolean, multiple, errormessage = err))
   }
   if (multiple) {
-    if (addAllPattern && any(identifier == "1")) { # all
+    all <- addAllPattern && any(identifier == "1")
+    pattern <- addAllPattern && any(identifier == length(theList) - 1)
+    fixed <- addAllPattern && any(identifier == length(theList))
+    if (all) { # all
       identifier <- seq_along(originalList)
     } else {
       # interpret group inputs and select all group members
@@ -100,9 +104,13 @@ chooseFromList <- function(theList, type = "items", userinfo = NULL, addAllPatte
       }
       identifier <- unique(c(identifier[! identifier %in% groupsids]))
       # if search by pattern is selected, ask for pattern and interpret it
-      if (addAllPattern && any(identifier == length(theList))) {
-        patternid <- choosePatternFromList(originalList, type)
-        identifier <- unique(c(patternid + 1, identifier[identifier < length(theList)]))
+      if (pattern) {
+        patternid <- choosePatternFromList(originalList, type, fixed = FALSE)
+        identifier <- unique(c(patternid + 1, identifier[identifier < length(originalList) + 2]))
+      }
+      if (fixed) {
+        patternid <- choosePatternFromList(originalList, type, fixed = TRUE)
+        identifier <- unique(c(patternid + 1, identifier[identifier < length(originalList) + 2]))
       }
       identifier <- identifier - 1 * addAllPattern # if addAllPattern = TRUE, '1' is 'all' option
     }
@@ -112,14 +120,14 @@ chooseFromList <- function(theList, type = "items", userinfo = NULL, addAllPatte
   if (returnBoolean) return(booleanList) else return(originalList[identifier])
 }
 
-choosePatternFromList <- function(theList, type = "items", pattern = FALSE) {
+choosePatternFromList <- function(theList, type = "items", pattern = FALSE, fixed = FALSE) {
   confirmchoice <- FALSE
   if (isFALSE(pattern)) {
     confirmchoice <- TRUE
-    message("\nInsert the search pattern or the regular expression: ")
+    message("\nInsert the ", if (fixed) "search pattern with fixed=TRUE: " else "regular expression: ")
     pattern <- getLine()
   }
-  id <- grep(pattern = pattern, theList)
+  id <- grep(pattern = pattern, theList, fixed = fixed)
   # lists all chosen and ask for the confirmation of the made choice
   if (length(id) > 0) {
     message("\n\nThe search pattern matches the following ", type, ":")
