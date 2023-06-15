@@ -39,6 +39,24 @@ test_that("check various chooseFromList settings", {
                    c("A", "B"))
   expect_identical(theList[choosePatternFromList(theList, pattern = "^[0-9]+$")],
                    theList[names(theList) == "Number"])
+  # check whether chooseFromList identifies errors and asks user again
+  with_mocked_bindings({
+    expect_error(chooseFromList(theList, userinput = length(theList) + length(unique(names(theList))) + 3 + 1)) # 3 for all, pattern, fixed
+    expect_error(chooseFromList(theList, multiple = FALSE, userinput = length(theList) + 1))
+    expect_error(chooseFromList(theList, addAllPattern = FALSE, userinput = "a"))
+    expect_error(chooseFromList(theList, addAllPattern = FALSE, userinput = "p"))
+    expect_error(chooseFromList(theList, addAllPattern = FALSE, userinput = "f"))
+    expect_error(chooseFromList(theList, multiple = FALSE, addAllPattern = TRUE, userinput = "a"))
+    expect_error(chooseFromList(theList, multiple = FALSE, addAllPattern = TRUE, userinput = "p"))
+    expect_error(chooseFromList(theList, multiple = FALSE, addAllPattern = TRUE, userinput = "f"))
+    expect_error(chooseFromList(theList, userinput = "1,,"))
+    expect_error(chooseFromList(theList, userinput = "1,:3,"))
+    expect_error(chooseFromList(theList, userinput = "0"))
+    expect_error(chooseFromList(theList, userinput = "-1"))
+    expect_error(chooseFromList(theList, userinput = "1-2"))
+    },
+    getLine = function() stop("getLine should not called.")
+  )
   # Test pattern search by overriding getLine, only works with 'y' because this validates the "are you sure"-question
   # Therefore, p and f cannot be differentiated here
   with_mocked_bindings({
@@ -69,4 +87,17 @@ test_that("chooseFromList works with multiple groups", {
 test_that("chooseFromList works with no groups", {
   theList <- c("A1", "B", "C", 1, 2, "3C")
   expect_identical(unname(chooseFromList(theList, userinput = "3")), "B")
+  with_mocked_bindings({
+    expect_error(chooseFromList(theList, userinput = length(theList) + 3 + 1)) # 3 for all, pattern, fixed
+    expect_error(chooseFromList(theList, multiple = FALSE, userinput = length(theList) + 1))
+    expect_error(chooseFromList(theList, addAllPattern = FALSE, userinput = "a"))
+    expect_error(chooseFromList(theList, addAllPattern = FALSE, userinput = "a"))
+    expect_error(chooseFromList(theList, addAllPattern = FALSE, userinput = "p"))
+    expect_error(chooseFromList(theList, addAllPattern = FALSE, userinput = "f"))
+    expect_error(chooseFromList(theList, multiple = FALSE, addAllPattern = TRUE, userinput = "a"))
+    expect_error(chooseFromList(theList, multiple = FALSE, addAllPattern = TRUE, userinput = "p"))
+    expect_error(chooseFromList(theList, multiple = FALSE, addAllPattern = TRUE, userinput = "f"))
+    },
+    getLine = function() stop("getLine should not called.")
+  )
 })
