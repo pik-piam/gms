@@ -75,7 +75,7 @@ chooseFromList <- function(theList, type = "items", userinfo = NULL, addAllPatte
     userinput <- getLine()
   }
   # interpret userinput and perform basic checks
-  identifier <- try(eval(parse(text = paste("c(", userinput, ")"))))
+  identifier <- try(eval(parse(text = paste("c(", userinput, ")"))), silent = TRUE)
   if (! all(grepl(if (addAllPattern) "^[afp0-9,: ]*$" else "^[0-9,: ]*$", userinput)) || inherits(identifier, "try-error")) {
     err <- paste0("Try again, you have to choose some numbers. ", attr(identifier, "condition"), "\n")
     return(chooseFromList(originalList, type, userinfo, addAllPattern, returnBoolean, multiple, errormessage = err))
