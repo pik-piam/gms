@@ -139,7 +139,7 @@ choosePatternFromList <- function(theList, type = "items", pattern = FALSE, fixe
   if (confirmchoice) {
     message("\nAre you sure these are the right ", type, "? (y/n): ")
     if (! getLine() %in% c("y", "Y")) {
-      return(choosePatternFromList(theList, type))
+      return(choosePatternFromList(theList, type, fixed = fixed))
     }
   }
   return(id)
