@@ -36,6 +36,10 @@
 chooseFromList <- function(theList, type = "items", userinfo = NULL, addAllPattern = TRUE,
                            returnBoolean = FALSE, multiple = TRUE, userinput = FALSE, errormessage = NULL) {
   originalList <- theList
+  if (length(theList) == 0) {
+    message("No ", type, " found that might be selected, returning the empty list.")
+    return(theList)
+  }
   addAllPattern <- addAllPattern && multiple
   booleanList <- rep(FALSE, length(originalList)) # set to FALSE
   if (is.list(theList)) booleanList <- as.list(booleanList)
