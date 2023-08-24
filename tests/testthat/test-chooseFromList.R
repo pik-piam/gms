@@ -2,10 +2,12 @@ context("chooseFromList test")
 
 with_mocked_bindings({ # fail if getLine() is called
   test_that("check various chooseFromList settings", {
-    expect_identical(chooseFromList(NULL), NULL)
-    expect_message(chooseFromList(NULL), "returning the empty list")
-    expect_identical(chooseFromList(list()), list())
-    expect_message(chooseFromList(list()), "returning the empty list")
+    zerolength <- list(NULL, logical(0), character(0), numeric(0), list(), a = NULL)
+    for (z in zerolength) {
+      expect_identical(chooseFromList(z), z)
+      expect_message(chooseFromList(z), "returning the empty list")
+    }
+    expect_identical(chooseFromList(list(n = NULL), userinput = "a"), list(n = NULL))
     theList <- c(Letter = "A", Letter = "B", Letter = "C",
                  Number = 1, Number = 2, Number = 3)
     expect_identical(unname(chooseFromList(theList, userinput = "3")),
@@ -58,6 +60,7 @@ with_mocked_bindings({ # fail if getLine() is called
     expect_error(chooseFromList(theList, userinput = "0"))
     expect_error(chooseFromList(theList, userinput = "-1"))
     expect_error(chooseFromList(theList, userinput = "1-2"))
+    expect_error(chooseFromList(theList, multiple = FALSE, userinput = "1:2"))
   })
 
   test_that("chooseFromList works with multiple groups", {
@@ -81,6 +84,7 @@ with_mocked_bindings({ # fail if getLine() is called
     expect_error(chooseFromList(theList, multiple = FALSE, addAllPattern = TRUE, userinput = "a"))
     expect_error(chooseFromList(theList, multiple = FALSE, addAllPattern = TRUE, userinput = "p"))
     expect_error(chooseFromList(theList, multiple = FALSE, addAllPattern = TRUE, userinput = "f"))
+    expect_error(chooseFromList(theList, multiple = FALSE, userinput = "1:2"))
   })
 
   }, # end of with_mocked_bindings

@@ -56,7 +56,7 @@ chooseFromList <- function(theList, type = "items", userinfo = NULL, addAllPatte
     if (! is.null(groups)) {
       groupsids <- seq(length(originalList) + 1 + 1 * addAllPattern,
                        length(originalList) + length(groups) + 1 * addAllPattern)
-      theList <- c(paste0(str_pad(theList, max(nchar(originalList), 10), side = "right"), " ", names(theList)),
+      theList <- c(paste0(str_pad(paste(theList), max(nchar(originalList), 10), side = "right"), " ", names(theList)),
                    paste("Group:", groups))
       m <- c(m, paste0(str_pad("", max(nchar(originalList), 10) + nchar(length(theList) + 2) + 2, side = "right"),
                        " Group\n"))
