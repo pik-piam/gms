@@ -23,7 +23,8 @@ Imports:
     stringr,
     withr,
     yaml,
-    filelock
+    filelock,
+    stats
 Suggests: 
     covr,
     curl,
