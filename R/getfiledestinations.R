@@ -2,6 +2,7 @@
 #'
 #' Create file2destination mapping based on information from the model
 #'
+#'
 #' @author Jan Philipp Dietrich, David Klein
 
 
@@ -15,6 +16,9 @@ getfiledestinations <- function() {
     tmp <- grep("^\\*", readLines(f, warn = FALSE), invert = TRUE, value = TRUE)
     add <- data.frame(file = tmp, destination = dirname(f), stringsAsFactors = FALSE)
     out <- rbind(out, add)
+  }
+  if (is.null(out)) {
+    return(NULL)
   }
   out <- as.data.frame(lapply(out, trimws), stringsAsFactors = FALSE)
   return(out[out[[1]] != "", ])
