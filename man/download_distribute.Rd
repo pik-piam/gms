@@ -25,7 +25,7 @@ list("ftp://my_pw_protected_server.de/data"=list(user="me",password=12345), "htt
 
 \item{modelfolder}{main model folder}
 
-\item{additionalDelete}{information which additonal data should be deleted before new data are downloaded and distributed}
+\item{additionalDelete}{information which additional data should be deleted before new data are downloaded and distributed}
 
 \item{debug}{switch for debug mode with additional diagnostic information}
 

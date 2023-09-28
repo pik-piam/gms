@@ -70,7 +70,13 @@ codeCheck <- function(path = ".",
     # returns a named list containing the code (without comments) and the corresponding declarations,
     # each divided into a core part and a part with the code/declarations of all modules.
     # Additionally, the named list also contains the not_used information from the modules.
-    allFiles <- list.files(path = path, pattern = "\\.gms$", recursive = TRUE)
+    path <- normalizePath(path, winslash = "/")
+    foldersToSearch <- list.dirs(path = path, recursive = FALSE)
+    foldersToSearch <- foldersToSearch[!basename(foldersToSearch) %in% c("renv", ".git", "output")]
+    allFiles <- list.files(path = foldersToSearch, pattern = "\\.gms$", full.names = TRUE, recursive = TRUE)
+    allFiles <- c(allFiles, list.files(path = path, pattern = "\\.gms$", full.names = TRUE, recursive = FALSE))
+    allFiles <- sub(paste0(path, "/"), "", normalizePath(allFiles, winslash = "/", mustWork = FALSE), fixed = TRUE)
+
     moduleFiles <-  paste0(path, "/", grep(paste("^", modulepath, sep = ""), allFiles, value = TRUE))
     coreFiles <- Sys.glob(paste0(path, "/", coreFiles))
     core <- codeExtract(coreFiles, "core")
