@@ -292,32 +292,22 @@ codeCheck <- function(path = ".",
     }
   }
   if (length(interfacesOnlyNotused) > 0) {
-    if (isTRUE(interactive)) {
-      answer <- chooseFromList(interfacesOnlyNotused, type = "variables that should be deleted from 'not_used.txt', as they appear only there within the module (stated as 'group')",
-                               multiple = TRUE, addAllPattern = FALSE, returnBoolean = TRUE)
-    } else {
-      answer <- rep(FALSE, length(interfacesOnlyNotused))
-    }
-    for (i in seq_along(answer)) {
+    .emitTimingMessage(" Cleanup not_used.txt...", ptm)
+    for (i in seq_along(interfacesOnlyNotused)) {
       m <- names(interfacesOnlyNotused[i])
       r <- grep(paste("^", m, "(\\.|$)", sep = ""), dimnames(ap$appearance)[[2]])
       v <- interfacesOnlyNotused[[i]]
-      if (isTRUE(answer[[i]])) {
-        notUsedGlob <- paste(path, modulepath, paste0("[0-9]*_", m), "*/not_used.txt", sep = "/")
-        notUsedPath <- Sys.glob(notUsedGlob)
-        for (n in notUsedPath) {
-          comment <- grep("^#", readLines(n), value = TRUE)
-          tmp <- read.csv(n, stringsAsFactors = FALSE, comment.char = "#")
-          tmp <- tmp[tmp$name != v, ]
-          writeLines(c(comment, paste(colnames(tmp), collapse = ",")), n)
-          write.table(tmp, n, sep = ",", quote = FALSE, row.names = FALSE, append = TRUE, col.names = FALSE)
-        }
-        ap$appearance[v, r] <- 0
-        message("'", v, "' is omitted in all ", length(notUsedPath), " not_used.txt files of module '", m, "'!\n")
-      } else {
-        w <- .warning("'", v, "' appears in some not_used.txt files of module '",
-                      m, "' but is not used in the code!", w = w)
+      notUsedGlob <- paste(path, modulepath, paste0("[0-9]*_", m), "*/not_used.txt", sep = "/")
+      notUsedPath <- Sys.glob(notUsedGlob)
+      for (n in notUsedPath) {
+        comment <- grep("^#", readLines(n), value = TRUE)
+        tmp <- read.csv(n, stringsAsFactors = FALSE, comment.char = "#")
+        tmp <- tmp[tmp$name != v, ]
+        writeLines(c(comment, paste(colnames(tmp), collapse = ",")), n)
+        write.table(tmp, n, sep = ",", quote = FALSE, row.names = FALSE, append = TRUE, col.names = FALSE)
       }
+      ap$appearance[v, r] <- 0
+      message("'", v, "' is omitted in all ", length(notUsedPath), " not_used.txt files of module '", m, "'!\n")
     }
   }
 
@@ -332,17 +322,17 @@ codeCheck <- function(path = ".",
           notaddressed <- realization[availability == 0]
           userinfo <- paste0("In module '", m, "', '", v, "' is not addressed in those ", length(notaddressed), " realizations: ", paste(notaddressed, collapse = ", "),
                              "!", if (grepl("^v", v)) "\nIt is a variable and might need to be fixed to a value.",
-                             "\nDoes that make sense and it should be included in 'not_used.txt'? Y/n")
+                             "\nTo add this to 'not_used.txt', type the reason why this is correct, press Enter for a generic comment or type 'n' if that is wrong.")
           message(userinfo)
-          answer <- tolower(getLine()) %in% c("y", "yes", "")
+          answer <- getLine()
         } else {
           answer <- FALSE
         }
-        if (answer) {
+        if (! answer %in% c(FALSE, "n", "N")) {
           for (n in notaddressed) {
             notUsedGlob <- paste(path, modulepath, paste0("[0-9]*_", m), n, sep = "/")
             notUsedPath <- paste(Sys.glob(notUsedGlob), "not_used.txt", sep = "/")
-            tmp <- data.frame(name = v, type = "input", reason = "added by codeCheck")
+            tmp <- data.frame(name = v, type = "input", reason = if (answer == "") "added by codeCheck" else answer)
             write.table(tmp,
                         notUsedPath,
                         sep = ",",
