@@ -27,7 +27,7 @@ Authors:
   \item Felicitas Beier
   \item Johannes Koch
   \item Lavinia Baumstark
-  \item Mika Pfl<U+00FC>ger
+  \item Mika Pflüger
   \item Oliver Richters
 }
 
