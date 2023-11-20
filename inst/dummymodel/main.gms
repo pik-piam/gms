@@ -20,7 +20,7 @@ $include "./core/sets.gms"
 $include "./core/core.gms"
 $batinclude "./modules/include.gms" calculations
 
-*' @title extrapage="settings"
+*' @title{extrapage: "settings"}
 *' Settings
-*' @description extrapage="settings"
+*' @description{extrapage: "settings"}
 *' We might want to move some documentation to a separate page called Settings.

@@ -152,7 +152,7 @@ Execute.checkErrorLevel "Rscript modules/03_Rmodule/withr/run_calculations.R";
 *######################## R SECTION END (MODULES) ##############################
 $offrecurse
 
-*' @title extrapage="settings"
+*' @title{extrapage: "settings"}
 *' Settings
-*' @description extrapage="settings"
+*' @description{extrapage: "settings"}
 *' We might want to move some documentation to a separate page called Settings.

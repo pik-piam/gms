@@ -9,8 +9,8 @@ $Ifi "%phase%" == "calculations" $include "./modules/02_crazymodule/complex/calc
 *######################## R SECTION END (PHASES) ###############################
 
 
-*' @description extrapage="crazy"
+*' @description{extrapage: "crazy"}
 *' The crazy module deserves a mention on an extra page!
 
-*' @limitations extrapage="crazy"
+*' @limitations{extrapage: "crazy"}
 *' The sky is the limit!
