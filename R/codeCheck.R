@@ -307,7 +307,8 @@ codeCheck <- function(path = ".",
         write.table(tmp, n, sep = ",", quote = FALSE, row.names = FALSE, append = TRUE, col.names = FALSE)
       }
       ap$appearance[v, r] <- 0
-      message("'", v, "' is omitted in all ", length(notUsedPath), " not_used.txt files of module '", m, "'!\n")
+      message("'", v, "' has been removed as interface and has been deleted from all ",
+              length(notUsedPath), " not_used.txt files of module '", m, "'!\n")
     }
   }
 
@@ -321,8 +322,9 @@ codeCheck <- function(path = ".",
         if (interactive) {
           notaddressed <- realization[availability == 0]
           userinfo <- paste0("In module '", m, "', '", v, "' is not addressed in those ", length(notaddressed), " realizations: ", paste(notaddressed, collapse = ", "),
-                             "!", if (grepl("^v", v)) "\nIt is a variable and might need to be fixed to a value.",
-                             "\nTo add this to 'not_used.txt', type the reason why this is correct, press Enter for a generic comment or type 'n' if that is wrong.")
+                             ".", if (grepl("^v", v)) "\nIt is an interface to other modules and might need to be take care of in these realizations (e.g. fixed to a value).",
+                             "\nIf you are sure that it does not need to be addressed at all you can add this to 'not_used.txt'.",
+                             "\nType the reason why it does not need to be addressed, or type 'n' if it actually needs to be addressed in the code.")
           message(userinfo)
           answer <- getLine()
         } else {
