@@ -28,6 +28,7 @@
 #' @export
 #' @seealso \code{\link{codeExtract}},\code{\link{readDeclarations}}
 #' @importFrom utils write.table read.csv
+#' @importFrom stats setNames
 #' @importFrom stringr str_pad
 #' @examples
 #' # check code consistency of dummy model
@@ -281,40 +282,33 @@ codeCheck <- function(path = ".",
   }
 
   # do interfaces appear only in not_used.txt files of a module?
+  interfacesOnlyNotused <- list()
   for (m in names(interfaceInfo)) {
     r <- grep(paste("^", m, "(\\.|$)", sep = ""), dimnames(ap$appearance)[[2]])
     for (v in interfaceInfo[[m]]) {
       if (all(ap$appearance[v, r] != 1)) {
-        if (interactive) {
-          answer <- chooseFromList(c("yes", "no"),
-                                   "choices",
-                                   multiple = FALSE,
-                                   userinfo = paste0("\"",
-                                                     v,
-                                                     "\" appears in some not_used.txt files of module \"",
-                                                     m,
-                                                     "\" but is not used in the code! Should it be removed?")
-          )
-          if (answer == "yes") {
-            notUsedGlob <- paste(path, modulepath, paste0("[0-9]*_", m), "*/not_used.txt", sep = "/")
-            notUsedPath <- Sys.glob(notUsedGlob)
-            for (n in notUsedPath) {
-              tmp <- read.csv(n, stringsAsFactors = FALSE, comment.char = "#")
-              tmp <- tmp[tmp$name != v, ]
-              write.table(tmp, n, sep = ",", quote = FALSE, row.names = FALSE)
-            }
-            ap$appearance[v, r] <- 0
-            message('"', v, '" has been removed from not_used.txt files!\n')
-          }
-        } else {
-          w <- .warning("\"",
-                        v,
-                        "\" appears in some not_used.txt files of module \"",
-                        m,
-                        "\" but is not used in the code!",
-                        w = w)
-        }
+        interfacesOnlyNotused <- append(interfacesOnlyNotused, setNames(v, m))
       }
+    }
+  }
+  if (length(interfacesOnlyNotused) > 0) {
+    .emitTimingMessage(" Cleanup not_used.txt...", ptm)
+    for (i in seq_along(interfacesOnlyNotused)) {
+      m <- names(interfacesOnlyNotused[i])
+      r <- grep(paste("^", m, "(\\.|$)", sep = ""), dimnames(ap$appearance)[[2]])
+      v <- interfacesOnlyNotused[[i]]
+      notUsedGlob <- paste(path, modulepath, paste0("[0-9]*_", m), "*/not_used.txt", sep = "/")
+      notUsedPath <- Sys.glob(notUsedGlob)
+      for (n in notUsedPath) {
+        comment <- grep("^#", readLines(n), value = TRUE)
+        tmp <- read.csv(n, stringsAsFactors = FALSE, comment.char = "#")
+        tmp <- tmp[tmp$name != v, ]
+        writeLines(c(comment, paste(colnames(tmp), collapse = ",")), n)
+        write.table(tmp, n, sep = ",", quote = FALSE, row.names = FALSE, append = TRUE, col.names = FALSE)
+      }
+      ap$appearance[v, r] <- 0
+      message("'", v, "' has been removed as interface and has been deleted from all ",
+              length(notUsedPath), " not_used.txt files of module '", m, "'!\n")
     }
   }
 
@@ -326,81 +320,33 @@ codeCheck <- function(path = ".",
         realization <- sub("^[^\\.]*\\.", "", dimnames(ap$appearance)[[2]][r])
         availability <- ap$appearance[v, r]
         if (interactive) {
-          for (i in seq_along(availability)) {
-            if (availability[i] == 0) {
-              answer <- chooseFromList(c("yes", "no"),
-                                       "option",
-                                        multiple = FALSE,
-                                        userinfo = paste0('"',
-                                                           v,
-                                                           '" is not addressed in realization "',
-                                                           realization[i],
-                                                           '" of module "',
-                                                           m,
-                                                           '"! Does that make sense?'))
-              if (answer == "no") {
-                stop("You need to fix the model code before we can proceed!")
-              }
-              if (grepl("^v", v)) {
-                answer <- chooseFromList(c("yes", "no"),
-                                         "option",
-                                          multiple = FALSE,
-                                          userinfo = paste0(
-                                            '"',
-                                            v,
-                                            '" is a variable.",
-                                            " Are you sure that it does not need to be treated in realization "',
-                                            realization[i],
-                                            '" (e.g. fixed to a value)?')
-                )
-                if (answer == "no") {
-                  stop("You need to fix the model code before we can proceed!")
-                }
-              }
-              answer <- chooseFromList(c("yes", "no"),
-                                         "option",
-                                          multiple = FALSE,
-                                          userinfo = paste0(
-                                            'Should "',
-                                            v,
-                                            '" be written to not_used.txt in realization "',
-                                            realization[i],
-                                            '" of module "',
-                                            m,
-                                            '"?')
-              )
-              if (answer == "yes") {
-                notUsedGlob <- paste(path, modulepath, paste0("[0-9]*_", m), realization[i], sep = "/")
-                notUsedPath <- paste(Sys.glob(notUsedGlob), "not_used.txt", sep = "/")
-                if (!file.exists(notUsedPath)) {
-                  w <- .warning('Do not forget to add the not_used.txt file in realization "',
-                                realization[i],
-                                '" of module "',
-                                m,
-                                '" to the repository!',
-                                w = w)
-                }
-                tmp <- data.frame(name = v, type = "input", reason = "added by codeCheck")
-                write.table(tmp,
-                            notUsedPath,
-                            sep = ",",
-                            quote = FALSE,
-                            row.names = FALSE,
-                            append = file.exists(notUsedPath),
-                            col.names = !file.exists(notUsedPath))
-                message('"', v, '" has been written to not_used.txt!')
-              }
-            }
+          notaddressed <- realization[availability == 0]
+          userinfo <- paste0("In module '", m, "', '", v, "' is not addressed in those ", length(notaddressed), " realizations: ", paste(notaddressed, collapse = ", "),
+                             ".", if (grepl("^v", v)) "\nIt is an interface to other modules and might need to be take care of in these realizations (e.g. fixed to a value).",
+                             "\nIf you are sure that it does not need to be addressed at all you can add this to 'not_used.txt'.",
+                             "\nType the reason why it does not need to be addressed, or type 'n' if it actually needs to be addressed in the code.")
+          message(userinfo)
+          answer <- getLine()
+        } else {
+          answer <- FALSE
+        }
+        if (! answer %in% c(FALSE, "n", "N")) {
+          for (n in notaddressed) {
+            notUsedGlob <- paste(path, modulepath, paste0("[0-9]*_", m), n, sep = "/")
+            notUsedPath <- paste(Sys.glob(notUsedGlob), "not_used.txt", sep = "/")
+            tmp <- data.frame(name = v, type = "input", reason = if (answer == "") "added by codeCheck" else answer)
+            write.table(tmp,
+                        notUsedPath,
+                        sep = ",",
+                        quote = FALSE,
+                        row.names = FALSE,
+                        append = file.exists(notUsedPath),
+                        col.names = ! file.exists(notUsedPath))
           }
         } else {
-          w <- .warning("\"",
-                        v,
-                        "\" is not addressed in all realizations of module \"",
-                        m,
-                        "\"! (",
-                        paste(realization, availability, collapse = ", ", sep = "="),
-                        ") (0 = missing, 1 = in code, 2 = in not_used.txt)",
-                        w = w)
+          w <- .warning("'", v, "' is not addressed in all realizations of module '", m,
+                        "'! (", paste(realization, availability, collapse = ", ", sep = "="),
+                        ") (0 = missing, 1 = in code, 2 = in not_used.txt)", w = w)
         }
       }
     }
