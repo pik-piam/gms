@@ -1,6 +1,8 @@
-test_that("update_modules_embedding", {
+test_that("update_modules_embedding test", {
   modelpath <- tempdir()
-  writeLines("code in main.gms", file.path(modelpath, "main.gms"))
+  writeLines(c('$include    "./core/sets.gms";',
+               '$batinclude "./modules/include.gms"    sets'),
+             file.path(modelpath, "main.gms"))
   dir.create(file.path(modelpath, "core"))
   writeLines(c("***######################## R SECTION START (MODULES) ###############################",
                "module2realisation",
@@ -21,10 +23,14 @@ test_that("update_modules_embedding", {
   writeLines(c("*####################### R SECTION START (PHASES) ##############################",
                "*######################## R SECTION END (PHASES) ###############################"),
              file.path(module21path, "works", "realization.gms"))
+  writeLines("some GAMS code",
+             file.path(module21path, "works", "sets.gms"))
   expect_warning(update_modules_embedding(modelpath = modelpath, modulepath = "modules/",
                                           includefile = "modules/include.gms", verbose = FALSE), "empty")
   expect_true(any(grepl("testmodule", readLines(file.path(modelpath, "core", "sets.gms"), warn = FALSE))))
+  expect_true(any(grepl("21_testmodule", readLines(file.path(modulepath, "include.gms"), warn = FALSE))))
   expect_true(any(grepl("works", readLines(file.path(module21path, "module.gms"), warn = FALSE))))
   expect_false(any(grepl("empty", readLines(file.path(module21path, "module.gms"), warn = FALSE))))
+  expect_true(any(grepl("sets", readLines(file.path(module21path, "works", "realization.gms"), warn = FALSE))))
 })
 

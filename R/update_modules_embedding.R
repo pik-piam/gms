@@ -47,7 +47,8 @@ update_modules_embedding <- function(modelpath = ".", modulepath = "modules/",
     stop("Could not find model main file. Neither main.gms nor magpie.gms do exist!")
   }
 
-  #connect whole code to one object by replacing $incude commands with
+  code <- c("", code, "") # includes in first or last line let repeat statement run infinitely
+  #connect whole code to one object by replacing $include commands with
   #corresponding code (.csv, .cs2 includes and batincludes are excluded)
   repeat {
     i <- grep("^\\$include", code)[1]
@@ -114,10 +115,10 @@ update_modules_embedding <- function(modelpath = ".", modulepath = "modules/",
       t <- types[ti]
       code <- NULL
       for (phase in phases) {
-        if (file.exists(path(".", modulepath, module, t, phase, ftype = "gms"))) {
+        if (file.exists(path(modelpath, modulepath, module, t, phase, ftype = "gms"))) {
           if (verbose) message(module, " ", t, ": ", phase, " is used")
           code <- c(code, paste("$Ifi \"%phase%\" == \"", phase, "\" $include \"",
-                    path(".", modulepath, module, t, phase, ftype = "gms"), "\"", sep = ""))
+                    path(modelpath, modulepath, module, t, phase, ftype = "gms"), "\"", sep = ""))
         } else if (verbose) message(module, " ", t, ": ", phase, "is not used")
       }
       replace_in_file(realizationGMSpaths[ti], code, subject = "PHASES")
