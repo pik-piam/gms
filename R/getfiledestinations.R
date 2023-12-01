@@ -1,14 +1,36 @@
 #' getfiledestinations
 #'
-#' Create file2destination mapping based on information from the model
+#' Create file2destination mapping based on information from the model, ignoring
+#' top-level directories listed in `.gitignore`.
 #'
+#' @md
 #'
 #' @author Jan Philipp Dietrich, David Klein
 
-
 getfiledestinations <- function() {
   folders <- base::list.dirs(recursive = FALSE, full.names = FALSE)
-  folders <- grep("^(\\.|225|output|calib_run|figure)", folders, invert = TRUE, value = TRUE)
+
+  if (0 == file.access(".gitignore", mode = 4)) {
+    ignores <- grep("/[:space:]*$",               # directories end on "/"
+                    sub("(^|[^\\\\])#.*$", "\\1", # strip comments
+                        readLines(".gitignore")),
+                    value = TRUE)
+    ignores <- basename(ignores)[dirname(ignores) %in% c(".", "/")]
+
+    # turn globs into regex patterns
+    globs <- grep("\\*", ignores, value = TRUE)
+    globs <- gsub("([.|()\\^{}+$*?]|\\[|\\])", "\\\\\\1", globs)
+    globs <- gsub("\\\\\\*", ".*", globs)
+
+    ignores  <- c(gsub("([.|()\\^{}+$*?]|\\[|\\])", "\\\\\\1",
+                       grep("\\*", ignores, value = TRUE, invert = TRUE)),
+                  globs)
+  } else {
+    ignores <- character()
+  }
+
+  folders <- grep(paste0("^(\\.|(", paste(ignores, collapse = "|"), ")$)"),
+                  folders, value = TRUE, invert = TRUE)
   files <- NULL
   for (f in folders) files <- c(files, dir(path = f, pattern = "^files$", recursive = TRUE, full.names = TRUE))
   out <- NULL
