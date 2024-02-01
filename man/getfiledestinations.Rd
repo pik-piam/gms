@@ -7,7 +7,8 @@
 getfiledestinations()
 }
 \description{
-Create file2destination mapping based on information from the model
+Create file2destination mapping based on information from the model, ignoring
+top-level directories listed in \code{.gitignore}.
 }
 \author{
 Jan Philipp Dietrich, David Klein
