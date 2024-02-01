@@ -47,7 +47,8 @@ update_modules_embedding <- function(modelpath = ".", modulepath = "modules/",
     stop("Could not find model main file. Neither main.gms nor magpie.gms do exist!")
   }
 
-  #connect whole code to one object by replacing $incude commands with
+  code <- c("", code, "") # includes in first or last line let repeat statement run infinitely
+  #connect whole code to one object by replacing $include commands with
   #corresponding code (.csv, .cs2 includes and batincludes are excluded)
   repeat {
     i <- grep("^\\$include", code)[1]
@@ -76,8 +77,8 @@ update_modules_embedding <- function(modelpath = ".", modulepath = "modules/",
   fullmodulepath <- path(modelpath, modulepath)
   modules        <- getModules(fullmodulepath)[, "folder"]
   moduleGMSpathsAll <- switch(version,
-                         "1" = path(".", modulepath, modules, modules, ftype = "gms"),
-                         "2" = path(".", modulepath, modules, "module", ftype = "gms"))
+                         "1" = path(modelpath, modulepath, modules, modules, ftype = "gms"),
+                         "2" = path(modelpath, modulepath, modules, "module", ftype = "gms"))
   # excludes modules that have no gms file
   if (! all(file.exists(moduleGMSpathsAll))) {
     warning("Missing module gms files: ",
@@ -97,8 +98,15 @@ update_modules_embedding <- function(modelpath = ".", modulepath = "modules/",
     #remove reserved module type names
     types <- setdiff(types, getOption("gms_reserved_types"))
     realizationGMSpaths <- switch(version,
-                           "1" = path(".", modulepath, module, types, ftype = "gms"),
-                           "2" = path(".", modulepath, module, types, "realization", ftype = "gms"))
+                           "1" = path(modelpath, modulepath, module, types, ftype = "gms"),
+                           "2" = path(modelpath, modulepath, module, types, "realization", ftype = "gms"))
+    emptyrealization <- ! file.exists(realizationGMSpaths)
+    if (any(emptyrealization)) {
+      warning("For module ", module, ", the following realizations lack their main gms file and cannot be used: ",
+              paste(types[emptyrealization], collapse = ", "))
+    }
+    types <- types[! emptyrealization]
+    realizationGMSpaths <- realizationGMSpaths[! emptyrealization]
     code <- paste0("$Ifi \"%", substring(module, 4), "%\" == \"", types, "\" $include \"", realizationGMSpaths, "\"")
     replace_in_file(moduleGMSpaths[m], code, subject = "MODULETYPES")
 
@@ -107,23 +115,19 @@ update_modules_embedding <- function(modelpath = ".", modulepath = "modules/",
       t <- types[ti]
       code <- NULL
       for (phase in phases) {
-        if (file.exists(path(".", modulepath, module, t, phase, ftype = "gms"))) {
+        if (file.exists(path(modelpath, modulepath, module, t, phase, ftype = "gms"))) {
           if (verbose) message(module, " ", t, ": ", phase, " is used")
           code <- c(code, paste("$Ifi \"%phase%\" == \"", phase, "\" $include \"",
-                    path(".", modulepath, module, t, phase, ftype = "gms"), "\"", sep = ""))
+                    path(modelpath, modulepath, module, t, phase, ftype = "gms"), "\"", sep = ""))
         } else if (verbose) message(module, " ", t, ": ", phase, "is not used")
       }
-      if (file.exists(realizationGMSpaths[ti])) {
-        replace_in_file(realizationGMSpaths[ti], code, subject = "PHASES")
-      } else {
-        warning(realizationGMSpaths[ti], " not found, this realization cannot be used!")
-      }
+      replace_in_file(realizationGMSpaths[ti], code, subject = "PHASES")
     }
   }
 
   ############# ADD MODULE INFO IN SETS  ###################### START ##########################################
 
-  if (length(grep("module2realisation", readLines(path(modelpath, "core/sets.gms")))) > 0) {
+  if (length(grep("module2realisation", readLines(path(modelpath, "core", "sets.gms")))) > 0) {
     content <- NULL
     modification_warning <- c(
       '*** THIS CODE IS CREATED AUTOMATICALLY, DO NOT MODIFY THESE LINES DIRECTLY',
@@ -136,7 +140,7 @@ update_modules_embedding <- function(modelpath = ".", modulepath = "modules/",
     content <- c(content, '', '      module2realisation(modules,*) "mapping of modules and active realisations" /')
     content <- c(content, paste0("       ", moduleNames, " . %", moduleNames, "%"))
     content <- c(content, '      /', ';')
-    replace_in_file("core/sets.gms", content, "MODULES", comment = "***")
+    replace_in_file(path(modelpath, "core", "sets.gms"), content, "MODULES", comment = "***")
 
 
   ############# ADD MODULE INFO IN SETS  ###################### END ############################################
