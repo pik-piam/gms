@@ -39,14 +39,13 @@ checkAppearance <- function(x) {
   tmp <- grep("execute_load", x$code, ignore.case = TRUE)
   x$code[tmp] <- gsub("=[^,]*", "", x$code[tmp])
 
-  tmp_func <- function(name, x) {
+  tmp <- sapply(colnames, function(name, x) {
     return(paste(x[names(x) == name], collapse = " "))
-  }
-  tmp <- sapply(colnames, tmp_func, x$code)
+  }, x$code)
 
   # add empty entry in tmp for module realization which do not contain any code but have a not_used.txt
-  not_used_names <- unique(dimnames(x$not_used)[[1]])
-  missing <- not_used_names[!(not_used_names %in% colnames)]
+  notUsedNames <- unique(dimnames(x$not_used)[[1]])
+  missing <- notUsedNames[!(notUsedNames %in% colnames)]
   if (length(missing) > 0) {
     mtmp <- rep("", length(missing))
     names(mtmp) <- missing
@@ -58,7 +57,8 @@ checkAppearance <- function(x) {
   code <- gsub("\\\".*\\\"", "", x$code)
   declarationsRegex <- paste("(^|[^[:alnum:]_])", escapeRegex(rownames), "($|[^[:alnum:]_])", sep = "")
 
-  message("  Search for variables with varying capitalization... (time elapsed: ", format(proc.time()["elapsed"] - ptm, width = 6, nsmall = 2, digits = 2), ")")
+  message("  Search for variables with varying capitalization... (time elapsed: ",
+          format(proc.time()["elapsed"] - ptm, width = 6, nsmall = 2, digits = 2), ")")
   duplicates <- sapply(declarationsRegex, function(x) {
     chunks <- code[grepl(x, code, ignore.case = TRUE)]
     return(length(chunks) != length(chunks[grepl(x, chunks, ignore.case = FALSE)]))
@@ -70,9 +70,11 @@ checkAppearance <- function(x) {
       paste0(unname(rownames[duplicates]), collapse = ", ")
     ), w = w)
   }
-  message("  Finished searching for variables with varying capitalization... (time elapsed: ", format(proc.time()["elapsed"] - ptm, width = 6, nsmall = 2, digits = 2), ")")
+  message("  Finished searching for variables with varying capitalization... (time elapsed: ",
+          format(proc.time()["elapsed"] - ptm, width = 6, nsmall = 2, digits = 2), ")")
 
-  message("  Start variable matching...            (time elapsed: ", format(proc.time()["elapsed"] - ptm, width = 6, nsmall = 2, digits = 2), ")")
+  message("  Start variable matching...            (time elapsed: ",
+          format(proc.time()["elapsed"] - ptm, width = 6, nsmall = 2, digits = 2), ")")
 
   # This part is the most time consuming (90% of the time in codeCheck) Here, the variable names are searched for in
   # all module realizations. This process primarily seems to scale with the number of variables and not with the number
