@@ -18,11 +18,20 @@
 #' @export
 #' @seealso \code{\link{codeCheck}},\code{\link{readDeclarations}}
 checkAppearance <- function(x) {
+  w <- NULL
   ptm <- proc.time()["elapsed"]
   message("  Running checkAppearance...")
   colnames <- unique(names(x$code))
   rownames <- unique(x$declarations[, "names"])
   if (!is.null(x$not_used)) rownames <- unique(c(rownames, x$not_used[, "name"]))
+
+  # check for variables with different capitalization in declarations
+  if (length(rownames[duplicated(tolower(rownames))]) > 0) {
+    w <- .warning(paste0(
+      "Found variables with more than one capitalization in declarations and not_used.txt files: ",
+      paste0(rownames[duplicated(tolower(rownames))], collapse = ", ")
+    ), w = w)
+  }
 
   # remove right-hand sides in execute_load statements as there are non-module-related
   # object names allowed (here one refers to the names in the gdx file, but these
@@ -51,40 +60,46 @@ checkAppearance <- function(x) {
 
   message("  Search for variables with varying capitalization... (time elapsed: ", format(proc.time()["elapsed"] - ptm, width = 6, nsmall = 2, digits = 2), ")")
   duplicates <- sapply(declarationsRegex, function(x) {
-    length(code[grepl(x, code, ignore.case = T)]) != length(code[grepl(x, code, ignore.case = F)])
+    chunks <- code[grepl(x, code, ignore.case = TRUE)]
+    return(length(chunks) != length(chunks[grepl(x, chunks, ignore.case = FALSE)]))
   })
-  problematicVariables <- unname(rownames[duplicates])
 
-  if (length(problematicVariables > 0)) {
-    message(paste0("Found variables with varying capitalization: ", paste0(problematicVariables, collapse = ", ")))
+  if (length(duplicates > 0)) {
+    w <- .warning(paste0(
+      "Found variables with more than one capitalization in the codebase: ",
+      paste0(unname(rownames[duplicates]), collapse = ", ")
+    ), w = w)
   }
   message("  Finished searching for variables with varying capitalization... (time elapsed: ", format(proc.time()["elapsed"] - ptm, width = 6, nsmall = 2, digits = 2), ")")
 
   message("  Start variable matching...            (time elapsed: ", format(proc.time()["elapsed"] - ptm, width = 6, nsmall = 2, digits = 2), ")")
+
   # This part is the most time consuming (90% of the time in codeCheck) Here, the variable names are searched for in
   # all module realizations. This process primarily seems to scale with the number of variables and not with the number
   # of module realizations.It is hard to optimize since the number of variables that the code has to look for can
   # hardly be reduced
   a <- t(sapply(declarationsRegex, grepl, tmp, perl = TRUE))
 
-  message("  Finished variable matching...         (time elapsed: ", format(proc.time()["elapsed"] - ptm, width = 6, nsmall = 2, digits = 2), ")")
+  message("  Finished variable matching...         (time elapsed: ",
+          format(proc.time()["elapsed"] - ptm, width = 6, nsmall = 2, digits = 2), ")")
 
   dimnames(a)[[1]] <- rownames
   dimnames(a)[[2]] <- colnames
-  w <- NULL
+
   if (!is.null(x$not_used)) {
     for (i in 1:dim(x$not_used)[1]) {
       if (a[x$not_used[i, "name"], dimnames(x$not_used)[[1]][i]]) {
-        w <- .warning(x$not_used[i, "name"], " appears in not_used.txt of module ", dimnames(x$not_used)[[1]][i], " but is used in the GAMS code of it!", w = w)
+        w <- .warning(x$not_used[i, "name"], " appears in not_used.txt of module ", dimnames(x$not_used)[[1]][i],
+                      " but is used in the GAMS code of it!", w = w)
       }
       a[x$not_used[i, "name"], dimnames(x$not_used)[[1]][i]] <- 2
     }
   }
 
   sets <- x$declarations[x$declarations[, "type"] == "set", "names"]
-  a_sets <- a[sets, , drop = FALSE]
+  aSets <- a[sets, , drop = FALSE]
   a <- a[!(rownames(a) %in% sets), , drop = FALSE]
   type <- sub("^(o|)[^_]*?(m|[0-9]{2}|)_.*$", "\\1\\2", dimnames(a)[[1]])
   names(type) <- dimnames(a)[[1]]
-  return(list(appearance = a, setappearance = a_sets, type = type, warnings = w))
+  return(list(appearance = a, setappearance = aSets, type = type, warnings = w))
 }
