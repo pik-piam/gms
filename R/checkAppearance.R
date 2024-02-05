@@ -23,6 +23,7 @@ checkAppearance <- function(x) {
   message("  Running checkAppearance...")
   colnames <- unique(names(x$code))
   rownames <- unique(x$declarations[, "names"])
+
   if (!is.null(x$not_used)) rownames <- unique(c(rownames, x$not_used[, "name"]))
 
   # check for variables with different capitalization in declarations
@@ -53,32 +54,14 @@ checkAppearance <- function(x) {
     colnames <- c(colnames, missing)
   }
 
-  # find variables with different capitalization
-  code <- gsub("\\\".*\\\"", "", x$code)
   declarationsRegex <- paste("(^|[^[:alnum:]_])", escapeRegex(rownames), "($|[^[:alnum:]_])", sep = "")
-
-  message("  Search for variables with varying capitalization... (time elapsed: ",
-          format(proc.time()["elapsed"] - ptm, width = 6, nsmall = 2, digits = 2), ")")
-  duplicates <- sapply(declarationsRegex, function(x) {
-    chunks <- code[grepl(x, code, ignore.case = TRUE)]
-    return(length(chunks) != length(chunks[grepl(x, chunks, ignore.case = FALSE)]))
-  })
-
-  if (length(duplicates > 0)) {
-    w <- .warning(paste0(
-      "Found variables with more than one capitalization in the codebase: ",
-      paste0(unname(rownames[duplicates]), collapse = ", ")
-    ), w = w)
-  }
-  message("  Finished searching for variables with varying capitalization... (time elapsed: ",
-          format(proc.time()["elapsed"] - ptm, width = 6, nsmall = 2, digits = 2), ")")
 
   message("  Start variable matching...            (time elapsed: ",
           format(proc.time()["elapsed"] - ptm, width = 6, nsmall = 2, digits = 2), ")")
 
-  # This part is the most time consuming (90% of the time in codeCheck) Here, the variable names are searched for in
+  # This part is the most time consuming (90% of the time in codeCheck). Here, the variable names are searched for in
   # all module realizations. This process primarily seems to scale with the number of variables and not with the number
-  # of module realizations.It is hard to optimize since the number of variables that the code has to look for can
+  # of module realizations. It is hard to optimize since the number of variables that the code has to look for can
   # hardly be reduced
   a <- t(sapply(declarationsRegex, grepl, tmp, perl = TRUE))
 
@@ -87,6 +70,37 @@ checkAppearance <- function(x) {
 
   dimnames(a)[[1]] <- rownames
   dimnames(a)[[2]] <- colnames
+
+  # Find variables with different capitalization
+
+  code <- x$code
+  # exclude \" comments \"
+  code <- gsub("\\\".*\\\"", "", code)
+  # exclude any text surrounded by with single quotes
+  code <- gsub("'.*'", "", code)
+  # exclude display statements
+  code <- gsub("display.*", "", code)
+
+  message("  Start var capitalization check...     (time elapsed: ",
+          format(proc.time()["elapsed"] - ptm, width = 6, nsmall = 2, digits = 2), ")")
+
+  # check for each variable if it appears with different capitalization in the code
+  duplicates <- sapply(declarationsRegex, function(x) {
+    # get all lines of code that match the variable (case insensitive)
+    chunks <- code[grepl(x, code, ignore.case = TRUE)]
+    # if case sensitive search yields less results, there must be occurrences different capitalization
+    return(length(chunks) != length(chunks[grepl(x, chunks, ignore.case = FALSE)]))
+  })
+
+  if (length(rownames[duplicates] > 0)) {
+    w <- .warning(paste0(
+      "Found variables with more than one capitalization in the codebase: ",
+      paste0(unname(rownames[duplicates]), collapse = ", ")
+    ), w = w)
+  }
+
+  message("  Finished var capitalization check...  (time elapsed: ",
+          format(proc.time()["elapsed"] - ptm, width = 6, nsmall = 2, digits = 2), ")")
 
   if (!is.null(x$not_used)) {
     for (i in 1:dim(x$not_used)[1]) {
