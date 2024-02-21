@@ -121,7 +121,9 @@ chooseFromList <- function(theList, type = "items", userinfo = NULL, addAllPatte
     }
   }
   booleanList[identifier] <- TRUE
-  message("Selected: ", paste(originalList[identifier], collapse = ", "))
+  msgselected <- originalList[identifier]
+  stopafter <- min(which(cumsum(nchar(msgselected)) > getOption("chooseFromListLimit", 666)), length(msgselected))
+  message("Selected: ", paste(msgselected[seq_len(stopafter)], collapse = ", "), if (stopafter < length(msgselected)) ", ...")
   if (returnBoolean) return(booleanList) else return(originalList[identifier])
 }
 
