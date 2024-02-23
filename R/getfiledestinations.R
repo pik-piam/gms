@@ -4,6 +4,7 @@
 #' top-level directories listed in `.gitignore`.
 #'
 #' @md
+#' @export
 #'
 #' @author Jan Philipp Dietrich, David Klein
 
