@@ -4,7 +4,10 @@
 \alias{getfiledestinations}
 \title{getfiledestinations}
 \usage{
-getfiledestinations()
+getfiledestinations(path = ".")
+}
+\arguments{
+\item{path}{main model folder}
 }
 \description{
 Create file2destination mapping based on information from the model, ignoring
