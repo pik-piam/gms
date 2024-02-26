@@ -93,10 +93,22 @@ checkAppearance <- function(x) {
   })
 
   if (length(rownames[duplicates] > 0)) {
-    w <- .warning(paste0(
+
+    msg <- paste0(
       "Found variables with more than one capitalization in the codebase: ",
-      paste0(unname(rownames[duplicates]), collapse = ", ")
-    ), w = w)
+      paste0(unname(rownames[duplicates]), collapse = ", "), "\n"
+    )
+
+    for (dup in unname(rownames[duplicates])) {
+      msg <- paste0(msg, "- Lines found for item '", dup, "':\n")
+      dup <- paste("(^|[^[:alnum:]_])", escapeRegex(dup), "($|[^[:alnum:]_])", sep = "")
+      chunks <- code[grepl(dup, code, ignore.case = TRUE)]
+      msg <- paste0(msg, paste0(setdiff(chunks, chunks[grepl(dup, chunks, ignore.case = FALSE)]), collapse = "\n"))##
+      msg <- paste0(msg, "\n")
+    }
+
+    w <- .warning(msg, w = w)
+
   }
 
   message("  Finished var capitalization check...  (time elapsed: ",
