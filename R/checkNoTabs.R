@@ -8,7 +8,7 @@
 #' @param excludeFolders Paths to folders that should not be checked.
 #' @return Invisibly, the list of files that were checked.
 #'
-#' @author Pascal Führlich
+#' @author Pascal Sauer
 #' @examples
 #' \dontrun{
 #' gms::checkNoTabs(pattern = "\\.(R|Rprofile|gms|cfg|bib)$",
@@ -19,7 +19,7 @@
 checkNoTabs <- function(pattern, exclude = NULL, excludeFolders = NULL) {
   folders <- normalizePath(list.dirs(".", recursive = FALSE))
   if (!is.null(excludeFolders)) {
-    folders <- setdiff(folders, normalizePath(excludeFolders))
+    folders <- setdiff(folders, normalizePath(excludeFolders, mustWork = FALSE))
   }
   filesToCheck <- c(list.files(folders, pattern = pattern,
                                all.files = TRUE, full.names = TRUE, recursive = TRUE),
