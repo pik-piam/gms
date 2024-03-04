@@ -6,6 +6,8 @@
 #'
 #'
 #' @param x A code list as returned by \code{\link{codeExtract}}
+#' @param capitalExclusionList A vector of names that should be ignored when
+#' checking for unified capitalization of variables
 #' @return A list with four elements: appearance, setappearance, type and
 #' warnings. Appearance is a matrix containing values which indicate whether an
 #' object appears in a part of the code or not (e.g. indicates whether "vm_example"
@@ -15,9 +17,10 @@
 #' objects. Type is a vector containing the type of each object (exluding sets). And warnings
 #' contains a list of warnings created during that process.
 #' @author Jan Philipp Dietrich
+
 #' @export
 #' @seealso \code{\link{codeCheck}},\code{\link{readDeclarations}}
-checkAppearance <- function(x) {
+checkAppearance <- function(x, capitalExclusionList = NULL) {
   w <- NULL
   ptm <- proc.time()["elapsed"]
   message("  Running checkAppearance...")
@@ -92,18 +95,20 @@ checkAppearance <- function(x) {
     return(length(chunks) != length(chunks[grepl(x, chunks, ignore.case = FALSE)]))
   })
 
-  if (length(rownames[duplicates] > 0)) {
+  if (length(rownames[setdiff(rownames[duplicates], capitalExclusionList)] > 0)) {
+
+    duplicateNames <- unname(setdiff(rownames[duplicates], capitalExclusionList))
 
     msg <- paste0(
       "Found variables with more than one capitalization in the codebase: ",
-      paste0(unname(rownames[duplicates]), collapse = ", "), "\n"
+      paste0(duplicateNames, collapse = ", "), "\n"
     )
 
-    for (dup in unname(rownames[duplicates])) {
+    for (dup in duplicateNames) {
       msg <- paste0(msg, "- Lines found for item '", dup, "':\n")
       dup <- paste("(^|[^[:alnum:]_])", escapeRegex(dup), "($|[^[:alnum:]_])", sep = "")
       chunks <- code[grepl(dup, code, ignore.case = TRUE)]
-      msg <- paste0(msg, paste0(setdiff(chunks, chunks[grepl(dup, chunks, ignore.case = FALSE)]), collapse = "\n"))##
+      msg <- paste0(msg, paste0(setdiff(chunks, chunks[grepl(dup, chunks, ignore.case = FALSE)]), collapse = "\n"))
       msg <- paste0(msg, "\n")
     }
 

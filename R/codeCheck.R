@@ -144,7 +144,6 @@ codeCheck <- function(path = ".",
     return(list(gams = gams, w = w))
   }
 
-
   .getInterfaceInfo <- function(ap, gams, w) {
     # setting up a list of used interfaces for each module
     interfaceInfo <- list()
@@ -193,8 +192,8 @@ codeCheck <- function(path = ".",
 
   ptm <- proc.time()["elapsed"]
 
-
   modulesInfo <- getModules(paste0(path, "/", modulepath))
+
   gams <- .collectData(path = path, modulepath = modulepath, coreFiles = core_files, modulesInfo = modulesInfo)
 
   if (returnDebug) {
@@ -213,7 +212,11 @@ codeCheck <- function(path = ".",
   .emitTimingMessage(" Naming conventions check done...", ptm)
 
   # Check appearance of objects
-  ap <- checkAppearance(gams)
+  capitalExclusionList <- NULL
+  if (file.exists(file.path(path, ".codeCheck.yaml"))) {
+    capitalExclusionList <- read_yaml(file.path(path, ".codeCheck.yaml"))[["capitalExclusionList"]]
+  }
+  ap <- checkAppearance(gams, capitalExclusionList = capitalExclusionList)
   w <- c(w, ap$warnings)
 
   .emitTimingMessage(" Investigated variable appearances...", ptm)
