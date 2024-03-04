@@ -291,7 +291,7 @@ codeCheck <- function(path = ".",
       }
     }
   }
-  if (length(interfacesOnlyNotused) > 0) {
+  if (length(interfacesOnlyNotused) > 0 && isTRUE(as.logical(Sys.getenv("CI", "false")))) {
     .emitTimingMessage(" Cleanup not_used.txt...", ptm)
     for (i in seq_along(interfacesOnlyNotused)) {
       m <- names(interfacesOnlyNotused[i])
