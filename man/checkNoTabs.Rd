@@ -28,5 +28,5 @@ gms::checkNoTabs(utils::glob2rx("*.R"))
 }
 }
 \author{
-Pascal Führlich
+Pascal Sauer
 }
