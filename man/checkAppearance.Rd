@@ -4,10 +4,13 @@
 \alias{checkAppearance}
 \title{checkAppearance}
 \usage{
-checkAppearance(x)
+checkAppearance(x, capitalExclusionList = NULL)
 }
 \arguments{
 \item{x}{A code list as returned by \code{\link{codeExtract}}}
+
+\item{capitalExclusionList}{A vector of names that should be ignored when
+checking for unified capitalization of variables}
 }
 \value{
 A list with four elements: appearance, setappearance, type and
