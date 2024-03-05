@@ -321,6 +321,10 @@ codeCheck <- function(path = ".",
       message("'", v, "' has been removed as interface and has been deleted from all ",
               length(notUsedPath), " not_used.txt files of module '", m, "'!\n")
     }
+
+    # changes in not_used.txt require repeating the interface check
+    ret <- .getInterfaceInfo(ap = ap, gams = gams, w = w)
+    w <- ret$w
   }
 
   # are all interfaces of a module addressed in all of its realizations?
