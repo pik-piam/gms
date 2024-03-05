@@ -28,7 +28,7 @@ debugging the codeCheck function}
 \item{interactive}{activates an interactive developer mode in which some of
 the warnings can be fixed interactively.}
 
-\item{test_switches}{(boolean) Should realization switches in model core be tested for completness?
+\item{test_switches}{(boolean) Should realization switches in model core be tested for completeness?
 Usually set to TRUE but should be set to FALSE for standalone models only using a subset of
 existing modules}
 
@@ -49,6 +49,12 @@ A list of all modules containing the interfaces for each module. Or more detaile
 Checks GAMS code for consistency. Throws out warnings if something is wrong
 in the code and returns a list containing the interfaces of each module of
 the code.
+}
+\details{
+Additional settings can be provided via a yaml file ".codeCheck" in the main
+folder of the model. Currently supported settings are:
+- capitalExclusionList: a list of names that should be ignored when checking
+for unified capitalization of variables
 }
 \examples{
 # check code consistency of dummy model

@@ -4,6 +4,10 @@
 #' in the code and returns a list containing the interfaces of each module of
 #' the code.
 #'
+#' Additional settings can be provided via a yaml file ".codeCheck" in the main
+#' folder of the model. Currently supported settings are:
+#' - capitalExclusionList: a list of names that should be ignored when checking
+#' for unified capitalization of variables
 #'
 #' @param path path of the main folder of the model
 #' @param modulepath path to the module folder relative to "path"
@@ -12,7 +16,7 @@
 #' debugging the codeCheck function
 #' @param interactive activates an interactive developer mode in which some of
 #' the warnings can be fixed interactively.
-#' @param test_switches (boolean) Should realization switches in model core be tested for completness?
+#' @param test_switches (boolean) Should realization switches in model core be tested for completeness?
 #' Usually set to TRUE but should be set to FALSE for standalone models only using a subset of
 #' existing modules
 #' @param strict (boolean) test strictness. If set to TRUE warnings from codeCheck will stop calculations
@@ -144,7 +148,6 @@ codeCheck <- function(path = ".",
     return(list(gams = gams, w = w))
   }
 
-
   .getInterfaceInfo <- function(ap, gams, w) {
     # setting up a list of used interfaces for each module
     interfaceInfo <- list()
@@ -193,8 +196,8 @@ codeCheck <- function(path = ".",
 
   ptm <- proc.time()["elapsed"]
 
-
   modulesInfo <- getModules(paste0(path, "/", modulepath))
+
   gams <- .collectData(path = path, modulepath = modulepath, coreFiles = core_files, modulesInfo = modulesInfo)
 
   if (returnDebug) {
@@ -213,7 +216,15 @@ codeCheck <- function(path = ".",
   .emitTimingMessage(" Naming conventions check done...", ptm)
 
   # Check appearance of objects
-  ap <- checkAppearance(gams)
+
+  capitalExclusionList <- NULL
+
+  if (file.exists(file.path(path, ".codeCheck"))) {
+    # read in exclusions for capitalization check from .codeCheck
+    capitalExclusionList <- read_yaml(file.path(path, ".codeCheck"))[["capitalExclusionList"]]
+  }
+
+  ap <- checkAppearance(gams, capitalExclusionList = capitalExclusionList)
   w <- c(w, ap$warnings)
 
   .emitTimingMessage(" Investigated variable appearances...", ptm)
