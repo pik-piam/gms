@@ -205,10 +205,12 @@ codeCheck <- function(path = ".",
 
   # mark instances only showing up in not_used, but are never declared
   notDeclared <- ! gams$not_used[, "name"] %in% gams$declarations[, "names"]
-  interfacesOnlyNotused <- as.list(setNames(gams$not_used[, "name"],
-                                   gsub("\\..*$", "", rownames(gams$not_used)))[notDeclared])
-  gams$not_used <- gams$not_used[! notDeclared, ]
-
+  interfacesOnlyNotused <- list()
+  if (length(notDeclared) > 0 && any(notDeclared)) {
+    interfacesOnlyNotused <- as.list(setNames(gams$not_used[, "name"],
+                                     gsub("\\..*$", "", rownames(gams$not_used)))[notDeclared])
+    gams$not_used <- gams$not_used[! notDeclared, ]
+  }
 
   if (returnDebug) {
     gamsBackup <- gams
