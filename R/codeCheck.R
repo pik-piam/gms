@@ -158,7 +158,7 @@ codeCheck <- function(path = ".",
         w <- .warning(i,
                       " appears only in \"",
                       mod,
-                      "\" even though it is supposed to be an interface (perhaps only in not_used.txt?)!",
+                      "\" even though it is supposed to be an interface!",
                       w = w)
       } else {
         whereDeclared <- unique(sub("\\.[^\\.]*$", "", rownames(gams$declarations)[gams$declarations[, 1] == i]))
@@ -198,16 +198,25 @@ codeCheck <- function(path = ".",
 
   modulesInfo <- getModules(paste0(path, "/", modulepath))
 
+  # warnings
+  w <- NULL
+
   gams <- .collectData(path = path, modulepath = modulepath, coreFiles = core_files, modulesInfo = modulesInfo)
+
+  # mark instances only showing up in not_used, but are never declared
+  notDeclared <- ! gams$not_used[, "name"] %in% gams$declarations[, "names"]
+  interfacesOnlyNotused <- list()
+  if (length(notDeclared) > 0 && any(notDeclared)) {
+    interfacesOnlyNotused <- as.list(setNames(gams$not_used[, "name"],
+                                     gsub("\\..*$", "", rownames(gams$not_used)))[notDeclared])
+    gams$not_used <- gams$not_used[! notDeclared, ]
+  }
 
   if (returnDebug) {
     gamsBackup <- gams
   }
 
   .emitTimingMessage(" Finished data collection...", ptm)
-
-  # warnings
-  w <- NULL
 
   ret <- .checkNamingConventions(gams = gams, w = w)
   gams <- ret$gams
@@ -293,7 +302,6 @@ codeCheck <- function(path = ".",
   }
 
   # do interfaces appear only in not_used.txt files of a module?
-  interfacesOnlyNotused <- list()
   for (m in names(interfaceInfo)) {
     r <- grep(paste("^", m, "(\\.|$)", sep = ""), dimnames(ap$appearance)[[2]])
     for (v in interfaceInfo[[m]]) {
@@ -302,29 +310,37 @@ codeCheck <- function(path = ".",
       }
     }
   }
-  if (length(interfacesOnlyNotused) > 0) {
-    .emitTimingMessage(" Cleanup not_used.txt...", ptm)
-    for (i in seq_along(interfacesOnlyNotused)) {
-      m <- names(interfacesOnlyNotused[i])
-      r <- grep(paste("^", m, "(\\.|$)", sep = ""), dimnames(ap$appearance)[[2]])
-      v <- interfacesOnlyNotused[[i]]
-      notUsedGlob <- paste(path, modulepath, paste0("[0-9]*_", m), "*/not_used.txt", sep = "/")
-      notUsedPath <- Sys.glob(notUsedGlob)
-      for (n in notUsedPath) {
-        comment <- grep("^#", readLines(n), value = TRUE)
-        tmp <- read.csv(n, stringsAsFactors = FALSE, comment.char = "#")
-        tmp <- tmp[tmp$name != v, ]
-        writeLines(c(comment, paste(colnames(tmp), collapse = ",")), n)
-        write.table(tmp, n, sep = ",", quote = FALSE, row.names = FALSE, append = TRUE, col.names = FALSE)
-      }
-      ap$appearance[v, r] <- 0
-      message("'", v, "' has been removed as interface and has been deleted from all ",
-              length(notUsedPath), " not_used.txt files of module '", m, "'!\n")
-    }
 
-    # changes in not_used.txt require repeating the interface check
-    ret <- .getInterfaceInfo(ap = ap, gams = gams, w = w)
-    w <- ret$w
+  if (length(interfacesOnlyNotused) > 0) {
+    if (! isTRUE(interactive)) {
+      w <- .warning(paste(unique(interfacesOnlyNotused), collapse = ", "),
+                    " was never declared, but exists only in not_used.txt of ",
+                    paste(unique(names(interfacesOnlyNotused)), collapse = ", "),
+                    w = w)
+    } else {
+      .emitTimingMessage(" Cleanup not_used.txt...", ptm)
+      for (i in seq_along(interfacesOnlyNotused)) {
+        m <- names(interfacesOnlyNotused[i])
+        r <- grep(paste("^", m, "(\\.|$)", sep = ""), dimnames(ap$appearance)[[2]])
+        v <- interfacesOnlyNotused[[i]]
+        notUsedGlob <- paste(path, modulepath, paste0("[0-9]*_", m), "*/not_used.txt", sep = "/")
+        notUsedPath <- Sys.glob(notUsedGlob)
+        for (n in notUsedPath) {
+          comment <- grep("^#", readLines(n), value = TRUE)
+          tmp <- read.csv(n, stringsAsFactors = FALSE, comment.char = "#")
+          tmp <- tmp[tmp$name != v, ]
+          writeLines(c(comment, paste(colnames(tmp), collapse = ",")), n)
+          write.table(tmp, n, sep = ",", quote = FALSE, row.names = FALSE, append = TRUE, col.names = FALSE)
+        }
+        if (v %in% rownames(ap$appearance)) ap$appearance[v, r] <- 0
+        message("'", v, "' has been removed as interface and has been deleted from all ",
+                length(notUsedPath), " not_used.txt files of module '", m, "'!\n")
+      }
+
+      # changes in not_used.txt require repeating the interface check
+      ret <- .getInterfaceInfo(ap = ap, gams = gams, w = w)
+      w <- ret$w
+    }
   }
 
   # are all interfaces of a module addressed in all of its realizations?
