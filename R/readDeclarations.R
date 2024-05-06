@@ -47,7 +47,7 @@ readDeclarations <- function(file,
       # remove ;
       tmp <- sub(";", "", tmp)
       # remove $-expressions
-      tmp <- sub("^\\$.*", "", tmp)
+      tmp <- sub("^(\\$|[[:space:]]*\\$\\$).*", "", tmp)
       # remove type name
       tmp <- sub(paste0("^[ \\t]*", t, "[^ \\t]*"), "", tmp, ignore.case = TRUE)
       # remove "/ xyz /" entries
