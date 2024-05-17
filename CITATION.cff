@@ -2,8 +2,8 @@ cff-version: 1.2.0
 message: If you use this software, please cite it using the metadata from this file.
 type: software
 title: 'gms: ''GAMS'' Modularization Support Package'
-version: 0.30.8
-date-released: '2024-04-29'
+version: 0.30.9
+date-released: '2024-05-17'
 abstract: A collection of tools to create, use and maintain modularized model code
   written in the modeling language 'GAMS' (<https://www.gams.com/>). Out-of-the-box
   'GAMS' does not come with support for modularized model code. This package provides
@@ -15,21 +15,29 @@ authors:
 - family-names: Dietrich
   given-names: Jan Philipp
   email: dietrich@pik-potsdam.de
+  orcid: 0000-0002-4309-6431
+  affiliation: Potsdam Institute for Climate Impact Research
 - family-names: Klein
   given-names: David
+  affiliation: Potsdam Institute for Climate Impact Research
 - family-names: Giannousakis
   given-names: Anastasis
 - family-names: Beier
   given-names: Felicitas
+  affiliation: Potsdam Institute for Climate Impact Research
 - family-names: Koch
   given-names: Johannes
+  affiliation: Potsdam Institute for Climate Impact Research
 - family-names: Baumstark
   given-names: Lavinia
+  affiliation: Potsdam Institute for Climate Impact Research
 - family-names: Pflüger
   given-names: Mika
 - family-names: Richters
   given-names: Oliver
+  affiliation: Potsdam Institute for Climate Impact Research
 license: BSD-2-Clause
+keywords: tool
 repository-code: https://github.com/pik-piam/gms
 doi: 10.5281/zenodo.4390032
 
