@@ -4,10 +4,13 @@
 \alias{getfiledestinations}
 \title{getfiledestinations}
 \usage{
-getfiledestinations(path = ".")
+getfiledestinations(path = ".", ignoreFolders = "renv")
 }
 \arguments{
 \item{path}{main model folder}
+
+\item{ignoreFolders}{folders to be ignored by the function, additionally to
+directories listed in \code{.gitignore} (by default only "renv").}
 }
 \description{
 Create file2destination mapping based on information from the model, ignoring
