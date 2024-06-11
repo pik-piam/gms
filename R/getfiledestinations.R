@@ -4,12 +4,14 @@
 #' top-level directories listed in `.gitignore`.
 #'
 #' @param path main model folder
+#' @param ignoreFolders folders to be ignored by the function, additionally to
+#' directories listed in `.gitignore` (by default only "renv").
 #' @md
 #' @export
 #'
 #' @author Jan Philipp Dietrich, David Klein
 
-getfiledestinations <- function(path = ".") {
+getfiledestinations <- function(path = ".", ignoreFolders = "renv") {
   folders <- base::list.dirs(path = path, recursive = FALSE, full.names = FALSE)
 
   if (0 == file.access(file.path(path, ".gitignore"), mode = 4)) {
@@ -33,6 +35,7 @@ getfiledestinations <- function(path = ".") {
 
   folders <- grep(paste0("^(\\.|(", paste(ignores, collapse = "|"), ")$)"),
                   folders, value = TRUE, invert = TRUE)
+  folders <- setdiff(folders, ignoreFolders)
   files <- NULL
   for (f in folders) files <- c(files, dir(path = file.path(path, f), pattern = "^files$", recursive = TRUE, full.names = TRUE))
   out <- NULL
