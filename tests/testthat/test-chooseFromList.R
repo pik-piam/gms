@@ -30,6 +30,10 @@ with_mocked_bindings({ # fail if getLine() is called
                      theList[1])
     expect_identical(chooseFromList(theList, addAllPattern = FALSE, userinput = "  1 :  1  "),
                      theList[1])
+    expect_identical(chooseFromList(theList, addAllPattern = FALSE, userinput = "  1 -  1  "),
+                     theList[1])
+    expect_identical(chooseFromList(theList, addAllPattern = FALSE, userinput = "  1 -  2  "),
+                     theList[1:2])
     expect_identical(unname(chooseFromList(theList, userinput = "1", returnBoolean = TRUE)),
                      rep(TRUE, length(theList)))
     expect_identical(chooseFromList(theList, userinput = toString(length(theList) + 2)),
@@ -59,8 +63,8 @@ with_mocked_bindings({ # fail if getLine() is called
     expect_error(chooseFromList(theList, userinput = "1,:3,"))
     expect_error(chooseFromList(theList, userinput = "0"))
     expect_error(chooseFromList(theList, userinput = "-1"))
-    expect_error(chooseFromList(theList, userinput = "1-2"))
     expect_error(chooseFromList(theList, multiple = FALSE, userinput = "1:2"))
+    expect_error(chooseFromList(theList, multiple = FALSE, userinput = "1-2"))
   })
 
   test_that("chooseFromList works with multiple groups", {
