@@ -13,6 +13,11 @@
 getModules <- function(modulepath) {
   if(!dir.exists(modulepath)) stop("Module path ",modulepath," does not exist!")
   folder <- base::list.dirs(path=modulepath,full.names = FALSE,recursive = FALSE)
+  emptyfolder <- folder[unlist(lapply(lapply(file.path(modulepath, folder), list.files, ".*\\.gms$"), length)) == 0]
+  if (length(emptyfolder) > 0) {
+    warning("The following module folders contain no '*.gms' file and are ignored: ", paste(emptyfolder, collapse = ", "))
+  }
+  folder <- setdiff(folder, emptyfolder)
   name   <- gsub("[0-9]+\\_","",folder)
   number <- gsub("([0-9]+)\\_.*","\\1",folder) 
   out    <- cbind(name,number,folder)

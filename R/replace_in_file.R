@@ -51,8 +51,8 @@ replace_in_file <- function(file, content, subject='CODE',add=FALSE,addfile=FALS
   
   start_row <- grep(start,f)
   end_row <- grep(end,f)
-  if(length(start_row)!=length(end_row)) stop("start pattern was found ",length(start_row), " times, but end pattern was found ",length(end_row), "times!")
-  if(length(start_row)>1) stop(paste("pattern was found",length(start_row),"times!"))
+  if(length(start_row)!=length(end_row)) stop("start pattern was found ",length(start_row), " times, but end pattern was found ",length(end_row), " times in ", file, "!")
+  if(length(start_row)>1) stop("pattern was found ",length(start_row)," times in ", file, "!")
   if(length(end_row)==0) {
     if(add=="top"){
       f <- c("",start_raw,end_raw,"",f)
