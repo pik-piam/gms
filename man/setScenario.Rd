@@ -12,7 +12,8 @@ setScenario(cfg, scenario, scenario_config = "config/scenario_config.csv")
 \item{scenario}{name of scenario (e.g. "SSP2"). Can also be a vector of
 scenarios. In this case scenario settings are applied in the given order}
 
-\item{scenario_config}{The path where the scenario config table is stored.}
+\item{scenario_config}{A data frame containing the scenario config table
+or the path where the scenario config table is stored.}
 }
 \value{
 The updated config as a config list ready for further usage.
