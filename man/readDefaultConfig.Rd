@@ -4,16 +4,19 @@
 \alias{readDefaultConfig}
 \title{readDefaultConfig}
 \usage{
-readDefaultConfig(path)
+readDefaultConfig(path = ".", mainfile = "main.gms")
 }
 \arguments{
 \item{path}{path of the main folder of the model}
+
+\item{mainfile}{filename of main model file, defaults to 'main.gms'}
 }
 \value{
 A vector of parameter values and their names.
 }
 \description{
-Reads the default configuration of the model. Uses default.cfg or main.cfg as the source as appropriate.
+Reads the default configuration of the model. Uses default.cfg and the model's main gms
+as the source as appropriate.
 To read a configuration from YAML format, use \code{\link{loadConfig}} instead.
 }
 \seealso{
