@@ -50,6 +50,9 @@ with_mocked_bindings({ # fail if getLine() is called
                      c("A", "B"))
     expect_identical(theList[choosePatternFromList(theList, pattern = "^[0-9]+$")],
                      theList[names(theList) == "Number"])
+    # accept factor vectors but turn them into characters
+    expect_identical(unname(chooseFromList(as.factor(theList), userinput = "3,5")),
+                     c("B", "1"))
     # check whether chooseFromList identifies errors and asks user again
     expect_error(chooseFromList(theList, userinput = length(theList) + length(unique(names(theList))) + 3 + 1)) # 3 for all, pattern, fixed
     expect_error(chooseFromList(theList, multiple = FALSE, userinput = length(theList) + 1))

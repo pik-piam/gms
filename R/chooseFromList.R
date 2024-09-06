@@ -35,6 +35,7 @@
 #' @export
 chooseFromList <- function(theList, type = "items", userinfo = NULL, addAllPattern = TRUE,
                            returnBoolean = FALSE, multiple = TRUE, userinput = FALSE, errormessage = NULL) {
+  if (is.factor(theList)) theList <- as.character(theList)
   originalList <- theList
   if (length(theList) == 0) {
     message("No ", type, " found that might be selected, returning the empty list.")
