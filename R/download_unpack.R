@@ -43,8 +43,10 @@ download_unpack <- function(input, targetdir = "input", repositories = NULL,
   }
 
   # treat all files the same way if stopOnMissing is not defined individually for each element in `files`
-  if (length(stopOnMissing) < length(files)) {
+  if (length(stopOnMissing) == 1) {
     stopOnMissing <- rep(stopOnMissing, length(files))
+  } else if (length(stopOnMissing) != length(files)) {
+    stop("stopOnMissing must have exactly one element, or as many elements as files")
   }
 
   ifiles <- files
