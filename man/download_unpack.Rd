@@ -32,7 +32,8 @@ list("ftp://my_pw_protected_server.de/data"=list(user="me",password=12345), "htt
 \item{unpack}{if switched off the source files are purley downloaded}
 
 \item{stopOnMissing}{Boolean indicating whether to stop if any file in
-\code{files} could not be downloaded.  Off (\code{FALSE}) by default.}
+\code{files} could not be downloaded. Off (\code{FALSE}) by default. Can either be defined as a single boolean, which then
+applies equally to all elements of \code{files}, or can be defined individually for each element in \code{files}.}
 }
 \value{
 Information about the download process in form of a data.frame with data sets as row names and repositories
