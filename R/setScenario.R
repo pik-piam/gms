@@ -18,6 +18,7 @@
 #' @author Jan Philipp Dietrich, Anastasis Giannousakis
 #' @export
 #' @importFrom utils read.csv
+#' @importFrom dplyr select
 #' @seealso \code{\link{check_config}},\code{\link{getModules}}
 setScenario <- function(cfg,scenario,scenario_config="config/scenario_config.csv"){
 
@@ -40,7 +41,7 @@ setScenario <- function(cfg,scenario,scenario_config="config/scenario_config.csv
     if(inherits(tmp, "try-error") || all(dimnames(tmp)[[1]]==as.character(1:dim(tmp)[1]))) {
       tmp <- read.csv(scenario_config, as.is=TRUE, sep=";", check.names=FALSE, colClasses = "character")
       dimnames(tmp)[[1]] <- tmp[,1]
-      tmp <- tmp[,-1]
+      tmp <- subset(tmp, select = -1)
     }
     scenario_config <- tmp
   }
