@@ -17,7 +17,8 @@
 #' @param debug switch for debug mode with additional diagnostic information
 #' @param unpack if switched off the source files are purley downloaded
 #' @param stopOnMissing Boolean indicating whether to stop if any file in
-#'   `files` could not be downloaded.  Off (`FALSE`) by default.
+#'   `files` could not be downloaded. Off (`FALSE`) by default. Can either be defined as a single boolean, which then
+#'   applies equally to all elements of `files`, or can be defined individually for each element in `files`.
 
 #' @return Information about the download process in form of a data.frame with data sets as row names and repositories
 #' (where it was downloaded from) and corresponding md5sum as columns
@@ -39,6 +40,13 @@ download_unpack <- function(input, targetdir = "input", repositories = NULL,
       repositories <- vector("list", length(input))
       names(repositories) <- dirname(input)
     }
+  }
+
+  # treat all files the same way if stopOnMissing is not defined individually for each element in `files`
+  if (length(stopOnMissing) == 1) {
+    stopOnMissing <- rep(stopOnMissing, length(files))
+  } else if (length(stopOnMissing) != length(files)) {
+    stop("stopOnMissing must have exactly one element, or as many elements as files")
   }
 
   ifiles <- files
@@ -94,19 +102,25 @@ download_unpack <- function(input, targetdir = "input", repositories = NULL,
     if (length(files) == 0) break
   }
 
+  # if there are files left that could not be downloaded
   if (length(files) > 0) {
-    tmp <- paste0("Following files not found:\n  ", paste(files, collapse = "\n  "))
-    if (stopOnMissing) {
-      stop(tmp)
-    } else {
+    # first the warning
+    optionalFiles <- ifiles %in% files & !stopOnMissing
+    if (any(optionalFiles)) {
+      tmp <- paste0("Following optional files not found:\n  ", paste(ifiles[optionalFiles], collapse = "\n  "))
       warning(tmp)
       message(tmp)
     }
+    # then the error
+    mandatoryFiles <- ifiles %in% files & stopOnMissing
+    if (any(mandatoryFiles)) stop(paste0("Following files not found:\n  ", paste(ifiles[mandatoryFiles], collapse = "\n  ")))
   }
+
   if (is.null(found)) {
     message()
     stop("No file could be found!")
   }
+
   # sort files in intial order and unpack
   found <- found[intersect(ifiles, rownames(found)), ]
   if (unpack) {
