@@ -35,6 +35,7 @@
 #' @export
 chooseFromList <- function(theList, type = "items", userinfo = NULL, addAllPattern = TRUE,
                            returnBoolean = FALSE, multiple = TRUE, userinput = FALSE, errormessage = NULL) {
+  if (is.factor(theList)) theList <- as.character(theList)
   originalList <- theList
   if (length(theList) == 0) {
     message("No ", type, " found that might be selected, returning the empty list.")
@@ -134,9 +135,12 @@ choosePatternFromList <- function(theList, type = "items", pattern = FALSE, fixe
     message("\nInsert the ", if (fixed) "search pattern with fixed=TRUE: " else "regular expression: ")
     pattern <- getLine()
   }
-  id <- grep(pattern = pattern, theList, fixed = fixed)
+  id <- try(grep(pattern = pattern, theList, fixed = fixed))
   # lists all chosen and ask for the confirmation of the made choice
-  if (length(id) > 0) {
+  if (inherits(id, "try-error")) {
+    message("\n\nMatching created an error. Try again!")
+    return(choosePatternFromList(theList, type, fixed = fixed))
+  } else if (length(id) > 0) {
     message("\n\nThe search pattern matches the following ", type, ":")
     message(paste(paste(seq_along(id), theList[id], sep = ": "), collapse = "\n"))
   } else {
