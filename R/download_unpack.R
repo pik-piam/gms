@@ -104,14 +104,13 @@ download_unpack <- function(input, targetdir = "input", repositories = NULL,
 
   # if there are files left that could not be downloaded
   if (length(files) > 0) {
-    # first the warning
+    # first the message (for optional files)
     optionalFiles <- ifiles %in% files & !stopOnMissing
     if (any(optionalFiles)) {
       tmp <- paste0("Following optional files not found:\n  ", paste(ifiles[optionalFiles], collapse = "\n  "))
-      warning(tmp)
       message(tmp)
     }
-    # then the error
+    # then the error (for mandatory files)
     mandatoryFiles <- ifiles %in% files & stopOnMissing
     if (any(mandatoryFiles)) stop(paste0("Following files not found:\n  ", paste(ifiles[mandatoryFiles], collapse = "\n  ")))
   }
