@@ -17,21 +17,34 @@ example <- c(
 "",
 "pm_EN_demand_from_initialcap2(all_regi,all_enty) \"PE demand. Unit: EJ, except for Uranium, where it is MT U3O8\"",
 "pm_budgetCO2eq(all_regi)                                        \"budget for regional energy-emissions in period 1\"",
+"  pm_empty_desc(all_regi)  \"\""  ,
+";",
+"sets",
+"  empty_set  \"\"  / /",
 ";",
 "",
 "*** EOF ./core/declarations.gms")
 
 expectedResult <- structure(c(
+  # names
   "pm_taxCO2eq", "pm_gdp_gdx", "p_inv_gdx", "pm_eta_conv",
-  "pm_EN_demand_from_initialcap2", "pm_budgetCO2eq", "ttot,all_regi",
-  "tall,all_regi", "tall,all_regi", "tall,all_regi,all_te", "all_regi,all_enty",
-  "all_regi", "CO2 tax path in T$/GtC = kgC. To get tCO2, multiply with 272",
-  "GDP path from gdx, updated /iteratively", "macro-investments  path from gdx, updated iteratively",
+  "pm_EN_demand_from_initialcap2", "pm_budgetCO2eq", "pm_empty_desc", "empty_set",
+  # sets
+  "ttot,all_regi", "tall,all_regi", "tall,all_regi", "tall,all_regi,all_te",
+  "all_regi,all_enty", "all_regi", "all_regi", "",
+  # descriptions
+  "CO2 tax path in T$/GtC = kgC. To get tCO2, multiply with 272",
+  "GDP path from gdx, updated /iteratively",
+  "macro-investments  path from gdx, updated iteratively",
   "Time-dependent, until 2050 to. Unit: efficiency (0..1, except for tnrs)",
   "PE demand. Unit: EJ, except for Uranium, where it is MT U3O8",
-  "budget for regional energy-emissions in period 1", "parameter",
-  "parameter", "parameter", "parameter", "parameter", "parameter"
-), .Dim = c(6L, 4L), .Dimnames = list(NULL, c("names", "sets",
+  "budget for regional energy-emissions in period 1",
+  "",
+  "",
+  # types
+  "parameter", "parameter", "parameter", "parameter",
+  "parameter", "parameter", "parameter", "set"
+), .Dim = c(8L, 4L), .Dimnames = list(NULL, c("names", "sets",
                                               "description", "type")))
 
 test_that("all parameters in example are properly detected", {

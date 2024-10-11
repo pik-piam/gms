@@ -44,6 +44,8 @@ readDeclarations <- function(file,
       names(quotedDescription) <- paste0("[#DESC#", seq_along(tmp), "#]")
       # insert placeholders
       tmp <- str_replace(tmp, "\"[^\"]*\"", names(quotedDescription))
+      # remove blanks
+      tmp <- trimws(tmp)
       # remove ;
       tmp <- sub(";", "", tmp)
       # remove $-expressions
@@ -51,7 +53,7 @@ readDeclarations <- function(file,
       # remove type name
       tmp <- sub(paste0("^[ \\t]*", t, "[^ \\t]*"), "", tmp, ignore.case = TRUE)
       # remove "/ xyz /" entries
-      tmp <- sub("/.*/", "", tmp)
+      tmp <- sub("[[:space:]]*/.*/", "", tmp)
       .rmFilling <- function(x) {
         n <- grep("/", x)
         if (length(n) < 2)
