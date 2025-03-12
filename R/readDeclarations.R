@@ -16,7 +16,7 @@
 readDeclarations <- function(file,
                              unlist = TRUE,
                              types = c("scalar",
-                                       "(positive |)variable",
+                                       "(positive |negative |)variable",
                                        "parameter",
                                        "table",
                                        "equation",
