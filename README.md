@@ -1,6 +1,6 @@
 # 'GAMS' Modularization Support Package
 
-R package **gms**, version **0.33.3**
+R package **gms**, version **0.33.4**
 
 [![CRAN status](https://www.r-pkg.org/badges/version/gms)](https://cran.r-project.org/package=gms) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4390032.svg)](https://doi.org/10.5281/zenodo.4390032) [![R build status](https://github.com/pik-piam/gms/workflows/check/badge.svg)](https://github.com/pik-piam/gms/actions) [![codecov](https://codecov.io/gh/pik-piam/gms/branch/master/graph/badge.svg)](https://app.codecov.io/gh/pik-piam/gms) [![r-universe](https://pik-piam.r-universe.dev/badges/gms)](https://pik-piam.r-universe.dev/builds)
 
@@ -43,17 +43,18 @@ In case of questions / problems please contact Jan Philipp Dietrich <dietrich@pi
 
 To cite package **gms** in publications use:
 
-Dietrich J, Klein D, Giannousakis A, Beier F, Koch J, Baumstark L, Pflüger M, Richters O (2024). _gms: 'GAMS' Modularization Support Package_. doi:10.5281/zenodo.4390032 <https://doi.org/10.5281/zenodo.4390032>, R package version 0.33.3, <https://github.com/pik-piam/gms>.
+Dietrich J, Klein D, Giannousakis A, Beier F, Koch J, Baumstark L, Pflüger M, Richters O (2025). "gms: 'GAMS' Modularization Support Package." doi:10.5281/zenodo.4390032 <https://doi.org/10.5281/zenodo.4390032>, Version: 0.33.4, <https://github.com/pik-piam/gms>.
 
 A BibTeX entry for LaTeX users is
 
  ```latex
-@Manual{,
+@Misc{,
   title = {gms: 'GAMS' Modularization Support Package},
   author = {Jan Philipp Dietrich and David Klein and Anastasis Giannousakis and Felicitas Beier and Johannes Koch and Lavinia Baumstark and Mika Pflüger and Oliver Richters},
-  year = {2024},
-  note = {R package version 0.33.3},
-  url = {https://github.com/pik-piam/gms},
   doi = {10.5281/zenodo.4390032},
+  date = {2025-03-12},
+  year = {2025},
+  url = {https://github.com/pik-piam/gms},
+  note = {Version: 0.33.4},
 }
 ```

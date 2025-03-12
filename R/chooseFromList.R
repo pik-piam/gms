@@ -80,8 +80,9 @@ chooseFromList <- function(theList, type = "items", userinfo = NULL, addAllPatte
     userinput <- getLine()
   }
   # interpret userinput and perform basic checks
-  identifier <- try(eval(parse(text = paste("c(", gsub("-", ":", userinput), ")"))), silent = TRUE)
-  if (! all(grepl(if (addAllPattern) "^[afp0-9,: -]*$" else "^[0-9,: -]*$", userinput)) || inherits(identifier, "try-error")) {
+  userinput <- gsub(",,", ",", gsub(" ", "", gsub("-", ":", userinput)), fixed = TRUE)
+  identifier <- try(eval(parse(text = paste("c(", userinput, ")"))), silent = TRUE)
+  if (! all(grepl(if (addAllPattern) "^[afp0-9,: -]*$" else "^[0-9,:]*$", userinput)) || inherits(identifier, "try-error")) {
     err <- paste0("Try again, you have to choose some numbers. ", attr(identifier, "condition"), "\n")
     return(chooseFromList(originalList, type, userinfo, addAllPattern, returnBoolean, multiple, errormessage = err))
   }
@@ -104,9 +105,9 @@ chooseFromList <- function(theList, type = "items", userinfo = NULL, addAllPatte
       # interpret group inputs and select all group members
       selectedGroups <- sub("^Group: ", "", theList[intersect(identifier, groupsids)])
       for (group in selectedGroups) {
-         identifier <- c(identifier,
-                         which(grepl(paste0("(^|,)", group, "($|,)"), names(originalList), perl = TRUE))
-                         + addAllPattern)  # shift all identifiers by one if the "all" pattern is the first option
+        identifier <- c(identifier,
+                        which(grepl(paste0("(^|,)", group, "($|,)"), names(originalList), perl = TRUE))
+                        + addAllPattern)  # shift all identifiers by one if the "all" pattern is the first option
       }
       identifier <- unique(c(identifier[! identifier %in% groupsids]))
       # if search by pattern is selected, ask for pattern and interpret it

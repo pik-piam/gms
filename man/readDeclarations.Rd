@@ -7,7 +7,8 @@
 readDeclarations(
   file,
   unlist = TRUE,
-  types = c("scalar", "(positive |)variable", "parameter", "table", "equation", "set")
+  types = c("scalar", "(positive |negative |)variable", "parameter", "table", "equation",
+    "set")
 )
 }
 \arguments{
