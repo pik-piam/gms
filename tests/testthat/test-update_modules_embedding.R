@@ -25,30 +25,41 @@
 
 test_that("update_modules_embedding full test", {
   withr::local_dir(withr::local_tempdir())
-  modulesPath <- file.path("modules") 
-  module21Path <- file.path(modulesPath, "21_testmodule")
-  .setup_update_modules_embedding(modulesPath, module21Path)
+  module21Path <- file.path("modules", "21_testmodule")
+  .setup_update_modules_embedding("modules", module21Path)
 
   dir.create(file.path(module21Path, "empty"))
   
   expect_warning(update_modules_embedding(modulepath = "modules/",
                                           includefile = "modules/include.gms", verbose = FALSE), "empty")
   expect_true(any(grepl("testmodule", readLines(file.path("core", "sets.gms"), warn = FALSE))))
-  expect_true(any(grepl("21_testmodule", readLines(file.path(modulesPath, "include.gms"), warn = FALSE))))
+  expect_true(any(grepl("21_testmodule", readLines(file.path("modules", "include.gms"), warn = FALSE))))
   expect_true(any(grepl("works", readLines(file.path(module21Path, "module.gms"), warn = FALSE))))
   expect_false(any(grepl("empty", readLines(file.path(module21Path, "module.gms"), warn = FALSE))))
   expect_true(any(grepl("sets", readLines(file.path(module21Path, "works", "realization.gms"), warn = FALSE))))
+  
 })
 
-test_that("update_modules_embedding missing patterns test", {
+test_that("update_modules_embedding missing end pattern in realization.gms test", {
   withr::local_dir(withr::local_tempdir())
-  modulesPath <- file.path("modules") 
-  module21Path <- file.path(modulesPath, "21_testmodule")
-  .setup_update_modules_embedding(modulesPath, module21Path)
+  module21Path <- file.path("modules", "21_testmodule")
+  .setup_update_modules_embedding("modules", module21Path)
 
-  writeLines(c(""),
-             file.path(module21Path, "works", "realization.gms"))
+  writeChar("", file.path(module21Path, "works", "realization.gms"))
   update_modules_embedding(modulepath = "modules/",
-                           includefile = "modules/include.gms", verbose = FALSE) 
+                          includefile = "modules/include.gms", verbose = FALSE) 
   expect_true(any(grepl("sets", readLines(file.path(module21Path, "works", "realization.gms"), warn = FALSE))))
+})
+
+test_that("update_modules_embedding missing end pattern in module.gms test", {
+  withr::local_dir(withr::local_tempdir())
+  module21Path <- file.path("modules", "21_testmodule")
+  .setup_update_modules_embedding("modules", module21Path)
+
+  dir.create(file.path(module21Path, "empty"))
+  writeChar("", file.path(module21Path, "module.gms"))
+
+  expect_warning(update_modules_embedding(modulepath = "modules/",
+                                          includefile = "modules/include.gms", verbose = FALSE), "empty")
+  expect_true(any(grepl("works", readLines(file.path(module21Path, "module.gms"), warn = FALSE))))
 })
