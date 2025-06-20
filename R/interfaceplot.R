@@ -481,7 +481,7 @@ interfaceplot <- function(x = ".",
     params$title.cex <- 0.8
   }
 
-  qgraphObject <- do.call(qgraph::qgraph, params)
+  suppressWarnings(qgraphObject <- do.call(qgraph::qgraph, params))
   ########################################################################################
 
   return(interface_info)
