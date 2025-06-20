@@ -121,7 +121,7 @@ update_modules_embedding <- function(modelpath = ".", modulepath = "modules/",
                     path(modelpath, modulepath, module, t, phase, ftype = "gms"), "\"", sep = ""))
         } else if (verbose) message(module, " ", t, ": ", phase, "is not used")
       }
-      replace_in_file(realizationGMSpaths[ti], code, subject = "PHASES")
+      replace_in_file(realizationGMSpaths[ti], code, add="bottom", subject = "PHASES")
     }
   }
 
