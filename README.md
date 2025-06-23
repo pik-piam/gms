@@ -52,7 +52,7 @@ A BibTeX entry for LaTeX users is
   title = {gms: 'GAMS' Modularization Support Package},
   author = {Jan Philipp Dietrich and David Klein and Anastasis Giannousakis and Felicitas Beier and Johannes Koch and Lavinia Baumstark and Mika Pflüger and Oliver Richters},
   doi = {10.5281/zenodo.4390032},
-  date = {2025-06-20},
+  date = {2025-06-23},
   year = {2025},
   url = {https://github.com/pik-piam/gms},
   note = {Version: 0.33.5},

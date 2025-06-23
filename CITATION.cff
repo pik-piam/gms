@@ -3,7 +3,7 @@ message: If you use this software, please cite it using the metadata from this f
 type: software
 title: 'gms: ''GAMS'' Modularization Support Package'
 version: 0.33.5
-date-released: '2025-06-20'
+date-released: '2025-06-23'
 abstract: A collection of tools to create, use and maintain modularized model code
   written in the modeling language 'GAMS' (<https://www.gams.com/>). Out-of-the-box
   'GAMS' does not come with support for modularized model code. This package provides

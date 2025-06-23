@@ -481,7 +481,11 @@ interfaceplot <- function(x = ".",
     params$title.cex <- 0.8
   }
 
-  suppressWarnings(qgraphObject <- do.call(qgraph::qgraph, params))
+  withCallingHandlers(qgraphObject <- do.call(qgraph::qgraph, params), warning = function(m) {
+    if (grepl("partial argument match of 'length' to 'length.out'", m[["message"]], fixed = fixed)) {
+      invokeRestart("muffleWarning")
+    }
+  })
   ########################################################################################
 
   return(interface_info)
