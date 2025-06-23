@@ -481,8 +481,11 @@ interfaceplot <- function(x = ".",
     params$title.cex <- 0.8
   }
 
+  # The following suppression of a warning can be replaced with
+  # magclass::suppressSpecificWarnings in case magclass ever
+  # becomes a full dependency for gms.
   withCallingHandlers(qgraphObject <- do.call(qgraph::qgraph, params), warning = function(m) {
-    if (grepl("partial argument match of 'length' to 'length.out'", m[["message"]], fixed = fixed)) {
+    if (grepl("partial argument match of 'length' to 'length.out'", m[["message"]], fixed = TRUE)) {
       invokeRestart("muffleWarning")
     }
   })
