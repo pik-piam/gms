@@ -108,7 +108,7 @@ update_modules_embedding <- function(modelpath = ".", modulepath = "modules/",
     types <- types[! emptyrealization]
     realizationGMSpaths <- realizationGMSpaths[! emptyrealization]
     code <- paste0("$Ifi \"%", substring(module, 4), "%\" == \"", types, "\" $include \"", realizationGMSpaths, "\"")
-    replace_in_file(moduleGMSpaths[m], code, subject = "MODULETYPES")
+    replace_in_file(moduleGMSpaths[m], code, add = "bottom", subject = "MODULETYPES")
 
     #set links to different module phases
     for (ti in seq_along(types)) {
@@ -121,7 +121,7 @@ update_modules_embedding <- function(modelpath = ".", modulepath = "modules/",
                     path(modelpath, modulepath, module, t, phase, ftype = "gms"), "\"", sep = ""))
         } else if (verbose) message(module, " ", t, ": ", phase, "is not used")
       }
-      replace_in_file(realizationGMSpaths[ti], code, subject = "PHASES")
+      replace_in_file(realizationGMSpaths[ti], code, add = "bottom", subject = "PHASES")
     }
   }
 
