@@ -1,0 +1,89 @@
+template:
+  package: tidytemplate
+  bootstrap: 5
+
+development:
+  mode: auto
+
+reference:
+
+  - title: "Module Utilities"
+    desc: "Inspect, create, and maintain modular GAMS model structure"
+    contents:
+      - getModules
+      - is.modularGAMS
+      - module.skeleton
+      - singleGAMSfile
+      - convert.modularGAMS
+      - update_modules_embedding
+      - updateInterfaceMapping
+      - writeSets
+
+  - title: "Code Checks"
+    desc: "Validate and check the consistency of modular GAMS model code"
+    contents:
+      - codeCheck
+      - checkAppearance
+      - checkDescription
+      - checkNoTabs
+      - checkSwitchAppearance
+      - settingsCheck
+
+  - title: "Code Parsing & Extraction"
+    desc: "Parse and extract information from GAMS source code"
+    contents:
+      - GAMScodeFilter
+      - codeExtract
+      - readDeclarations
+      - readParameterValues
+      - readSetglobals
+      - readSettings
+      - read_yaml_header
+
+  - title: "Configuration"
+    desc: "Read, write, and validate model configuration"
+    contents:
+      - loadConfig
+      - saveConfig
+      - readDefaultConfig
+      - check_config
+      - setScenario
+
+  - title: "Data Management"
+    desc: "Download, distribute, and manage model input data"
+    contents:
+      - download_distribute
+      - download_unpack
+      - publish_data
+      - copy_input
+      - delete_olddata
+      - getfiledestinations
+      - tardir
+      - fulldataOutput
+      - update_fulldataOutput
+
+  - title: "Visualization"
+    desc: "Visualize module interfaces and model structure"
+    contents:
+      - interfaceplot
+      - modules_interfaceplot
+
+  - title: "Model Locking"
+    desc: "Manage concurrent access to a model folder"
+    contents:
+      - model_lock
+      - model_unlock
+      - is_model_locked
+
+  - title: "Utilities"
+    desc: "General-purpose helper functions"
+    contents:
+      - chooseFromList
+      - selectScript
+      - getLine
+      - get_info
+      - path
+      - readFileOrVector
+      - replace_in_file
+      - model_dependencies
+      - gms-package
