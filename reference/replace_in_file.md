@@ -1,0 +1,61 @@
+# Replace in File
+
+Function to replace a marked paragaph in a text file. Paragraph has to
+be marked in the text file with an initial "##### R SECTION START
+(SUBJECT) \#####" and "##### R SECTION END (SUBJECT) \#####" as ending.
+The number of \# symbols can be chosen by the user, but there has to be
+at least one at the beginning and one at the end. Furthermore it is
+allowed to add further symbols at the beginning or the end of the line.
+"SUBJECT" is chosen by the user and is used for identification, if a
+text file has more than one R section.
+
+## Usage
+
+``` r
+replace_in_file(
+  file,
+  content,
+  subject = "CODE",
+  add = FALSE,
+  addfile = FALSE,
+  comment = "*"
+)
+```
+
+## Arguments
+
+- file:
+
+  a connection object or a character string describing the file, that
+  should be manipulated.
+
+- content:
+
+  the content that should be used as replacement stored as a vector of
+  strings. Each vector component will be written as a line.
+
+- subject:
+
+  A string used for identification of a paragraph.
+
+- add:
+
+  Determines behavior when marking is missing in the code. add=FALSE
+  will throw out an error, if the marking is missing, add="top" will add
+  the markings automatically at the beginning of the file, add="bottom"
+  or add=TRUE will do the same but at the end of the file.
+
+- addfile:
+
+  Determines the behavior when the file does not exist. If addfile=TRUE,
+  file will be created when missing.
+
+- comment:
+
+  Symbol which is used to indicate a comment in the language the file is
+  written that should be manipulated. Only relevant if add or addfile
+  are used.
+
+## Author
+
+Jan Philipp Dietrich
