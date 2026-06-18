@@ -1,6 +1,6 @@
 # ‘GAMS’ Modularization Support Package
 
-R package **gms**, version **0.33.7**
+R package **gms**, version **0.34.0**
 
 [![CRAN
 status](https://www.r-pkg.org/badges/version/gms)](https://cran.r-project.org/package=gms)
@@ -60,7 +60,7 @@ To cite package **gms** in publications use:
 Dietrich J, Klein D, Giannousakis A, Beier F, Koch J, Baumstark L,
 Pflüger M, Richters O (2026). “gms: ‘GAMS’ Modularization Support
 Package.” <doi:10.5281/zenodo.4390032>
-<https://doi.org/10.5281/zenodo.4390032>, Version: 0.33.7,
+<https://doi.org/10.5281/zenodo.4390032>, Version: 0.34.0,
 <https://github.com/pik-piam/gms>.
 
 A BibTeX entry for LaTeX users is
@@ -70,9 +70,9 @@ A BibTeX entry for LaTeX users is
  title = {gms: 'GAMS' Modularization Support Package},
  author = {Jan Philipp Dietrich and David Klein and Anastasis Giannousakis and Felicitas Beier and Johannes Koch and Lavinia Baumstark and Mika Pflüger and Oliver Richters},
  doi = {10.5281/zenodo.4390032},
- date = {2026-03-10},
+ date = {2026-06-18},
  year = {2026},
  url = {https://github.com/pik-piam/gms},
- note = {Version: 0.33.7},
+ note = {Version: 0.34.0},
 }
 ```

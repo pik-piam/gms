@@ -32,11 +32,11 @@ Source:
 
 Dietrich J, Klein D, Giannousakis A, Beier F, Koch J, Baumstark L,
 Pflüger M, Richters O (2026). *gms: 'GAMS' Modularization Support
-Package*. R package version 0.33.7.
+Package*. R package version 0.34.0.
 
     @Manual{,
       title = {gms: 'GAMS' Modularization Support Package},
       author = {Jan Philipp Dietrich and David Klein and Anastasis Giannousakis and Felicitas Beier and Johannes Koch and Lavinia Baumstark and Mika Pflüger and Oliver Richters},
       year = {2026},
-      note = {R package version 0.33.7},
+      note = {R package version 0.34.0},
     }

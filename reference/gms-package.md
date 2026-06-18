@@ -22,21 +22,30 @@ Useful links:
 ## Author
 
 **Maintainer**: Jan Philipp Dietrich <dietrich@pik-potsdam.de>
-([ORCID](https://orcid.org/0000-0002-4309-6431)) (Potsdam Institute for
-Climate Impact Research)
+([ORCID](https://orcid.org/0000-0002-4309-6431)) (affiliation: Potsdam
+Institute for Climate Impact Research)
 
 Authors:
 
-- David Klein (Potsdam Institute for Climate Impact Research)
+- Jan Philipp Dietrich <dietrich@pik-potsdam.de>
+  ([ORCID](https://orcid.org/0000-0002-4309-6431)) (affiliation: Potsdam
+  Institute for Climate Impact Research)
+
+- David Klein (affiliation: Potsdam Institute for Climate Impact
+  Research)
 
 - Anastasis Giannousakis
 
-- Felicitas Beier (Potsdam Institute for Climate Impact Research)
+- Felicitas Beier (affiliation: Potsdam Institute for Climate Impact
+  Research)
 
-- Johannes Koch (Potsdam Institute for Climate Impact Research)
+- Johannes Koch (affiliation: Potsdam Institute for Climate Impact
+  Research)
 
-- Lavinia Baumstark (Potsdam Institute for Climate Impact Research)
+- Lavinia Baumstark (affiliation: Potsdam Institute for Climate Impact
+  Research)
 
 - Mika Pflüger
 
-- Oliver Richters (Potsdam Institute for Climate Impact Research)
+- Oliver Richters (affiliation: Potsdam Institute for Climate Impact
+  Research)
