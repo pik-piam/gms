@@ -92,19 +92,19 @@ Jan Philipp Dietrich
 codeCheck(system.file("dummymodel", package = "gms"))
 #> 
 #>  Running codeCheck...
-#>  Finished data collection...            (time elapsed:  0.014)
-#>  Naming conventions check done...       (time elapsed:  0.014)
+#>  Finished data collection...            (time elapsed:  0.008)
+#>  Naming conventions check done...       (time elapsed:  0.008)
 #>   Running checkAppearance...
-#>   Start variable matching...            (time elapsed:   0.00)
+#>   Start variable matching...            (time elapsed:  0.001)
 #>   Finished variable matching...         (time elapsed:  0.001)
 #>   Start var capitalization check...     (time elapsed:  0.001)
-#>   Finished var capitalization check...  (time elapsed:  0.003)
-#>  Investigated variable appearances...   (time elapsed:  0.018)
-#>  Appearance and usage check done...     (time elapsed:  0.019)
-#>  Switch Appearance check done...        (time elapsed:   0.02)
-#>  Interface collection and check done... (time elapsed:  0.021)
-#>  Input folder check done...             (time elapsed:  0.021)
-#>  Description check done...              (time elapsed:  0.022)
+#>   Finished var capitalization check...  (time elapsed:  0.002)
+#>  Investigated variable appearances...   (time elapsed:   0.01)
+#>  Appearance and usage check done...     (time elapsed:   0.01)
+#>  Switch Appearance check done...        (time elapsed:  0.011)
+#>  Interface collection and check done... (time elapsed:  0.011)
+#>  Input folder check done...             (time elapsed:  0.011)
+#>  Description check done...              (time elapsed:  0.012)
 #>  All codeCheck tests passed!
 #> $core
 #>         out 
