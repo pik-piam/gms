@@ -61,10 +61,10 @@ checkAppearance <- function(x, capitalExclusionList = NULL) {
 
   # Tokenize all code lines at once and build an inverted (token -> module) index.
   # This is O(code size) rather than O(symbols x code size), replacing the grepl sweep.
-  allTokenLists <- strsplit(code, "[^[:alnum:]_]+", perl = TRUE)
+  nonIdentifierSetItems <- grep("[+-]", unique(unlist(x$sets, use.names = FALSE)), value = TRUE)
+  allTokenLists <- .tokenizeGams(code, nonIdentifierSetItems)
   lineLengths   <- lengths(allTokenLists)
   tokenVec      <- unlist(allTokenLists, use.names = FALSE)
-  lowerTokenVec <- tolower(tokenVec)
   moduleVec     <- rep(names(code), lineLengths)
 
   # keep only non-empty tokens that are declared symbols
@@ -85,14 +85,11 @@ checkAppearance <- function(x, capitalExclusionList = NULL) {
   message("  Start var capitalization check...     (time elapsed: ",
           format(proc.time()["elapsed"] - ptm, width = 6, nsmall = 2, digits = 2), ")")
 
-  tokenVecForCap        <- unlist(strsplit(code, "[^[:alnum:]_]+", perl = TRUE),
-                                  use.names = FALSE)
-  lowerTokenVecForCap   <- tolower(tokenVecForCap)
-
-  # Find symbols that appear with more than one capitalisation variant in the code.
-  # tapply groups actual tokens by their lowercase form; count > 1 means mixed casing.
-  casingCounts <- tapply(tokenVecForCap, lowerTokenVecForCap, function(v) length(unique(v)))
-  multiCaseSet <- names(casingCounts)[casingCounts > 1L]
+  # Find symbols that appear with more than one capitalisation variant in the code. A lowercase
+  # form has mixed casing exactly when more than one distinct token shares it.
+  uniqueTokens <- tokenVec[!duplicated(tokenVec)]
+  lowerUnique  <- tolower(uniqueTokens)
+  multiCaseSet <- lowerUnique[duplicated(lowerUnique)]
   duplicates   <- tolower(objectNames) %in% multiCaseSet
   names(duplicates) <- objectNames
 
@@ -104,15 +101,13 @@ checkAppearance <- function(x, capitalExclusionList = NULL) {
       paste0(duplicateNames, collapse = ", "), "\n"
     )
 
+    lineOfToken <- rep(seq_along(code), lineLengths)
     for (dup in duplicateNames) {
       msg <- paste0(msg, "- Suspicious lines found for item '", dup, "':\n")
-      dupRegex <- paste("(^|[^[:alnum:]_])", escapeRegex(dup), "($|[^[:alnum:]_])", sep = "")
-      chunks <- code[grepl(dupRegex, code, ignore.case = TRUE, perl = TRUE)]
 
-      tokens <- strsplit(chunks, "[^[:alnum:]_]+", perl = TRUE)
-      correctTokenCounts <- vapply(tokens, function(line) sum(dup == line), integer(1))
-      allTokenCounts <- vapply(tokens, function(line) sum(tolower(dup) == tolower(line)), integer(1))
-      suspectLines <- chunks[correctTokenCounts != allTokenCounts]
+      # lines holding the item in a casing other than the declared one
+      miscased     <- tokenVec %in% setdiff(uniqueTokens[lowerUnique == tolower(dup)], dup)
+      suspectLines <- code[unique(lineOfToken[miscased])]
 
       msg <- paste0(msg, paste0(paste(" - ", suspectLines), collapse = "\n"))
       msg <- paste0(msg, "\n")
@@ -140,4 +135,22 @@ checkAppearance <- function(x, capitalExclusionList = NULL) {
   type <- sub("^(o|)[^_]*?(m|[0-9]{2}|)_.*$", "\\1\\2", dimnames(objectsToModules)[[1]])
   names(type) <- dimnames(objectsToModules)[[1]]
   return(list(appearance = objectsToModules, setappearance = aSets, type = type, warnings = w))
+}
+
+# Like strsplit(lines, "[^[:alnum:]_]+"), but keeps declared set items containing "+"/"-"
+# (e.g. "SMIP7-H-SSP2-sens") out of the token list, so their pieces (here "H") do not collide with
+# symbols like the set "h". A set item missing from nonIdentifierSetItems is split like arithmetic.
+.tokenizeGams <- function(lines, nonIdentifierSetItems = NULL) {
+  # split with "+"/"-" counting as identifier characters, so that a set item stays one token
+  setItemTokens     <- strsplit(lines, "[^[:alnum:]_+-]+", perl = TRUE)
+  potentialSetItems <- gsub("^[+-]+|[+-]+$", "", unlist(setItemTokens, use.names = FALSE), perl = TRUE)
+  lineOfSetItem     <- rep(seq_along(lines), lengths(setItemTokens))
+  isSetItem         <- tolower(potentialSetItems) %in% tolower(nonIdentifierSetItems)
+
+  identifierTokens <- strsplit(potentialSetItems[!isSetItem], "[+-]+", perl = TRUE)
+  # the levels keep lines without any token as an empty entry
+  tokens <- split(unlist(identifierTokens, use.names = FALSE),
+                  factor(rep(lineOfSetItem[!isSetItem], lengths(identifierTokens)),
+                         levels = seq_along(lines)))
+  return(unname(tokens))
 }

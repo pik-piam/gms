@@ -1,8 +1,8 @@
 Package: gms
 Type: Package
 Title: 'GAMS' Modularization Support Package
-Version: 0.35.0
-Date: 2026-06-22
+Version: 0.35.1
+Date: 2026-10-29
 Authors@R: c(person("Jan Philipp", "Dietrich", email = "dietrich@pik-potsdam.de", 
              comment = c(affiliation = "Potsdam Institute for Climate Impact Research", ORCID = "0000-0002-4309-6431"), role = c("aut","cre")),
              person("David", "Klein", comment = c(affiliation = "Potsdam Institute for Climate Impact Research"), role = "aut"),
@@ -40,4 +40,4 @@ LazyData: no
 Encoding: UTF-8
 Config/Keywords: tool
 Config/Needs/website: tidyverse/tidytemplate
-Config/roxygen2/version: 8.0.0
+Config/roxygen2/version: 8.1.1

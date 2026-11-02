@@ -17,3 +17,4 @@
 ^_pkgdown\.yml$
 ^\.claude$
 ^\.positai$
+^CODE_STYLE\.md$
